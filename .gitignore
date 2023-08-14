@@ -1,0 +1,14 @@
+
+# dependencies
+fridgeq/node_modules
+fridgeq/.pnp
+fridgeq/.pnp.js
+
+# testing
+fridgeq/coverage
+
+# production
+fridgeq/build
+
+fridge_api/.env
+fridge_api/node_modules
