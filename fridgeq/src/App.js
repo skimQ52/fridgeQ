@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import Fridge from './Fridge';
-import Navbar from './Navbar';
+import Fridge from './components/Fridge';
+import Navbar from './components/Navbar';
 
 class App extends Component {
 
