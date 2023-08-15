@@ -31,6 +31,12 @@ code {
     monospace;
 }
 
+h1 {
+  color: rgb(77, 0, 77);
+  text-align: center;
+  user-select: none;
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -176,9 +182,11 @@ code {
 .popup-inner {
   position: relative;
   padding: 32px;
-  width: 100%;
-  max-width: 640px;
+  /* width: 100%; */
+  /* max-width: 640px; */
   background-color: white;
+  border-radius: 10px;
+  filter: drop-shadow(8px 8px 4px #00000060);
 }
 
 .popup-inner .close-btn {
@@ -187,6 +195,51 @@ code {
   right: 16px;
 }
 
-.addButton {
-  
+/* .addButton {
+
+} */
+
+
+/* FormInput */
+
+.FormInput {
+  display: flex;
+  flex-direction: column;
+  /* width: 30%; */
+  align-items: left;
+  justify-content: center;
+  user-select: none;
+}
+.input {
+  padding: 15px;
+  margin: 10px 0px;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+
+.labelInput {
+  font-size: 15px;
+  color: gray;
+}
+
+.confirmButton {
+  width: 100%;
+  height: 4vh;
+  padding:2px;
+  border: none;
+  background-color: rebeccapurple;
+  color: white;
+  border-radius: 5px;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  transition: 0.3s;
+}
+
+.confirmButton:hover {
+  background-color: rgb(99, 0, 199);
+}
+
+form {
+  align-items: center;
+  justify-content: center;
 }

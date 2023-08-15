@@ -4,7 +4,7 @@ var router = express.Router();
 
 router.post("/add_food", async (request, response) => {
     const food = new foodModel(request.body);
-  
+    console.log(food);
     try {
       await food.save();
       response.send(food);
