@@ -190,7 +190,7 @@ h1 {
 }
 
 .popup-inner .close-btn {
-  position: abosolute;
+  position: absolute;
   top: 16px;
   right: 16px;
 }
