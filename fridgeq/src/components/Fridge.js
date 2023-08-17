@@ -26,6 +26,7 @@ const Fridge = () => {
     }, [])
 
     const [buttonPopup, setButtonPopup] = useState(false);
+    const [foodPopup, setFoodPopup] = useState({trigger: false, value: ''});
 
     const foodRef = useRef()
     const quanRef = useRef()
@@ -49,6 +50,7 @@ const Fridge = () => {
             return;
         }
 
+        // Check if food name already exists to prevent dupes
         let check = false;
         Object.values(foods).forEach(food => {
             if (food.name.toLowerCase() === foodRef.current.value.toLowerCase()) {
@@ -56,16 +58,10 @@ const Fridge = () => {
             }
         });
         if (check) {
+            e.preventDefault();
             return;
         }
 
-        // let test = foodNameExists(foodRef.current.value);
-        // if (test) {
-        //     // e.preventDefault();
-        //     console.log("exists2");
-        //     return;
-        // }
-        console.log("test3");
         const data = {
             name: foodRef.current.value,
             type: typeRef.current.value,
@@ -90,19 +86,24 @@ const Fridge = () => {
         });
     }
 
+    const handleItemClicked = (value) => {
+        console.log("Dread");
+        setFoodPopup({ trigger: true, value });
+    };
+
     return (
         <div>
             {/* <Flip right cascade> */}
             {/* <Zoom cascade> */}
             <div className="Fridge">
                 {foods.map((item, index) => (
-                    <Item key={index} name={item.name} quan={item.quantity}></Item> 
+                    <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
                 ))}
             </div>
             {/* </Flip> */}
             {/* </Zoom> */}
             <button onClick={() => setButtonPopup(true)} className='addButton'>Add new items</button>
-            <Popup trigger={buttonPopup} setTrigger={setButtonPopup} onClose={() => console.log("fukumean")}>
+            <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
                 <form onSubmit={handleSubmit}>
                     <FormInput refer={foodRef} type="text" placeholder="Banana" label="Name"/>
@@ -110,6 +111,9 @@ const Fridge = () => {
                     <FormInput refer={typeRef} type="text" placeholder="Type" label="Type"/> {/* make drop down menu */}
                     <button className='confirmButton'>Confirm</button>
                 </form>
+            </Popup>
+            <Popup trigger={foodPopup.trigger} setTrigger={setFoodPopup}>
+                <h1>{foodPopup.value}</h1>
             </Popup>
         </div>
     );
