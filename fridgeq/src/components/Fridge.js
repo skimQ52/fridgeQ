@@ -10,6 +10,20 @@ config({ ssrFadeout: true });
 const Fridge = () => {
 
     const [foods, setFoods] = useState([]);
+    const [buttonPopup, setButtonPopup] = useState({ trigger: false });
+    const [foodPopup, setFoodPopup] = useState({
+        trigger: false,
+        food: {
+            name: '',
+            quan: 0,
+            type: '',
+        }});
+
+    const [tempFood, setTempFood] = useState(foodPopup);
+
+    const foodRef = useRef()
+    const quanRef = useRef()
+    const typeRef = useRef()
 
     const fetchFoods = () => {
         fetch("http://localhost:9000/mongoAPI/foods")
@@ -21,16 +35,52 @@ const Fridge = () => {
             })
     }
 
+    const fetchFood = (name) => {
+        fetch(`http://localhost:9000/mongoAPI/food?param=${name}`)
+            .then(response => {
+            return response.json()
+            })
+            .then(data => {
+            console.log(data[0].name)
+            setFoodPopup({
+                trigger: true,
+                food: {
+                    name: data[0].name,
+                    quan: data[0].quantity,
+                    type: data[0].type,
+                }
+            })
+            setTempFood({
+                trigger: true,
+                food: {
+                    name: data[0].name,
+                    quan: data[0].quantity,
+                    type: data[0].type,
+                }
+            })
+        })
+    }
+
     useEffect(() => {
         fetchFoods()
     }, [])
 
-    const [buttonPopup, setButtonPopup] = useState(false);
-    const [foodPopup, setFoodPopup] = useState({trigger: false, value: ''});
-
-    const foodRef = useRef()
-    const quanRef = useRef()
-    const typeRef = useRef()
+    const deleteFood = () => {
+        fetch(`http://localhost:9000/mongoAPI/delete_food?name=${foodPopup.food.name}`, {
+            method: 'DELETE'
+        }).then(response => response.json())
+            .then(result => {
+                console.log("ye")
+                fetchFoods()
+                setFoodPopup( prevData => ({
+                    ...prevData,
+                    trigger: false
+                }))
+            }).catch(error => {
+                console.error('Error:', error);
+            }
+        );
+    }
 
     const foodNameExists = (name) => {
         Object.values(foods).forEach(food => {
@@ -87,9 +137,52 @@ const Fridge = () => {
     }
 
     const handleItemClicked = (value) => {
-        console.log("Dread");
-        setFoodPopup({ trigger: true, value });
+        fetchFood(value);
     };
+
+    const handleIncrement = () => {
+        if (tempFood.food.quan === 99) {
+            return;
+        }
+        setTempFood(prevData => ({
+          ...prevData,
+          food: {
+            ...prevData.food,
+            quan: prevData.food.quan + 1
+          }
+        }));
+    };
+
+    const handleDecrement = () => {
+        if (tempFood.food.quan === 0) {
+            return;
+        }
+        setTempFood(prevData => ({
+          ...prevData,
+          food: {
+            ...prevData.food,
+            quan: prevData.food.quan - 1
+          }
+        }));
+    };
+
+    const handleApplyChanges = (e) => {
+        if (tempFood.food.quan === 0) { // Need to delete
+            deleteFood();
+        }
+        else { // Update quantity
+            fetch(`http://localhost:9000/mongoAPI/update_food?name=${tempFood.food.name}&quan=${tempFood.food.quan}`, {
+                method: 'POST'
+            })
+            .then(result => {
+                fetchFoods()
+            })
+            .catch(error => {
+                e.preventDefault();
+                console.error('Error:', error);
+            });
+        }
+    }
 
     return (
         <div>
@@ -102,8 +195,8 @@ const Fridge = () => {
             </div>
             {/* </Flip> */}
             {/* </Zoom> */}
-            <button onClick={() => setButtonPopup(true)} className='addButton'>Add new items</button>
-            <Popup trigger={buttonPopup} setTrigger={setButtonPopup}>
+            <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='addButton'>Add new items</button>
+            <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
                 <form onSubmit={handleSubmit}>
                     <FormInput refer={foodRef} type="text" placeholder="Banana" label="Name"/>
@@ -113,7 +206,14 @@ const Fridge = () => {
                 </form>
             </Popup>
             <Popup trigger={foodPopup.trigger} setTrigger={setFoodPopup}>
-                <h1>{foodPopup.value}</h1>
+                <h1>{foodPopup.food.name}</h1>
+                <h2>You currently have:</h2>
+                <h3>{tempFood.food.quan}x</h3>
+                <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
+                    <button onClick={handleDecrement} className="">-</button>
+                    <button onClick={handleIncrement} className="">+</button>
+                </div>
+                <button onClick={handleApplyChanges} className='confirmButton'>Apply Changes</button>
             </Popup>
         </div>
     );
