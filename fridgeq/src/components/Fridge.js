@@ -21,6 +21,8 @@ const Fridge = () => {
 
     const [tempFood, setTempFood] = useState(foodPopup);
 
+    const [query, setQuery] = useState("");
+
     const foodRef = useRef()
     const quanRef = useRef()
     const typeRef = useRef()
@@ -186,16 +188,15 @@ const Fridge = () => {
 
     return (
         <div>
-            {/* <Flip right cascade> */}
-            {/* <Zoom cascade> */}
-            <div className="Fridge">
-                {foods.map((item, index) => (
-                    <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
-                ))}
+            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur' : ''}>
+                <div className="Fridge">
+                    {foods.map((item, index) => (
+                        <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
+                    ))}
+                </div>
+                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='addButton'>Add new items</button>
+                <input onChange={e=> setQuery(e.target.value)} className='search' type="text" placeholder='Search...'></input>
             </div>
-            {/* </Flip> */}
-            {/* </Zoom> */}
-            <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='addButton'>Add new items</button>
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
                 <form onSubmit={handleSubmit}>

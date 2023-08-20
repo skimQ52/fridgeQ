@@ -25,7 +25,6 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className='App'>
-          <div className='background'></div>
           <div className="content">
             <Routes>
               <Route path="/fridge" element={<Fridge/>}/>
