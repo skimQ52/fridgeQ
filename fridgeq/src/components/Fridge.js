@@ -188,14 +188,14 @@ const Fridge = () => {
 
     return (
         <div>
-            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur' : ''}>
+            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur fridge-outer' : 'fridge-outer'}>
+            <input onChange={e=> setQuery(e.target.value)} className='search' type="text" placeholder='Search...'></input>
                 <div className="Fridge">
                     {foods.map((item, index) => (
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
                     ))}
                 </div>
                 <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='addButton'>Add new items</button>
-                <input onChange={e=> setQuery(e.target.value)} className='search' type="text" placeholder='Search...'></input>
             </div>
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>

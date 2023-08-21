@@ -98,7 +98,18 @@ h3 {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
-  margin: 5%;
+  margin: 2% 5%;
+}
+
+.fridge-outer {
+  margin-top: 5%;
+  display: block;
+  /* flex-flow: column wrap; */
+}
+
+.addButton {
+  width: 120px;
+  height: 25px;
 }
 
 /* ITEM (Fridge) */
@@ -220,10 +231,6 @@ h3 {
   top: 16px;
   right: 16px;
 }
-
-/* .addButton {
-
-} */
 
 
 /* FormInput */
