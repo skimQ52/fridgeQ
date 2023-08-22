@@ -9,7 +9,9 @@ config({ ssrFadeout: true });
 
 const Fridge = () => {
 
-    const [foods, setFoods] = useState([]);
+    const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
+    const [allFoods, setAllFoods] = useState(); // Full food map
+    const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [buttonPopup, setButtonPopup] = useState({ trigger: false });
     const [foodPopup, setFoodPopup] = useState({
         trigger: false,
@@ -20,8 +22,6 @@ const Fridge = () => {
         }});
 
     const [tempFood, setTempFood] = useState(foodPopup);
-
-    const [query, setQuery] = useState("");
 
     const foodRef = useRef()
     const quanRef = useRef()
@@ -34,6 +34,7 @@ const Fridge = () => {
             })
             .then(data => {
             setFoods(data)
+            setAllFoods(data)
             })
     }
 
@@ -62,10 +63,6 @@ const Fridge = () => {
             })
         })
     }
-
-    useEffect(() => {
-        fetchFoods()
-    }, [])
 
     const deleteFood = () => {
         fetch(`http://localhost:9000/mongoAPI/delete_food?name=${foodPopup.food.name}`, {
@@ -186,10 +183,27 @@ const Fridge = () => {
         }
     }
 
+    // Handle search query change
+    const handleSearchChange = (event) => {
+        const query = event.target.value;
+        setSearchQuery(query);
+
+        // Filter items based on search query
+        const filtered = allFoods.filter(item =>
+            item.name.toLowerCase().includes(query.toLowerCase())
+        );
+        setFoods(filtered);
+    };
+
+    // Resets
+    useEffect(() => {
+        fetchFoods();
+    }, [])
+
     return (
         <div>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur fridge-outer' : 'fridge-outer'}>
-            <input onChange={e=> setQuery(e.target.value)} className='search' type="text" placeholder='Search...'></input>
+            <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
                 <div className="Fridge">
                     {foods.map((item, index) => (
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
