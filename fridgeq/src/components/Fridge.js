@@ -12,6 +12,7 @@ const Fridge = () => {
     const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
     const [allFoods, setAllFoods] = useState(); // Full food map
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
+    const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
     const [buttonPopup, setButtonPopup] = useState({ trigger: false });
     const [foodPopup, setFoodPopup] = useState({
         trigger: false,
@@ -192,8 +193,34 @@ const Fridge = () => {
         const filtered = allFoods.filter(item =>
             item.name.toLowerCase().includes(query.toLowerCase())
         );
-        setFoods(filtered);
+
+        // Filter items based on filter query
+        const filtered2 = filtered.filter(item =>
+            item.type.toLowerCase().includes(filterQuery.toLowerCase())
+        );
+        setFoods(filtered2);
     };
+
+    // Handle filter query change
+    const handleFilterChange = (event) => {
+        const query = event.target.value;
+        if (query === "none") {
+            return;
+        }
+        setFilterQuery(query);
+
+        // Filter items based on filter query
+        const filtered = allFoods.filter(item =>
+            item.type.toLowerCase().includes(query.toLowerCase())
+        );
+
+        // Filter items based on search query
+        const filtered2 = filtered.filter(item =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setFoods(filtered2);
+    };
+
 
     // Resets
     useEffect(() => {
@@ -203,7 +230,15 @@ const Fridge = () => {
     return (
         <div>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur fridge-outer' : 'fridge-outer'}>
-            <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
+                <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
+                <select onChange={handleFilterChange}>
+                    <option value="" selected="true">Type</option>
+                    <option value="vegetable">Vegetable</option>
+                    <option value="meat">Meat</option>
+                    <option value="fruit">Fruit</option>
+                    <option value="snack">Snack</option>
+                    <option value="liquid">Liquid</option>
+                </select>
                 <div className="Fridge">
                     {foods.map((item, index) => (
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
