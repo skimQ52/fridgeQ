@@ -1,5 +1,6 @@
 import Flip from 'react-reveal/Flip';
 import Zoom from 'react-reveal/Zoom';
+import Fade from 'react-reveal/Fade';
 import React, { useEffect, useState, useRef, useId } from "react";
 import Item from './Item';
 import Popup from './Popup';
@@ -228,7 +229,8 @@ const Fridge = () => {
     }, [])
 
     return (
-        <div style={{filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
+        // <Fade cascade>
+        <div style={{height: '100%', filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
                 <select onChange={handleFilterChange}>
@@ -244,7 +246,7 @@ const Fridge = () => {
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
                     ))}
                 </div>
-                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='add-btn'>+</button>
+                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
@@ -266,6 +268,7 @@ const Fridge = () => {
                 <button onClick={handleApplyChanges} className='confirmButton'>Apply Changes</button>
             </Popup>
         </div>
+        // </Zoom>
     );
 }
 
