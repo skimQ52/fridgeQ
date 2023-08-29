@@ -25,13 +25,13 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className='App'>
-          <div className="content">
+          <Navbar/>
+          <div className="main-content">
             <Routes>
               <Route path="/fridge" element={<Fridge/>}/>
             </Routes>
           </div>
         </div>
-        <Navbar/>
       </BrowserRouter>
     );
   }

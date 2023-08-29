@@ -7,8 +7,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin: auto;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  overflow: auto;
-  background: linear-gradient(315deg, rgb(0, 228, 255) 0%, rgb(22, 144, 212) 60%, rgb(33, 122, 255) 98%);
+  overflow: hidden; /* Prevent horizontal scroll if needed */
+  background-color: rgb(100, 100, 100);
+  background: linear-gradient(315deg, rgb(160, 52, 52) 0%, rgb(255, 102, 0) 60%, rgb(255, 6, 6) 98%);
   animation: gradient 30s ease infinite;
   background-size: 400% 400%;
   background-attachment: fixed;
@@ -59,14 +60,32 @@ h3 {
   transition: 0.6s;
 }
 
+.App {
+  display: flex;
+  flex-direction: row;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden; /* Prevent horizontal scroll if needed */
+}
+
+.main-content {
+  flex: 1; /* Expand to fill available space */
+  padding: 20px; /* Create space between sidebar and content */
+}
+
 /* NAVBAR */
 
 .navbar {
-  position: fixed;
-  top: 0%;
-  background-color: rgb(10, 163, 36);
-  width: 100%;
-  height: 5%;
+  /* position: fixed; */
+  left: 0;
+  top: 0;
+  bottom: 0;
+  /* background: linear-gradient(315deg, rgb(160, 52, 52) 0%, rgb(255, 102, 0) 60%, rgb(255, 6, 6) 98%); */
+  background-color: aliceblue;
+  animation: gradient 20s ease infinite;
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  width: 250px;
+  height: 100%;
 } 
 
 .bar { /* with all the links */
@@ -97,26 +116,32 @@ h3 {
 .Fridge {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-evenly;
+  justify-content: left;
+  padding: 1%;
   margin: 2% 5%;
+  border-radius: 20px;
+  background-color: aliceblue;
+  overflow-y: auto;
 }
 
 .fridge-outer {
   margin-top: 5%;
-  display: block;
-  /* flex-flow: column wrap; */
+  border-radius: 40px;
+  background-color: aliceblue;
 }
 
 .addButton {
   width: 120px;
   height: 25px;
+  margin-left: 2%;
+  margin-bottom: 2%;
 }
 
 /* ITEM (Fridge) */
 
 .Item {
   background: linear-gradient(45deg, rgb(206, 206, 206) 0%, rgba(235,235,235,1) 44%, rgba(255,255,255,1) 100%);
-  width: 9%;
+  width: 12%;
   padding-bottom: 6%;
   user-select: none;
   border-radius: 10%;
@@ -191,13 +216,15 @@ h3 {
 }
 
 .quanItem {
+  position: absolute;
   font-size: 200%;
-  margin: 0;
-  margin-right: 7%;
-  margin-top: 3%;
+  bottom: 4px;
+  right: 8px;
 }
 
 .search {
+  margin-left: 2%;
+  margin-top: 2%;
   background-color: red;
   width: 15%;
 }

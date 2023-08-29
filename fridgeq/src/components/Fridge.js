@@ -228,7 +228,7 @@ const Fridge = () => {
     }, [])
 
     return (
-        <div>
+        <div className='fridge-outer'>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur fridge-outer' : 'fridge-outer'}>
                 <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
                 <select onChange={handleFilterChange}>
