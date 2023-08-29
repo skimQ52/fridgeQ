@@ -228,8 +228,8 @@ const Fridge = () => {
     }, [])
 
     return (
-        <div className='fridge-outer'>
-            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'blur fridge-outer' : 'fridge-outer'}>
+        <div style={{filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
+            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
                 <select onChange={handleFilterChange}>
                     <option value="" selected="true">Type</option>
@@ -244,7 +244,7 @@ const Fridge = () => {
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
                     ))}
                 </div>
-                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='addButton'>Add new items</button>
+                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='add-btn'>+</button>
             </div>
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
