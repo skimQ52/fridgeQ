@@ -6,7 +6,6 @@ import Item from './Item';
 import Popup from './Popup';
 import config from 'react-reveal/globals';
 import FormInput from './FormInput';
-import ToggleButton from './ToggleButton';
 
 config({ ssrFadeout: true });
 
@@ -268,7 +267,7 @@ const Fridge = () => {
                         <option value="snack">Snack</option>
                         <option value="liquid">Liquid</option>
                     </select>
-                    
+
                     <div onClick={handleSort} className={(sortedState) ? 'ToggleButton ToggleButtonActive' : 'ToggleButton'}>
                         Sort Alphabetically
                     </div>
