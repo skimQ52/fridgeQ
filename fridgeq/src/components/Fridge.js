@@ -233,7 +233,7 @@ const Fridge = () => {
         <div style={{height: '100%', filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
-                <select onChange={handleFilterChange}>
+                <select onChange={handleFilterChange} className='select'>
                     <option value="" selected="true">Type</option>
                     <option value="vegetable">Vegetable</option>
                     <option value="meat">Meat</option>
@@ -254,7 +254,7 @@ const Fridge = () => {
                     <FormInput refer={foodRef} type="text" placeholder="Banana" label="Name"/>
                     <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
                     <FormInput refer={typeRef} type="text" placeholder="Type" label="Type"/> {/* make drop down menu */}
-                    <button className='confirmButton'>Confirm</button>
+                    <button className='glow-on-hover confirmButton'>Confirm</button>
                 </form>
             </Popup>
             <Popup trigger={foodPopup.trigger} setTrigger={setFoodPopup}>
@@ -265,7 +265,7 @@ const Fridge = () => {
                     <button onClick={handleDecrement} className="">-</button>
                     <button onClick={handleIncrement} className="">+</button>
                 </div>
-                <button onClick={handleApplyChanges} className='confirmButton'>Apply Changes</button>
+                <button onClick={handleApplyChanges} className='glow-on-hover confirmButton'>Apply Changes</button>
             </Popup>
         </div>
         // </Zoom>

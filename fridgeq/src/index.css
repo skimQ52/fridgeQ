@@ -34,9 +34,10 @@ code {
 }
 
 h1 {
-  color: rgb(0, 0, 0);
+  color: orangered;
   text-align: center;
   user-select: none;
+  font-family: 'Trebuchet MS';
 }
 
 h2 {
@@ -300,8 +301,17 @@ h3 {
 .search {
   margin-left: 2%;
   margin-top: 2%;
-  background-color: red;
   width: 15%;
+  height: 35px;
+  border-radius: 10px;
+  border: 1px solid gray;
+}
+
+.select {
+  margin-left: 1%;
+  height: 35px;
+  border-radius: 10px;
+  border: 1px solid gray;
 }
 
 /* Popup */
@@ -361,17 +371,9 @@ h3 {
   width: 100%;
   height: 4vh;
   padding:2px;
-  border: none;
-  background-color: rebeccapurple;
-  color: white;
-  border-radius: 5px;
   margin-top: 5%;
   margin-bottom: 5%;
-  transition: 0.3s;
-}
-
-.confirmButton:hover {
-  background-color: rgb(99, 0, 199);
+  filter: drop-shadow(-1px 2px 4px #0000005e);
 }
 
 form {
