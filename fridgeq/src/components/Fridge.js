@@ -6,14 +6,18 @@ import Item from './Item';
 import Popup from './Popup';
 import config from 'react-reveal/globals';
 import FormInput from './FormInput';
+import ToggleButton from './ToggleButton';
+
 config({ ssrFadeout: true });
 
 const Fridge = () => {
 
     const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
     const [allFoods, setAllFoods] = useState(); // Full food map
+    const [filteredFoods, setFilteredFoods] = useState(); // Filtered food map
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
+    const [sortedState, setSortedState] = useState(false); // Sorted or no
     const [buttonPopup, setButtonPopup] = useState({ trigger: false });
     const [foodPopup, setFoodPopup] = useState({
         trigger: false,
@@ -36,6 +40,7 @@ const Fridge = () => {
             })
             .then(data => {
             setFoods(data)
+            setFilteredFoods(data)
             setAllFoods(data)
             })
     }
@@ -190,6 +195,8 @@ const Fridge = () => {
         const query = event.target.value;
         setSearchQuery(query);
 
+        setSortedState(false);
+        sortAlphabetically(false);
         // Filter items based on search query
         const filtered = allFoods.filter(item =>
             item.name.toLowerCase().includes(query.toLowerCase())
@@ -200,16 +207,18 @@ const Fridge = () => {
             item.type.toLowerCase().includes(filterQuery.toLowerCase())
         );
         setFoods(filtered2);
+        setFilteredFoods(filtered2); // Hold the filtered map for sorting
     };
 
     // Handle filter query change
     const handleFilterChange = (event) => {
         const query = event.target.value;
+        setFilterQuery(query);
         if (query === "none") {
             return;
         }
-        setFilterQuery(query);
-
+        setSortedState(false);
+        sortAlphabetically(false);
         // Filter items based on filter query
         const filtered = allFoods.filter(item =>
             item.type.toLowerCase().includes(query.toLowerCase())
@@ -220,6 +229,21 @@ const Fridge = () => {
             item.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setFoods(filtered2);
+        setFilteredFoods(filtered2); // Hold the filtered map for sorting
+    };
+
+    const handleSort = () => {
+        setSortedState(!sortedState);
+        sortAlphabetically(sortedState)
+    }
+
+    function sortAlphabetically(state) {
+        if (!sortedState) {
+            const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
+            setFoods(sortedFoods);
+            return;
+        }
+        setFoods(filteredFoods);
     };
 
 
@@ -232,15 +256,24 @@ const Fridge = () => {
         // <Fade cascade>
         <div style={{height: '100%', filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
-                <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
-                <select onChange={handleFilterChange} className='select'>
-                    <option value="" selected="true">Type</option>
-                    <option value="vegetable">Vegetable</option>
-                    <option value="meat">Meat</option>
-                    <option value="fruit">Fruit</option>
-                    <option value="snack">Snack</option>
-                    <option value="liquid">Liquid</option>
-                </select>
+
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', margin: '35px'}}>
+                    <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
+
+                    <select onChange={handleFilterChange} className='select'>
+                        <option value="" defaultValue="true">Type</option>
+                        <option value="vegetable">Vegetable</option>
+                        <option value="meat">Meat</option>
+                        <option value="fruit">Fruit</option>
+                        <option value="snack">Snack</option>
+                        <option value="liquid">Liquid</option>
+                    </select>
+                    
+                    <div onClick={handleSort} className={(sortedState) ? 'ToggleButton ToggleButtonActive' : 'ToggleButton'}>
+                        Sort Alphabetically
+                    </div>
+                </div>
+
                 <div className="Fridge">
                     {foods.map((item, index) => (
                         <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
