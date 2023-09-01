@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Routes, Route, BrowserRouter } from 'react-router-dom';
 import Fridge from './components/Fridge';
 import Navbar from './components/Navbar';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 class App extends Component {
 
@@ -29,6 +31,8 @@ class App extends Component {
           <div className="main-content">
             <Routes>
               <Route path="/fridge" element={<Fridge/>}/>
+              <Route path="/login" element={<Login/>}/>
+              <Route path="/signup" element={<Signup/>}/>
             </Routes>
           </div>
         </div>

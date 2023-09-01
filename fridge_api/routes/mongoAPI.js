@@ -1,5 +1,5 @@
 const express = require("express");
-const foodModel = require("../models");
+const foodModel = require("../models/foodModel");
 var router = express.Router();
 
 router.post("/add_food", async (request, response) => {
