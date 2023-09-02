@@ -13,8 +13,8 @@ const FoodSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  owner: {
-    type: Number,
+  user_id: {
+    type: String,
     required: true,
   },
 }, { timestamps: true });

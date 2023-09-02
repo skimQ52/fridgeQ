@@ -6,11 +6,13 @@ import Item from './Item';
 import Popup from './Popup';
 import config from 'react-reveal/globals';
 import FormInput from './FormInput';
+import { useAuthContext } from '../hooks/useAuthContext';
 
 config({ ssrFadeout: true });
 
 const Fridge = () => {
 
+    const {user} = useAuthContext();
     const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
     const [allFoods, setAllFoods] = useState(); // Full food map
     const [filteredFoods, setFilteredFoods] = useState(); // Filtered food map
@@ -28,12 +30,16 @@ const Fridge = () => {
 
     const [tempFood, setTempFood] = useState(foodPopup);
 
-    const foodRef = useRef()
-    const quanRef = useRef()
-    const typeRef = useRef()
+    const foodRef = useRef();
+    const quanRef = useRef();
+    const typeRef = useRef();
 
     const fetchFoods = () => {
-        fetch("http://localhost:9000/mongoAPI/foods")
+        fetch("http://localhost:9000/mongoAPI/foods", {
+            headers: {
+                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            }
+        })
             .then(response => {
             return response.json()
             })
@@ -42,11 +48,16 @@ const Fridge = () => {
             setFilteredFoods(data)
             setAllFoods(data)
             })
-    }
+    };
+
+    const fetchFoodsRef = useRef(fetchFoods);
 
     const fetchFood = (name) => {
-        fetch(`http://localhost:9000/mongoAPI/food?param=${name}`)
-            .then(response => {
+        fetch(`http://localhost:9000/mongoAPI/food?param=${name}`, {
+            headers: {
+                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            }
+        }).then(response => {
             return response.json()
             })
             .then(data => {
@@ -72,7 +83,10 @@ const Fridge = () => {
 
     const deleteFood = () => {
         fetch(`http://localhost:9000/mongoAPI/delete_food?name=${foodPopup.food.name}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            }
         }).then(response => response.json())
             .then(result => {
                 console.log("ye")
@@ -128,7 +142,8 @@ const Fridge = () => {
         fetch("http://localhost:9000/mongoAPI/add_food", {
             method: 'POST',
             headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
@@ -177,7 +192,11 @@ const Fridge = () => {
         }
         else { // Update quantity
             fetch(`http://localhost:9000/mongoAPI/update_food?name=${tempFood.food.name}&quan=${tempFood.food.quan}`, {
-                method: 'POST'
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+                }
             })
             .then(result => {
                 fetchFoods()
@@ -245,11 +264,14 @@ const Fridge = () => {
         setFoods(filteredFoods);
     };
 
-
-    // Resets
+    // On load
     useEffect(() => {
-        fetchFoods();
-    }, [])
+        if (user) {
+            const fetchFoods2 = fetchFoodsRef.current;
+            fetchFoods2();
+        }
+        // else reroute to Login page
+    }, [user])
 
     return (
         // <Fade cascade>
