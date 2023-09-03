@@ -17,13 +17,13 @@ const Topbar = () => {
           {user && ( // if have a user
             <div>
                 <span>{user.email}</span>
-                <button className='topbarButton' onClick={handleClick}>Log out</button>
+                <button className='topbarButton glow-on-hover' onClick={handleClick}>Log out</button>
             </div>
           )}
           {!user && ( // if no user
             <div>
-                <Link className='topbarButton' to="/login">Login</Link>
-                <Link className='topbarButton' to="/signup">Signup</Link>
+                <Link className='topbarButton glow-on-hover' to="/login">Login</Link>
+                <Link className='topbarButton glow-on-hover' to="/signup">Signup</Link>
             </div>
           )}
         </nav>

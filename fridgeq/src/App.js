@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Topbar from './components/Topbar';
+import Landing from './components/Landing';
 import { useAuthContext } from './hooks/useAuthContext';
 
 function App() {
@@ -13,15 +14,18 @@ function App() {
 
   return (
     <BrowserRouter>
-    <Topbar/>
       <div className='App'>
-        <Navbar/>
+        {user && // show only if there is a user
+          <Navbar/>
+        }
+        <Topbar/>
         <div className="main-content">
           <Routes>
-            {/* route for landing page with login/signup and big logo :D */}
             <Route path="/fridge" element={user ? <Fridge/> : <Navigate to="/login"/>}/>
             <Route path="/login" element={!user ? <Login/> : <Navigate to="/fridge"/>}/>
             <Route path="/signup" element={!user ? <Signup/> : <Navigate to="/fridge"/>}/>
+            <Route path="/meals" element={<Landing/>}/>
+            <Route path="/" element={!user ? <Landing/> : <Navigate to="/fridge"/>}/>
           </Routes>
         </div>
       </div>

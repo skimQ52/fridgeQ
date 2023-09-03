@@ -7,7 +7,7 @@ const Navbar = () => {
             <nav className="bar">
                 <div className="links">
                     <Link className="glow-on-hover link" to="/fridge">My Fridge</Link>
-                    <Link className="glow-on-hover link" to="">Meals</Link>
+                    <Link className="glow-on-hover link" to="/meals">Meals</Link>
                 </div>
             </nav>
         </div>
