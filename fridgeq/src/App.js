@@ -6,30 +6,34 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Topbar from './components/Topbar';
 import Landing from './components/Landing';
+import Meals from './components/Meals';
 import { useAuthContext } from './hooks/useAuthContext';
+import { PageProvider } from './context/PageContext';
 
 function App() {
 
   const { user } = useAuthContext();
 
   return (
-    <BrowserRouter>
-      <div className='App'>
-        {user && // show only if there is a user
-          <Navbar/>
-        }
-        <Topbar/>
-        <div className="main-content">
-          <Routes>
-            <Route path="/fridge" element={user ? <Fridge/> : <Navigate to="/login"/>}/>
-            <Route path="/login" element={!user ? <Login/> : <Navigate to="/fridge"/>}/>
-            <Route path="/signup" element={!user ? <Signup/> : <Navigate to="/fridge"/>}/>
-            <Route path="/meals" element={<Landing/>}/>
-            <Route path="/" element={!user ? <Landing/> : <Navigate to="/fridge"/>}/>
-          </Routes>
+    <PageProvider>
+      <BrowserRouter>
+        <div className='App'>
+          {user && // show only if there is a user
+            <Navbar/>
+          }
+          <Topbar/>
+          <div className="main-content">
+            <Routes>
+              <Route exact path="/" element={!user ? <Landing/> : <Navigate to="/fridge"/>}/>
+              <Route path="/fridge" element={user ? <Fridge/> : <Navigate to="/login"/>}/>
+              <Route path="/login" element={!user ? <Login/> : <Navigate to="/fridge"/>}/>
+              <Route path="/signup" element={!user ? <Signup/> : <Navigate to="/fridge"/>}/>
+              <Route path="/meals" element={user ? <Meals/> : <Navigate to="/login"/>}/>
+            </Routes>
+          </div>
         </div>
-      </div>
-    </BrowserRouter>
+      </BrowserRouter>
+    </PageProvider>
   );
   
 }

@@ -6,7 +6,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   margin: auto;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   overflow: hidden; /* Prevent horizontal scroll if needed */
   background-color: rgb(100, 100, 100);
   background: linear-gradient(315deg, rgb(160, 52, 52) 0%, rgb(255, 102, 0) 60%, rgb(255, 6, 6) 98%);
@@ -72,6 +71,15 @@ header .container {
   margin: 0 auto;
   display: flex;
   align-items: center;
+  background-color: #ff0000;
+}
+
+header .title {
+  position: absolute;
+  left: 275px;
+  font-size: 30px;
+  font-family: 4;
+  user-select: none;
 }
 
 /* header a {
@@ -120,6 +128,12 @@ div.error {
   flex: 1; /* Expand to fill available space */
   margin-top: 30px;
   height: 88vh;
+}
+
+.page {
+  height: 100%;
+  filter: drop-shadow(1px 1px 8px #0000005e);
+  padding: 20px;
 }
 
 .glow-on-hover {
@@ -315,6 +329,18 @@ div.error {
   filter: drop-shadow(4px 4px 8px #00000025);
 }
 
+.red {
+  color: #b13232;
+}
+
+.yellow {
+  color: rgb(197, 197, 30);
+}
+
+.green {
+  color: rgb(91, 187, 91);
+}
+
 @keyframes hover {
   0% {
     transform: translate3d(0, 0, 0);
@@ -356,8 +382,7 @@ div.error {
 
 .Item:hover {
   cursor: pointer;
-  animation: hover 3s infinite linear;
-  animation-delay: 0s;
+  animation: hover 3s infinite linear !important;
 }
 
 .nameItem {
@@ -374,40 +399,44 @@ div.error {
   right: 8px;
 }
 
-.search {
-  margin-right: 15px;
-  padding: 0px 15px;
-  width: 15%;
-  height: 35px;
+.timeItem {
+  position: absolute;
+  font-size: 120%;
+  bottom: 0px;
+  left: 8px;
+}
+
+/* filters */
+
+.filter {
   border-radius: 10px;
   border: 1px solid gray;
   filter: drop-shadow(-1px 2px 3px #0000005e);
+  height: 35px;
+  margin-right: 15px;
+  padding: 0px 15px;
+}
+
+/* .search {
+
 }
 
 .select {
-  margin-right: 15px;
-  padding: 0px 10px;
-  height: 35px;
-  border-radius: 10px;
-  border: 1px solid gray;
-  transition: 0.6s;
-  filter: drop-shadow(-1px 2px 3px #0000005e);
-}
 
-.select option {
+} */
+
+/* .select option {
   background-color: rgb(255, 204, 109);
-}
+} */
 
 .ToggleButton {
-  vertical-align: middle;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 14px;
-  margin-right: 15px;
   user-select: none;
   background-color: white;
-  padding: 9px;
-  border-radius: 10px;
-  border: 1px solid gray;
-  filter: drop-shadow(-1px 2px 3px #0000005e);
+  padding: 0 9px;
   transition: 0.2s;
 }
 
@@ -458,7 +487,6 @@ div.error {
 .FormInput {
   display: flex;
   flex-direction: column;
-  /* width: 30%; */
   align-items: left;
   justify-content: center;
   user-select: none;
@@ -468,6 +496,10 @@ div.error {
   margin: 10px 0px;
   border-radius: 5px;
   border: 1px solid gray;
+}
+
+.input-select {
+  width: 100%;
 }
 
 .labelInput {
@@ -488,3 +520,5 @@ form {
   align-items: center;
   justify-content: center;
 }
+
+/* meals */

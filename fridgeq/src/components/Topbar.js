@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout'
 import { useAuthContext } from '../hooks/useAuthContext';
+import { usePage } from '../context/PageContext';
+import Fade from 'react-reveal/Fade';
 
 const Topbar = () => {
   const { logout } = useLogout();
@@ -10,8 +12,13 @@ const Topbar = () => {
     logout()
   }
 
+  const { currentPage } = usePage();
+
   return (
     <header>
+      {user && ( // if have a user
+        <h2 className="title">{user.name}'s {currentPage}</h2>
+      )}
       <div className="container">
         <nav>
           {user && ( // if have a user

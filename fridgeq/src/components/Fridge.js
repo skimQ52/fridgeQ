@@ -1,12 +1,13 @@
 import Flip from 'react-reveal/Flip';
 import Zoom from 'react-reveal/Zoom';
 import Fade from 'react-reveal/Fade';
-import React, { useEffect, useState, useRef, useId } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Item from './Item';
 import Popup from './Popup';
 import config from 'react-reveal/globals';
 import FormInput from './FormInput';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { usePage } from '../context/PageContext';
 
 config({ ssrFadeout: true });
 
@@ -29,10 +30,11 @@ const Fridge = () => {
         }});
 
     const [tempFood, setTempFood] = useState(foodPopup);
+    const { setCurrentPage } = usePage();
 
     const foodRef = useRef();
     const quanRef = useRef();
-    const typeRef = useRef();
+    const [typeSelectState, setTypeSelectState] = useState('');
 
     const fetchFoods = () => {
         fetch("http://localhost:9000/mongoAPI/foods", {
@@ -44,9 +46,9 @@ const Fridge = () => {
             return response.json()
             })
             .then(data => {
-            setFoods(data)
-            setFilteredFoods(data)
-            setAllFoods(data)
+                setFoods(data)
+                setFilteredFoods(data)
+                setAllFoods(data)
             })
     };
 
@@ -89,7 +91,6 @@ const Fridge = () => {
             }
         }).then(response => response.json())
             .then(result => {
-                console.log("ye")
                 fetchFoods()
                 setFoodPopup( prevData => ({
                     ...prevData,
@@ -112,9 +113,9 @@ const Fridge = () => {
     const handleSubmit = (e) => {
         console.log(foodRef.current.value);
         console.log(quanRef.current.value);
-        console.log(typeRef.current.value);
+        console.log(typeSelectState);
 
-        if (!foodRef.current.value || !quanRef.current.value || !typeRef.current.value) {
+        if (!foodRef.current.value || !quanRef.current.value || !typeSelectState) {
             e.preventDefault();
             return;
         }
@@ -133,9 +134,8 @@ const Fridge = () => {
 
         const data = {
             name: foodRef.current.value,
-            type: typeRef.current.value,
+            type: typeSelectState,
             quantity: quanRef.current.value,
-            owner: 1 /* temp TODO */
         };
     
         // Send the POST request
@@ -250,12 +250,18 @@ const Fridge = () => {
         setFilteredFoods(filtered2); // Hold the filtered map for sorting
     };
 
+    // Handle type select of adding change
+    const handleTypeSelect = (event) => {
+        const query = event.target.value;
+        setTypeSelectState(query);
+    };
+
     const handleSort = () => {
         setSortedState(!sortedState);
         sortAlphabetically(sortedState)
     }
 
-    function sortAlphabetically(state) {
+    function sortAlphabetically() {
         if (!sortedState) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
             setFoods(sortedFoods);
@@ -267,21 +273,20 @@ const Fridge = () => {
     // On load
     useEffect(() => {
         if (user) {
+            setCurrentPage('Fridge');
             const fetchFoods2 = fetchFoodsRef.current;
             fetchFoods2();
         }
-        // else reroute to Login page
     }, [user])
 
     return (
-        // <Fade cascade>
-        <div style={{height: '100%', filter: 'drop-shadow(1px 1px 8px #0000005e)', padding: '20px'}}>
+        <div className='page'>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
 
                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', margin: '35px'}}>
-                    <input onChange={handleSearchChange} className='search' type="text" placeholder='Search...' value={searchQuery}></input>
+                    <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
 
-                    <select onChange={handleFilterChange} className='select'>
+                    <select onChange={handleFilterChange} className='filter select'>
                         <option value="" defaultValue="true">Type</option>
                         <option value="vegetable">Vegetable</option>
                         <option value="meat">Meat</option>
@@ -290,16 +295,19 @@ const Fridge = () => {
                         <option value="liquid">Liquid</option>
                     </select>
 
-                    <div onClick={handleSort} className={(sortedState) ? 'ToggleButton ToggleButtonActive' : 'ToggleButton'}>
+                    <div onClick={handleSort} className={(sortedState) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
                         Sort Alphabetically
                     </div>
                 </div>
 
-                <div className="Fridge">
-                    {foods.map((item, index) => (
-                        <Item key={index} name={item.name} quan={item.quantity} onItemClicked={handleItemClicked}></Item>
-                    ))}
-                </div>
+                <Fade>
+                    <div className="Fridge">
+                        {foods.map((item, index) => (
+                            <Item key={index} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></Item>
+                        ))}
+                    </div>
+                </Fade>
+                
                 <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
@@ -307,7 +315,15 @@ const Fridge = () => {
                 <form onSubmit={handleSubmit}>
                     <FormInput refer={foodRef} type="text" placeholder="Banana" label="Name"/>
                     <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
-                    <FormInput refer={typeRef} type="text" placeholder="Type" label="Type"/> {/* make drop down menu */}
+                    <select onChange={handleTypeSelect} className='input input-select'>
+                        <option value="" defaultValue="true">Type</option>
+                        <option value="vegetable">Vegetable</option>
+                        <option value="meat">Meat</option>
+                        <option value="fruit">Fruit</option>
+                        <option value="snack">Snack</option>
+                        <option value="liquid">Liquid</option>
+                    </select>
+                    {/* <FormInput refer={typeRef} type="text" placeholder="Type" label="Type"/> */}
                     <button className='glow-on-hover confirmButton'>Confirm</button>
                 </form>
             </Popup>
@@ -322,7 +338,6 @@ const Fridge = () => {
                 <button onClick={handleApplyChanges} className='glow-on-hover confirmButton'>Apply Changes</button>
             </Popup>
         </div>
-        // </Zoom>
     );
 }
 
