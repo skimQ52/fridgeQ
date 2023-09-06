@@ -250,16 +250,16 @@ const Fridge = () => {
         setFilteredFoods(filtered2); // Hold the filtered map for sorting
     };
 
+    const handleSort = () => {
+        setSortedState(!sortedState);
+        sortAlphabetically(sortedState)
+    }
+
     // Handle type select of adding change
     const handleTypeSelect = (event) => {
         const query = event.target.value;
         setTypeSelectState(query);
     };
-
-    const handleSort = () => {
-        setSortedState(!sortedState);
-        sortAlphabetically(sortedState)
-    }
 
     function sortAlphabetically() {
         if (!sortedState) {
@@ -283,9 +283,8 @@ const Fridge = () => {
         <div className='page'>
             <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
 
-                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', margin: '35px'}}>
+                <div className='filter-bar'>
                     <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
-
                     <select onChange={handleFilterChange} className='filter select'>
                         <option value="" defaultValue="true">Type</option>
                         <option value="vegetable">Vegetable</option>
@@ -294,7 +293,6 @@ const Fridge = () => {
                         <option value="snack">Snack</option>
                         <option value="liquid">Liquid</option>
                     </select>
-
                     <div onClick={handleSort} className={(sortedState) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
                         Sort Alphabetically
                     </div>
