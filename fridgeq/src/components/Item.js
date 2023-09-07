@@ -11,7 +11,7 @@ export default function Item(props) {
 
     return (
         <div style={props.style} className='Item' onClick={handleClick}>
-            <h2 className='nameItem'>{props.name}</h2>
+            <p className='nameItem'>{props.name}</p>
             <h2 className='quanItem'>{props.quan}x</h2>
             <h1 className={daysDifference < 2 ? "timeItem green" : daysDifference < 5 ? "timeItem yellow" : "timeItem red"}>{daysDifference} days old</h1>
         </div>

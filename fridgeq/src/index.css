@@ -321,7 +321,7 @@ div.error {
 /* ITEM (Fridge) */
 
 .Item {
-  background-color: aliceblue;
+  background-color: white;
   width: 12%;
   height: 10vh;
   max-height: 85px;
@@ -474,8 +474,6 @@ div.error {
 .popup-inner {
   position: relative;
   padding: 32px;
-  /* width: 100%; */
-  /* max-width: 640px; */
   background-color: white;
   border-radius: 10px;
   filter: drop-shadow(8px 8px 4px #00000060);
@@ -591,6 +589,22 @@ form {
   font-style: italic;
 }
 
+.ingredients {
+  max-height: 100px;
+  max-width: 400px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.ingredient {
+  font-style: italic;
+}
+
+/*select food list */
+
 .mealFoodList {
   display: flex;
   flex-flow: column;
@@ -606,4 +620,38 @@ form {
 
 .checked-item {
   text-decoration: line-through;
+  color: rgba(146, 146, 146, 0.452);
+}
+
+
+/* ParagraphInput */
+
+.ParagraphInput {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+  user-select: none;
+}
+
+.ParagraphInput textarea {
+  border-radius: 5px;
+  resize: none;
+  width: 400px;
+  height: 150px;
+  padding: 15px;
+  margin: 10px 0px;
+}
+
+.charCount {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 10px;
+  margin-top: -5px;
+  /* float: right; */
+}
+
+.charCountText {
+  margin: 0;
+  padding: 0;
 }

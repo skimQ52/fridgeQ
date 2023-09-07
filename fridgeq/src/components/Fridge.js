@@ -27,7 +27,8 @@ const Fridge = () => {
             name: '',
             quan: 0,
             type: '',
-        }});
+        }
+    });
 
     const [tempFood, setTempFood] = useState(foodPopup);
     const { setCurrentPage } = usePage();
@@ -186,7 +187,7 @@ const Fridge = () => {
         }));
     };
 
-    const handleApplyChanges = (e) => {
+    const handleUpdate = (e) => {
         if (tempFood.food.quan === 0) { // Need to delete
             deleteFood();
         }
@@ -274,6 +275,7 @@ const Fridge = () => {
     useEffect(() => {
         if (user) {
             setCurrentPage('Fridge');
+            setTypeSelectState('');
             const fetchFoods2 = fetchFoodsRef.current;
             fetchFoods2();
         }
@@ -321,7 +323,6 @@ const Fridge = () => {
                         <option value="snack">Snack</option>
                         <option value="liquid">Liquid</option>
                     </select>
-                    {/* <FormInput refer={typeRef} type="text" placeholder="Type" label="Type"/> */}
                     <button className='glow-on-hover confirmButton'>Confirm</button>
                 </form>
             </Popup>
@@ -333,7 +334,7 @@ const Fridge = () => {
                     <button onClick={handleDecrement} className="">-</button>
                     <button onClick={handleIncrement} className="">+</button>
                 </div>
-                <button onClick={handleApplyChanges} className='glow-on-hover confirmButton'>Apply Changes</button>
+                <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
             </Popup>
         </div>
     );

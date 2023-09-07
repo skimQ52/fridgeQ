@@ -12,6 +12,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testAPIRouter = require("./routes/testAPI");
 var mongoAPIRouter = require("./routes/mongoAPI");
+var mealsRouter = require('./routes/meals');
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/testAPI", testAPIRouter);
 app.use("/mongoAPI", mongoAPIRouter);
+app.use("/meals", mealsRouter);
 
 
 mongoose.connect(process.env.MONGODB_URL,

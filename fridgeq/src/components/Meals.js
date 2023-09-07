@@ -4,12 +4,15 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import Fade from 'react-reveal/Fade';
 import Meal from "./Meal";
 import Popup from "./Popup";
+import FormInput from "./FormInput";
+import ParagraphInput from "./ParagraphInput";
 
 const Meals = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
     const [buttonPopup, setButtonPopup] = useState({ trigger: false });
+    const [newMealPopup, setNewMealPopup] = useState({ trigger: false });
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
     const [sortedState, setSortedState] = useState(false); // Sorted or no
@@ -18,6 +21,23 @@ const Meals = () => {
     const [filteredMeals, setFilteredMeals] = useState();
     const [foods, setFoods] = useState([]);
     const [checked, setChecked] = useState([]);
+    const nameRef = useRef();
+    const descRef = useRef();
+    const [typeSelectState, setTypeSelectState] = useState('');
+    const [recipe, setRecipe] = useState('');
+    const [error, setError] = useState(null);
+    const [mealPopup, setMealPopup] = useState({
+        trigger: false,
+        meal: {
+            name: '',
+            desc: '',
+            type: '',
+            recipe: '',
+            // foods: {
+
+            // }
+        }
+    });
 
     const fetchMeals = () => {
         fetch("http://localhost:9000/mongoAPI/foods", {
@@ -111,12 +131,82 @@ const Meals = () => {
         setChecked(updatedList);
     };
 
+    // Check if item is checked off
     const isChecked = (item) => checked.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
 
-    // Generate string of checked items
+    const handleUpdate = (e) => {
+        // if (tempFood.food.quan === 0) { // Need to delete
+        //     deleteFood();
+        // }
+        // else { // Update quantity
+        //     fetch(`http://localhost:9000/mongoAPI/update_food?name=${tempFood.food.name}&quan=${tempFood.food.quan}`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //             'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+        //         }
+        //     })
+        //     .then(result => {
+        //         fetchFoods()
+        //     })
+        //     .catch(error => {
+        //         e.preventDefault();
+        //         console.error('Error:', error);
+        //     });
+        // }
+    }
 
     const handleNewMeal = () => {
-        console.log(checked);
+        setNewMealPopup(prevData => ({...prevData, trigger: true}))
+        setButtonPopup(prevData => ({...prevData, trigger: false}))
+    };
+
+    // Handle type select of adding change
+    const handleTypeSelect = (event) => {
+        const query = event.target.value;
+        setTypeSelectState(query);
+    };
+
+    // Submission of add new meal
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        await createNewMeal();
+        //TODO: refresh
+    };
+
+    const createNewMeal = async () => {
+
+        const data = {
+            name: nameRef.current.value,
+            description: descRef.current.value,
+            type: typeSelectState,
+            recipe: recipe,
+            ingredients: checked
+        };
+
+        // Send the POST request
+        const response = await fetch("http://localhost:9000/meals/add_meal", {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            },
+            body: JSON.stringify(data)
+        });
+        const json = await response.json();
+
+        if (!response.ok) {
+            setError(json.error);
+        }
+        else { //success 
+            setNewMealPopup({trigger: false})
+            setError(null);
+        }
+    };
+
+    const handleRecipeChange = (newText) => {
+        setRecipe(newText); // Update the parent's state with the new text
     };
 
     // On load
@@ -125,6 +215,10 @@ const Meals = () => {
             setCurrentPage('Meals');
             fetchMeals();
             fetchFoods();
+            setChecked([]);
+            setTypeSelectState('');
+            setError(null);
+            //TODO: make reset func??
         }
     }, [user])
 
@@ -155,21 +249,54 @@ const Meals = () => {
                 </Fade>
                 <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
+
+            {/* Meal Popup! */}
+            <Popup trigger={mealPopup.trigger} setTrigger={setMealPopup}>
+                <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
+            </Popup>
+
+            {/* Select Foods For new Meal Popup */}
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Select Foods For New Meal</h1>
                 <div className="mealFoodList">
                     {foods.map((item, index) => (
                         <div key={index}>
-                            <input value={item} type="checkbox" onChange={handleCheck}/>
-                            <span className={isChecked(item)}>{item.name}</span>
+                            <input value={item.name} type="checkbox" onChange={handleCheck}/>
+                            <span className={isChecked(item.name)}>{item.name}</span>
                         </div>
                     ))}
                 </div>
                 <button onClick={handleNewMeal} className='glow-on-hover confirmButton'>Confirm</button>
             </Popup>
-            {/* <Popup trigger={foodPopup.trigger} setTrigger={setFoodPopup}>
-                <button onClick={handleApplyChanges} className='glow-on-hover confirmButton'>Apply Changes</button>
-            </Popup> */}
+
+            {/* Create New Meal Manually Popup */}
+            <Popup trigger={newMealPopup.trigger} setTrigger={setNewMealPopup}>
+                <h1>Create New Meal</h1>
+                <div className="ingredients">
+                    {checked.map((item, index) => (
+                        <div className="ingredient" key={index}>
+                            {item}
+                            {index < checked.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
+                        </div>
+                    ))}
+                </div>
+                
+                <form onSubmit={handleSubmit}>
+                    <FormInput maxlength={25} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
+                    <FormInput maxlength={75} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
+                    <ParagraphInput max={1000} label="Recipe" onTextChange={handleRecipeChange} />
+                    <select onChange={handleTypeSelect} className='input input-select'>
+                        <option value="" defaultValue="true">Type</option>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                        <option value="other">Other</option>
+                    </select>
+                    { error && <div className="error">{error}</div>}
+                    <button className='glow-on-hover confirmButton'>Confirm</button>
+                </form>
+            </Popup>
         </div>
     );
 }
