@@ -227,6 +227,48 @@ const Meals = () => {
         );
     }
 
+    const generateMeal = async (e) => {
+        
+        e.preventDefault();
+
+        const ingredientsString = checked.join(', ');
+
+        const inputText = "Can you give me a meal idea with this ingredient list:" + 
+                ingredientsString + 
+                "With exclusively output in this format:\nName:\nDescription:\nInstructions:";
+        
+    
+        try {
+            const requestOptions = {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${process.env.OPENAI}`,
+                },
+                body: JSON.stringify({
+                    prompt: inputText,
+                    max_tokens: 50, // Adjust as needed
+                }),
+            };
+        
+            const response = await fetch(
+                'https://api.openai.com/v1/engines/davinci-codex/completions',
+                requestOptions
+            );
+        
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+        
+            const data = await response.json();
+    
+        //   setResponse(data.choices[0].text);
+            console.log(data.choices[0].text);
+        } catch (error) {
+            console.error('Error making API request:', error);
+        }
+    };
+
     // On load
     useEffect(() => {
         if (user) {
@@ -307,8 +349,12 @@ const Meals = () => {
                         </div>
                     ))}
                 </div>
-                <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false}))}} 
-                        className='glow-on-hover confirmButton'>Confirm</button>
+                <div className="buttonSpread">
+                   <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false}))}} 
+                        className='glow-on-hover confirmButton'>Create Meal</button>
+                    <button onClick={generateMeal} className='glow-on-hover confirmButton'>Generate Meal</button> 
+                </div>
+                
             </Popup>
 
             {/* Create New Meal Manually Popup */}
