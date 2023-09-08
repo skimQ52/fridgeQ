@@ -14,7 +14,6 @@ body {
   overflow: hidden; /* Prevent horizontal scroll if needed */
   background-color: rgb(100, 100, 100);
   background: linear-gradient(315deg, rgb(160, 52, 52) 0%, rgb(255, 102, 0) 60%, rgb(255, 6, 6) 98%);
-  /* background: linear-gradient(45deg, #ff0000, #ff7300, #ffc400, #ff0000); */
   animation: gradient 20s ease infinite;
   background-size: 400% 400%;
   background-attachment: fixed;
@@ -109,7 +108,8 @@ div.error {
   border: 1px solid red;
   color: red;
   border-radius: 4px;
-  margin: 0px 0;
+  margin: 0px;
+  margin-top: 10px;
 }
 
 .blur {
@@ -509,7 +509,7 @@ div.error {
 }
 
 .confirmButton {
-  width: 30%;
+  width: 100%;
   height: 4vh;
   padding:2px;
   margin-top: 5%;
@@ -638,6 +638,33 @@ form {
   flex-flow: row;
   align-items: center;
   justify-content: space-around;
+}
+
+.buttonSpread button {
+  width: 30%;
+}
+
+.generateMealContainer {
+  display: flex;
+  width: 55%;
+  background: linear-gradient(315deg, rgb(110, 212, 62) 0%, rgb(43, 180, 66) 60%, rgb(248, 197, 30) 98%);
+  animation: gradient 10s ease infinite;
+  background-size: 400% 400%;
+  background-attachment: fixed;
+  filter: drop-shadow(4px 4px 4px #00000025);
+  border-radius: 20px;
+  padding: 5px 10px;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.generateMealContainer button {
+  width: 40% !important;
+  height: 50px;
+}
+
+.generateMealContainer select {
+  height: 50px;
 }
 
 .mealLineBreak {

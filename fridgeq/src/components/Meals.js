@@ -163,11 +163,6 @@ const Meals = () => {
     // Check if item is checked off
     const isChecked = (item) => checked.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
 
-    const handleNewMeal = () => {
-        setNewMealPopup(prevData => ({...prevData, trigger: true}))
-        setButtonPopup(prevData => ({...prevData, trigger: false}))
-    };
-
     // Handle type select of adding change
     const handleTypeSelect = (event) => {
         const query = event.target.value;
@@ -228,44 +223,29 @@ const Meals = () => {
     }
 
     const generateMeal = async (e) => {
-        
         e.preventDefault();
 
-        const ingredientsString = checked.join(', ');
+        const data = {
+            ingredients: checked,
+            type: typeSelectState
+        };
 
-        const inputText = "Can you give me a meal idea with this ingredient list:" + 
-                ingredientsString + 
-                "With exclusively output in this format:\nName:\nDescription:\nInstructions:";
-        
-    
-        try {
-            const requestOptions = {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${process.env.OPENAI}`,
-                },
-                body: JSON.stringify({
-                    prompt: inputText,
-                    max_tokens: 50, // Adjust as needed
-                }),
-            };
-        
-            const response = await fetch(
-                'https://api.openai.com/v1/engines/davinci-codex/completions',
-                requestOptions
-            );
-        
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-        
-            const data = await response.json();
-    
-        //   setResponse(data.choices[0].text);
-            console.log(data.choices[0].text);
-        } catch (error) {
-            console.error('Error making API request:', error);
+        // Send the POST request
+        const response = await fetch("http://localhost:9000/meals/generate_meal", {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            },
+            body: JSON.stringify(data)
+        });
+        const json = await response.json();
+
+        if (!response.ok) {
+            setError(json.error);
+        }
+        else { //success 
+            // window.location.reload();
         }
     };
 
@@ -350,11 +330,20 @@ const Meals = () => {
                     ))}
                 </div>
                 <div className="buttonSpread">
-                   <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false}))}} 
+                   <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false})); setError(null)}} 
                         className='glow-on-hover confirmButton'>Create Meal</button>
-                    <button onClick={generateMeal} className='glow-on-hover confirmButton'>Generate Meal</button> 
+                    <div className="generateMealContainer">
+                        <button onClick={generateMeal} className='glow-on-hover confirmButton'>Generate Meal</button>
+                        <select onChange={handleTypeSelect} className='input'>
+                            <option value="" defaultValue="true">Type</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Snack">Snack</option>
+                        </select>
+                    </div>
                 </div>
-                
+                {error && <div className="error">{error}</div>}
             </Popup>
 
             {/* Create New Meal Manually Popup */}

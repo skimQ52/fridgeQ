@@ -7,7 +7,7 @@ const addMeal = async (req, res) => {
         if (!name || !description || !type || !recipe) {
             throw Error('Please fill in all fields');
         }
-        if (!ingredients) {
+        if (ingredients.length < 1) {
             throw Error('Cannot create meal with no ingredients!');
         }
         const user_id = req.user._id;
