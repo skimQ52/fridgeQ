@@ -33,14 +33,12 @@ const Meals = () => {
             desc: '',
             type: '',
             recipe: '',
-            // foods: {
-
-            // }
+            ingredients: []
         }
     });
 
     const fetchMeals = () => {
-        fetch("http://localhost:9000/mongoAPI/foods", {
+        fetch("http://localhost:9000/meals/meals", {
             headers: {
                 'Authorization': `Bearer ${user.token}` // Pass token in for authorization
             }
@@ -69,8 +67,30 @@ const Meals = () => {
             })
     };
 
+    const fetchMeal = (name) => {
+        fetch(`http://localhost:9000/meals/meal?param=${name}`, {
+            headers: {
+                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            }
+        }).then(response => {
+            return response.json()
+            })
+            .then(data => {
+            setMealPopup({
+                trigger: true,
+                meal: {
+                    name: data[0].name,
+                    desc: data[0].description,
+                    type: data[0].type,
+                    recipe: data[0].recipe,
+                    ingredients: data[0].ingredients
+                }
+            })
+        })
+    }
+
     const handleMealClicked = (value) => {
-        // fetchMeal(value);
+        fetchMeal(value);
     };
 
     // Handle search query change
@@ -79,18 +99,18 @@ const Meals = () => {
         setSearchQuery(query);
 
         setSortedState(false);
-        // sortAlphabetically(false);
+        sortAlphabetically(false);
         // Filter items based on search query
-        // const filtered = allFoods.filter(item =>
-        //     item.name.toLowerCase().includes(query.toLowerCase())
-        // );
+        const filtered = allMeals.filter(item =>
+            item.name.toLowerCase().includes(query.toLowerCase())
+        );
 
         // // Filter items based on filter query
-        // const filtered2 = filtered.filter(item =>
-        //     item.type.toLowerCase().includes(filterQuery.toLowerCase())
-        // );
-        // setFoods(filtered2);
-        // setFilteredFoods(filtered2); // Hold the filtered map for sorting
+        const filtered2 = filtered.filter(item =>
+            item.type.toLowerCase().includes(filterQuery.toLowerCase())
+        );
+        setMeals(filtered2);
+        setFilteredMeals(filtered2); // Hold the filtered map for sorting
     };
 
     // Handle filter query change
@@ -101,24 +121,33 @@ const Meals = () => {
             return;
         }
         setSortedState(false);
-        // sortAlphabetically(false);
+        sortAlphabetically(false);
         // Filter items based on filter query
-        // const filtered = allFoods.filter(item =>
-        //     item.type.toLowerCase().includes(query.toLowerCase())
-        // );
+        const filtered = allMeals.filter(item =>
+            item.type.toLowerCase().includes(query.toLowerCase())
+        );
 
-        // // Filter items based on search query
-        // const filtered2 = filtered.filter(item =>
-        //     item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        // );
-        // setFoods(filtered2);
-        // setFilteredFoods(filtered2); // Hold the filtered map for sorting
+        // Filter items based on search query
+        const filtered2 = filtered.filter(item =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        setMeals(filtered2);
+        setFilteredMeals(filtered2); // Hold the filtered map for sorting
     };
 
     const handleSort = () => {
         setSortedState(!sortedState);
-        // sortAlphabetically(sortedState)
+        sortAlphabetically(sortedState);
     }
+
+    function sortAlphabetically() {
+        if (!sortedState) {
+            const sortedMeals = [...filteredMeals].sort((a, b) => a.name.localeCompare(b.name));
+            setMeals(sortedMeals);
+            return;
+        }
+        setMeals(filteredMeals);
+    };
 
     // Add/Remove checked item from list
     const handleCheck = (event) => {
@@ -134,28 +163,6 @@ const Meals = () => {
     // Check if item is checked off
     const isChecked = (item) => checked.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
 
-    const handleUpdate = (e) => {
-        // if (tempFood.food.quan === 0) { // Need to delete
-        //     deleteFood();
-        // }
-        // else { // Update quantity
-        //     fetch(`http://localhost:9000/mongoAPI/update_food?name=${tempFood.food.name}&quan=${tempFood.food.quan}`, {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //             'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-        //         }
-        //     })
-        //     .then(result => {
-        //         fetchFoods()
-        //     })
-        //     .catch(error => {
-        //         e.preventDefault();
-        //         console.error('Error:', error);
-        //     });
-        // }
-    }
-
     const handleNewMeal = () => {
         setNewMealPopup(prevData => ({...prevData, trigger: true}))
         setButtonPopup(prevData => ({...prevData, trigger: false}))
@@ -167,16 +174,9 @@ const Meals = () => {
         setTypeSelectState(query);
     };
 
-    // Submission of add new meal
-    const handleSubmit = async (e) => {
+
+    const createNewMeal = async (e) => {
         e.preventDefault()
-
-        await createNewMeal();
-        //TODO: refresh
-    };
-
-    const createNewMeal = async () => {
-
         const data = {
             name: nameRef.current.value,
             description: descRef.current.value,
@@ -200,14 +200,32 @@ const Meals = () => {
             setError(json.error);
         }
         else { //success 
-            setNewMealPopup({trigger: false})
-            setError(null);
+            window.location.reload();
         }
     };
 
     const handleRecipeChange = (newText) => {
         setRecipe(newText); // Update the parent's state with the new text
     };
+
+    const handleDelete = () => {
+        fetch(`http://localhost:9000/meals/delete_meal?name=${mealPopup.meal.name}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+            }
+        }).then(response => response.json())
+            .then(() => {
+                fetchMeals()
+                setMealPopup( prevData => ({
+                    ...prevData,
+                    trigger: false
+                }))
+            }).catch(error => {
+                console.error('Error:', error);
+            }
+        );
+    }
 
     // On load
     useEffect(() => {
@@ -218,12 +236,13 @@ const Meals = () => {
             setChecked([]);
             setTypeSelectState('');
             setError(null);
-            //TODO: make reset func??
         }
     }, [user])
 
     return (
         <div className='page'>
+
+            {/* Outer component */}
             <div className={(buttonPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <div className='filter-bar'>
                     <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
@@ -243,7 +262,7 @@ const Meals = () => {
                 <Fade>
                     <div className="Meals">
                         {meals.map((item, index) => (
-                            <Meal key={index} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleMealClicked}></Meal>
+                            <Meal key={index} name={item.name} type={item.type} desc={item.description} onItemClicked={handleMealClicked}></Meal>
                         ))}
                     </div>
                 </Fade>
@@ -252,7 +271,29 @@ const Meals = () => {
 
             {/* Meal Popup! */}
             <Popup trigger={mealPopup.trigger} setTrigger={setMealPopup}>
-                <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
+                <div className="mealBig">
+                    <div className="headerMeal">
+                        <h1>{mealPopup.meal.name}</h1>
+                        <h4>&nbsp;-&nbsp;{mealPopup.meal.type}</h4>
+                    </div>
+                    <div className="headerMeal">
+                        <p className="descMeal">"{mealPopup.meal.desc}"</p>
+                    </div>
+                    <p className="mealLineBreak"/>
+                    <div className="ingredients">
+                        {mealPopup.meal.ingredients.map((item, index) => (
+                            <div className="ingredient" key={index}>
+                                {item}
+                                {index < mealPopup.meal.ingredients.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
+                            </div>
+                        ))}
+                    </div>
+                    <textarea disabled={true} defaultValue={mealPopup.meal.recipe}/>
+                    <div className="footerMeal">
+                        <button onClick={handleDelete} className='glow-on-hover deleteButton'>Delete</button>
+                    </div>
+                    
+                </div>
             </Popup>
 
             {/* Select Foods For new Meal Popup */}
@@ -266,7 +307,8 @@ const Meals = () => {
                         </div>
                     ))}
                 </div>
-                <button onClick={handleNewMeal} className='glow-on-hover confirmButton'>Confirm</button>
+                <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false}))}} 
+                        className='glow-on-hover confirmButton'>Confirm</button>
             </Popup>
 
             {/* Create New Meal Manually Popup */}
@@ -280,18 +322,17 @@ const Meals = () => {
                         </div>
                     ))}
                 </div>
-                
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={createNewMeal}>
                     <FormInput maxlength={25} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
                     <FormInput maxlength={75} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
                     <ParagraphInput max={1000} label="Recipe" onTextChange={handleRecipeChange} />
                     <select onChange={handleTypeSelect} className='input input-select'>
                         <option value="" defaultValue="true">Type</option>
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="snack">Snack</option>
-                        <option value="other">Other</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snack">Snack</option>
+                        <option value="Other">Other</option>
                     </select>
                     { error && <div className="error">{error}</div>}
                     <button className='glow-on-hover confirmButton'>Confirm</button>

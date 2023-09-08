@@ -1,3 +1,8 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -41,8 +46,6 @@ h1 {
 
 h2 {
   color: #444444;
-  padding: 0px;
-  margin: 0px;
   font-family: 'Trebuchet MS';
 }
 
@@ -53,6 +56,12 @@ h3 {
   padding: 0px;
   margin: 0px;
   font-family: system-ui, -apple-system;
+}
+
+h4 {
+  font-size: 22px;
+  color: #5f5f5f;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode';
 }
 
 header {
@@ -80,11 +89,6 @@ header .title {
   font-family: 4;
   user-select: none;
 }
-
-/* header a {
-  color: #333;
-  text-decoration: none;
-} */
 
 .topbarButton {
   background: #f1f1f1;
@@ -408,8 +412,8 @@ div.error {
 .timeItem {
   position: absolute;
   font-size: 120%;
-  bottom: 0px;
-  left: 8px;
+  bottom: 8px;
+  left: 7%;
 }
 
 /* filters */
@@ -422,18 +426,6 @@ div.error {
   margin-right: 15px;
   padding: 0px 15px;
 }
-
-/* .search {
-
-}
-
-.select {
-
-} */
-
-/* .select option {
-  background-color: rgb(255, 204, 109);
-} */
 
 .ToggleButton {
   display: flex;
@@ -485,6 +477,11 @@ div.error {
   right: 16px;
 }
 
+.small-btn {
+  padding: 0px 4px;
+  text-align: center;
+}
+
 
 /* FormInput */
 
@@ -517,7 +514,12 @@ div.error {
   padding:2px;
   margin-top: 5%;
   margin-bottom: 5%;
-  filter: drop-shadow(-1px 2px 4px #0000005e);
+  filter: drop-shadow(1px 2px 3px #0000005e);
+}
+
+.deleteButton {
+  padding:10px;
+  filter: drop-shadow(1px 2px 3px #0000005e);
 }
 
 form {
@@ -530,7 +532,7 @@ form {
 .Meals {
   display: flex;
   flex-flow: row wrap;
-  align-items: left;
+  align-content: flex-start; /* Align rows at the top */
   justify-content: left;
   margin: 3%;
   height: 65vh;
@@ -545,7 +547,6 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* border: 1px solid gray; */
   filter: drop-shadow(4px 4px 4px #00000025);
   border-radius: 20px;
   width: 47%;
@@ -603,6 +604,40 @@ form {
   font-style: italic;
 }
 
+/* mealBig */
+
+.mealBig {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.headerMeal {
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  align-items: baseline;
+  margin-bottom: 15px;
+}
+
+.footerMeal {
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  /* justify-content: space-around; */
+}
+
+.mealLineBreak {
+  background-color: rgb(110, 110, 110);
+  width:100%;
+  height: 1px;
+  display: block;
+  margin-bottom: 10px;
+}
+
 /*select food list */
 
 .mealFoodList {
@@ -634,7 +669,7 @@ form {
   user-select: none;
 }
 
-.ParagraphInput textarea {
+textarea {
   border-radius: 5px;
   resize: none;
   width: 400px;

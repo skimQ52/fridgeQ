@@ -8,9 +8,9 @@ export default function Meal(props) {
     return (
         <div className='Meal' onClick={handleClick}>
             <p className='nameMeal'>{props.name}</p>
-            <p className='typeMeal'>Breakfast</p>
+            <p className='typeMeal'>{props.type}</p>
             <div className='descContainer'>
-                <p className="descMeal"> I like to eat this sometimes with soup or whatever</p>
+                <p className="descMeal">{props.desc}</p>
             </div>
         </div>
     );

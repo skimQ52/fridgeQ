@@ -103,19 +103,12 @@ const Fridge = () => {
         );
     }
 
-    const foodNameExists = (name) => {
-        Object.values(foods).forEach(food => {
-            if (food.name.toLowerCase() === name.toLowerCase()) {
-                return true;
-            }
-        });
-    };
-
     const handleSubmit = (e) => {
         console.log(foodRef.current.value);
         console.log(quanRef.current.value);
         console.log(typeSelectState);
 
+        //TODO: ** MAKE THIS BACKEND
         if (!foodRef.current.value || !quanRef.current.value || !typeSelectState) {
             e.preventDefault();
             return;
@@ -132,6 +125,7 @@ const Fridge = () => {
             e.preventDefault();
             return;
         }
+        //TODO: ** MAKE THIS BACKEND
 
         const data = {
             name: foodRef.current.value,
@@ -331,8 +325,8 @@ const Fridge = () => {
                 <h2>You currently have:</h2>
                 <h3>{tempFood.food.quan}x</h3>
                 <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
-                    <button onClick={handleDecrement} className="">-</button>
-                    <button onClick={handleIncrement} className="">+</button>
+                    <button onClick={handleDecrement} className="small-btn">-</button>
+                    <button onClick={handleIncrement} className="small-btn">+</button>
                 </div>
                 <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
             </Popup>
