@@ -41,6 +41,7 @@ h1 {
   text-align: center;
   user-select: none;
   font-family: 'Trebuchet MS';
+  margin-bottom: 10px;
 }
 
 h2 {
@@ -61,6 +62,10 @@ h4 {
   font-size: 22px;
   color: #5f5f5f;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode';
+}
+
+.AIText {
+  color: rgb(137, 194, 52) !important;
 }
 
 header {
@@ -247,7 +252,6 @@ div.error {
   background-color: rgb(255, 255, 255);
   z-index: 2;
   width: 250px;
-  height: 100%;
   filter: drop-shadow(2px 2px 10px #0000005e);
   /* border-radius: 0px 25px 25px 0px; */
 } 
@@ -255,6 +259,7 @@ div.error {
 .bar { /* with all the links */
   padding-top: 50px;
   white-space: nowrap;
+  width: 100%;
 }
 
 .links {
@@ -581,7 +586,7 @@ form {
 .descContainer {
   width: 80%;
   padding-top: 15px;
-  overflow: hidden;
+  overflow-wrap: break-word;
   max-height: 70%;
 }
 
@@ -615,10 +620,16 @@ form {
 }
 
 .headerMeal {
-  width: 100%;
+  width: 500px;
   display: flex;
-  flex-flow: row;
+  flex-flow: column wrap;
   align-items: baseline;
+  margin-bottom: 15px;
+  overflow-wrap: break-word;
+}
+
+.descContainerMeal {
+  width: 100%;
   margin-bottom: 15px;
 }
 
@@ -721,7 +732,6 @@ textarea {
   text-align: right;
   margin-bottom: 10px;
   margin-top: -5px;
-  /* float: right; */
 }
 
 .charCountText {

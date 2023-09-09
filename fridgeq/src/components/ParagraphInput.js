@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 export default function ParagraphInput(props) {
-  const [text, setText] = useState('');
-  const maxLength = props.max;
+  const [text, setText] = useState(props.defaultValue);
+  const maxLength = props.maxlength;
 
   const handleChange = (e) => {
     const newText = e.target.value;

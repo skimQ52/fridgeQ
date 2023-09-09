@@ -10,7 +10,7 @@ export default function Meal(props) {
             <p className='nameMeal'>{props.name}</p>
             <p className='typeMeal'>{props.type}</p>
             <div className='descContainer'>
-                <p className="descMeal">{props.desc}</p>
+                <p className="descMeal">"{props.desc}"</p>
             </div>
         </div>
     );

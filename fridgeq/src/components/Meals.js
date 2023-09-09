@@ -36,6 +36,14 @@ const Meals = () => {
             ingredients: []
         }
     });
+    const [generateMealPopup, setGenerateMealPopup] = useState({
+        trigger: false,
+        meal: {
+            name: '',
+            desc: '',
+            recipe: ''
+        }
+    });
 
     const fetchMeals = () => {
         fetch("http://localhost:9000/meals/meals", {
@@ -244,8 +252,16 @@ const Meals = () => {
         if (!response.ok) {
             setError(json.error);
         }
-        else { //success 
-            // window.location.reload();
+        else { //success
+            console.log(json);
+            setRecipe(json.recipe); // So it doesn't require change
+            setGenerateMealPopup({
+                trigger: true,
+                meal: {
+                    name: json.name,
+                    desc: json.description,
+                }
+            })
         }
     };
 
@@ -296,10 +312,9 @@ const Meals = () => {
                 <div className="mealBig">
                     <div className="headerMeal">
                         <h1>{mealPopup.meal.name}</h1>
-                        <h4>&nbsp;-&nbsp;{mealPopup.meal.type}</h4>
-                    </div>
-                    <div className="headerMeal">
-                        <p className="descMeal">"{mealPopup.meal.desc}"</p>
+                        <div className="descContainerMeal">
+                            <p className="descMeal">"{mealPopup.meal.desc}"</p>
+                        </div>
                     </div>
                     <p className="mealLineBreak"/>
                     <div className="ingredients">
@@ -358,9 +373,9 @@ const Meals = () => {
                     ))}
                 </div>
                 <form onSubmit={createNewMeal}>
-                    <FormInput maxlength={25} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
-                    <FormInput maxlength={75} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
-                    <ParagraphInput max={1000} label="Recipe" onTextChange={handleRecipeChange} />
+                    <FormInput maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
+                    <FormInput maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
+                    <ParagraphInput defaultValue="" maxlength={1000} label="Recipe" onTextChange={handleRecipeChange} />
                     <select onChange={handleTypeSelect} className='input input-select'>
                         <option value="" defaultValue="true">Type</option>
                         <option value="Breakfast">Breakfast</option>
@@ -371,6 +386,32 @@ const Meals = () => {
                     </select>
                     { error && <div className="error">{error}</div>}
                     <button className='glow-on-hover confirmButton'>Confirm</button>
+                </form>
+            </Popup>
+
+            {/* Generated Meal Popup */}
+            <Popup trigger={generateMealPopup.trigger} setTrigger={setGenerateMealPopup}>
+                <h1 className="AIText">AI Generated Meal</h1>
+                <div className="ingredients">
+                    {checked.map((item, index) => (
+                        <div className="ingredient" key={index}>
+                            {item}
+                            {index < checked.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
+                        </div>
+                    ))}
+                </div>
+                <form onSubmit={createNewMeal}>
+                    <FormInput defaultValue={generateMealPopup.meal.name} maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
+                    <FormInput defaultValue={generateMealPopup.meal.desc} maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
+                    <ParagraphInput defaultValue={recipe} maxlength={1000} label="Recipe" onTextChange={handleRecipeChange}/>
+                    <select onChange={handleTypeSelect} disabled={true} className='input input-select'>
+                        <option value={typeSelectState}>{typeSelectState}</option>
+                    </select>
+                    { error && <div className="error">{error}</div>}
+                    <div className="buttonSpread">
+                        <button className='glow-on-hover confirmButton'>Discard</button>
+                        <button className='glow-on-hover confirmButton'>Save Meal</button>
+                    </div>
                 </form>
             </Popup>
         </div>
