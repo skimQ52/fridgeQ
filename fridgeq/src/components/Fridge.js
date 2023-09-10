@@ -1,5 +1,3 @@
-import Flip from 'react-reveal/Flip';
-import Zoom from 'react-reveal/Zoom';
 import Fade from 'react-reveal/Fade';
 import React, { useEffect, useState, useRef } from "react";
 import Item from './Item';
@@ -283,11 +281,13 @@ const Fridge = () => {
                     <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
                     <select onChange={handleFilterChange} className='filter select'>
                         <option value="" defaultValue="true">Type</option>
-                        <option value="vegetable">Vegetable</option>
-                        <option value="meat">Meat</option>
-                        <option value="fruit">Fruit</option>
-                        <option value="snack">Snack</option>
-                        <option value="liquid">Liquid</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="proteins">Proteins</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="grains">Grains</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="condiments">Condiments</option>
+                        <option value="snacks">Snacks</option>
                     </select>
                     <div onClick={handleSort} className={(sortedState) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
                         Sort Alphabetically
@@ -297,7 +297,7 @@ const Fridge = () => {
                 <Fade>
                     <div className="Fridge">
                         {foods.map((item, index) => (
-                            <Item key={index} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></Item>
+                            <Item key={index} type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></Item>
                         ))}
                     </div>
                 </Fade>
@@ -307,15 +307,17 @@ const Fridge = () => {
             <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
                 <h1>Add to your Fridge</h1>
                 <form onSubmit={handleSubmit}>
-                    <FormInput refer={foodRef} type="text" placeholder="Banana" label="Name"/>
+                    <FormInput refer={foodRef} maxlength={18} type="text" placeholder="Banana" label="Name"/>
                     <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
                     <select onChange={handleTypeSelect} className='input input-select'>
-                        <option value="" defaultValue="true">Type</option>
-                        <option value="vegetable">Vegetable</option>
-                        <option value="meat">Meat</option>
-                        <option value="fruit">Fruit</option>
-                        <option value="snack">Snack</option>
-                        <option value="liquid">Liquid</option>
+                    <option value="" defaultValue="true">Type</option>
+                        <option value="vegetables">Vegetables</option>
+                        <option value="proteins">Proteins</option>
+                        <option value="fruits">Fruits</option>
+                        <option value="grains">Grains</option>
+                        <option value="dairy">Dairy</option>
+                        <option value="condiments">Condiments</option>
+                        <option value="snacks">Snacks</option>
                     </select>
                     <button className='glow-on-hover confirmButton'>Confirm</button>
                 </form>

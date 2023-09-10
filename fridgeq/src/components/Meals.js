@@ -42,7 +42,6 @@ const Meals = () => {
         meal: {
             name: '',
             desc: '',
-            recipe: ''
         }
     });
     const [isLoading, setIsLoading] = useState(false);
@@ -267,6 +266,19 @@ const Meals = () => {
         }
     };
 
+    const discardGeneratedMeal = () => {
+        setChecked([]);
+        setTypeSelectState('');
+        setError(null);
+        setGenerateMealPopup({
+            trigger: false,
+            meal: {
+                name: '',
+                desc: '',
+            }
+        });
+    }
+
     // On load
     useEffect(() => {
         if (user) {
@@ -411,8 +423,8 @@ const Meals = () => {
                     </select>
                     { error && <div className="error">{error}</div>}
                     <div className="buttonSpread">
-                        <button className='glow-on-hover confirmButton'>Discard</button>
-                        <button className='glow-on-hover confirmButton'>Save Meal</button>
+                        <button onClick={discardGeneratedMeal}className='glow-on-hover confirmButton'>Discard</button>
+                        <button type="submit" className='glow-on-hover confirmButton'>Save Meal</button>
                     </div>
                 </form>
             </Popup>

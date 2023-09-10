@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="30mm" height="25mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 3000 2500"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:none}
+    .fil2 {fill:url(#id0)}
+    .fil1 {fill:url(#id1)}
+   ]]>
+  </style>
+  <linearGradient id="id0" gradientUnits="userSpaceOnUse" x1="2489.29" y1="1553.44" x2="1939.21" y2="2108.47">
+   <stop offset="0" style="stop-opacity:1; stop-color:#8485B0"/>
+   <stop offset="0.501961" style="stop-opacity:1; stop-color:#596090"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#373662"/>
+  </linearGradient>
+  <linearGradient id="id1" gradientUnits="userSpaceOnUse" x1="2122.96" y1="535.05" x2="919.4" y2="1901.47">
+   <stop offset="0" style="stop-opacity:1; stop-color:#8485B0"/>
+   <stop offset="0.619608" style="stop-opacity:1; stop-color:#596090"/>
+   <stop offset="1" style="stop-opacity:1; stop-color:#373662"/>
+  </linearGradient>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_1680503020096">
+   <rect class="fil0" x="47" y="65" width="2905" height="2371"/>
+   <path class="fil1" d="M258 1108c-68,30 -107,62 -125,109 -26,99 11,155 53,207 151,193 345,332 555,452 150,76 295,118 438,134 246,-10 343,-145 344,-358 1,-134 1,-268 2,-402 27,-73 54,-147 81,-220 42,42 81,76 133,103 86,46 324,35 640,-133 59,-36 73,-224 -9,-251 -297,-155 -945,-439 -1270,-271 -137,74 -269,151 -367,255 -161,140 -323,287 -475,375zm2231 -128c21,-70 19,-135 0,-196l115 27c86,-82 157,-98 230,-48 47,45 38,87 6,126 146,48 57,188 -20,198 -95,24 -185,7 -228,-90 -32,-16 -66,-22 -103,-17z"/>
+   <path class="fil2" d="M1976 1548c131,-219 355,-229 496,23 113,225 107,434 5,580 -135,169 -401,178 -541,-15 -90,-171 -88,-364 40,-588z"/>
+  </g>
+ </g>
+</svg>

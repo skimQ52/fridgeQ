@@ -211,18 +211,19 @@ div.error {
 
 .login-form {
   padding: 20px 0px;
-  height: 50%;
   display: flex;
   flex-flow: column;
-  width: 20%;
   background-color: white;
   border-radius: 10px;
   filter: drop-shadow(8px 8px 4px #00000060);
 }
 
-/* .login-form h2 {
-  margin-bottom: 30px;
-} */
+.login-form img {
+  max-width: 60%;
+  max-height: 60%;
+  margin-bottom: 20px;
+  display: block;
+}
 
 .login-form button {
   width: 40%;
@@ -254,10 +255,21 @@ div.error {
   width: 250px;
   filter: drop-shadow(2px 2px 10px #0000005e);
   /* border-radius: 0px 25px 25px 0px; */
-} 
+}
+
+.logoDiv {
+  width: 80%;
+  margin: 5% auto;
+}
+
+.navbar img {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+}
 
 .bar { /* with all the links */
-  padding-top: 50px;
+  padding-top: 10px;
   white-space: nowrap;
   width: 100%;
 }
@@ -332,14 +344,13 @@ div.error {
 .Item {
   background-color: white;
   width: 12%;
-  height: 10vh;
   max-height: 85px;
   min-width: 120px;
   padding-bottom: 6%;
   user-select: none;
   border-radius: 10%;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: column;
   margin: 1%;
   filter: drop-shadow(4px 4px 8px #00000025);
 }
@@ -400,24 +411,34 @@ div.error {
   animation: hover 3s infinite linear !important;
 }
 
+.Item img {
+  max-width: 100%;
+  max-height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
 .nameItem {
-  font-size: 150%;
+  font-size: 130%;
   margin: 0;
   margin-left: 7%;
   margin-top: 7%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  resize:horizontal;
 }
 
 .quanItem {
   position: absolute;
   font-size: 200%;
-  bottom: 4px;
-  right: 8px;
+  bottom: 8px;
+  right: 12px;
 }
 
 .timeItem {
   position: absolute;
   font-size: 120%;
-  bottom: 8px;
+  bottom: 0px;
   left: 7%;
 }
 

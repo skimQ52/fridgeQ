@@ -1,4 +1,11 @@
 import React from 'react';
+import grains from '../imgs/grains.png';
+import dairy from '../imgs/dairy.png';
+import fruits from '../imgs/fruits.png';
+import vegetables from '../imgs/vegetables.png';
+import proteins from '../imgs/proteins.png';
+import condiments from '../imgs/condiments.png';
+import snacks from '../imgs/snacks.png';
 
 export default function Item(props) {
     const handleClick = () => {
@@ -8,10 +15,38 @@ export default function Item(props) {
     const currentDate = new Date(); // current date
     const timeDifference = currentDate - timeUpdated;
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+    var image;
+
+    switch (props.type) {
+        case 'grains':
+            image = grains;
+            break;
+          case 'dairy':
+            image = dairy;
+            break;
+          case 'vegetables':
+            image = vegetables;
+            break;
+          case 'fruits':
+            image = fruits;
+            break;
+          case 'proteins':
+            image = proteins;
+            break;
+          case 'condiments':
+            image = condiments;
+            break;
+          case 'snacks':
+            image = snacks;
+            break;
+          default:
+            image = '';
+    }
 
     return (
         <div style={props.style} className='Item' onClick={handleClick}>
             <p className='nameItem'>{props.name}</p>
+            <img src={image} alt="type descriptor"/>
             <h2 className='quanItem'>{props.quan}x</h2>
             <h1 className={daysDifference < 2 ? "timeItem green" : daysDifference < 5 ? "timeItem yellow" : "timeItem red"}>{daysDifference} days old</h1>
         </div>

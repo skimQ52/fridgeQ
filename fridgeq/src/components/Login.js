@@ -2,6 +2,7 @@ import { useState } from "react"
 import FormInput from "./FormInput";
 import { useLogin } from "../hooks/useLogin";
 import { Link } from 'react-router-dom';
+import FridgeWise from '../imgs/FridgeWise.png';
 
 
 const Login = () => {
@@ -18,6 +19,7 @@ const Login = () => {
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit}>
+                <img src={FridgeWise} alt="FridgeWise Logo"/>
                 <h2>Log in</h2>
                 <FormInput onChange={(e) => setEmail(e.target.value)} value={email.value} type="email" placeholder="johndoe@something.com" label="Email:"/>
                 <FormInput onChange={(e) => setPassword(e.target.value)} value={password.value} type="password" placeholder="*********" label="Password:"/>
