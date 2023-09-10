@@ -6,6 +6,7 @@ import Meal from "./Meal";
 import Popup from "./Popup";
 import FormInput from "./FormInput";
 import ParagraphInput from "./ParagraphInput";
+import LoadingScreen from 'react-loading-screen'
 
 const Meals = () => {
 
@@ -44,6 +45,7 @@ const Meals = () => {
             recipe: ''
         }
     });
+    const [isLoading, setIsLoading] = useState(false);
 
     const fetchMeals = () => {
         fetch("http://localhost:9000/meals/meals", {
@@ -237,7 +239,7 @@ const Meals = () => {
             ingredients: checked,
             type: typeSelectState
         };
-
+        setIsLoading(true);
         // Send the POST request
         const response = await fetch("http://localhost:9000/meals/generate_meal", {
             method: 'POST',
@@ -248,7 +250,7 @@ const Meals = () => {
             body: JSON.stringify(data)
         });
         const json = await response.json();
-
+        setIsLoading(false);
         if (!response.ok) {
             setError(json.error);
         }
@@ -375,7 +377,7 @@ const Meals = () => {
                 <form onSubmit={createNewMeal}>
                     <FormInput maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
                     <FormInput maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
-                    <ParagraphInput defaultValue="" maxlength={1000} label="Recipe" onTextChange={handleRecipeChange} />
+                    <ParagraphInput defaultValue="" maxlength={1200} label="Recipe" onTextChange={handleRecipeChange} />
                     <select onChange={handleTypeSelect} className='input input-select'>
                         <option value="" defaultValue="true">Type</option>
                         <option value="Breakfast">Breakfast</option>
@@ -403,7 +405,7 @@ const Meals = () => {
                 <form onSubmit={createNewMeal}>
                     <FormInput defaultValue={generateMealPopup.meal.name} maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
                     <FormInput defaultValue={generateMealPopup.meal.desc} maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
-                    <ParagraphInput defaultValue={recipe} maxlength={1000} label="Recipe" onTextChange={handleRecipeChange}/>
+                    <ParagraphInput defaultValue={recipe} maxlength={1200} label="Recipe" onTextChange={handleRecipeChange}/>
                     <select onChange={handleTypeSelect} disabled={true} className='input input-select'>
                         <option value={typeSelectState}>{typeSelectState}</option>
                     </select>
@@ -414,6 +416,15 @@ const Meals = () => {
                     </div>
                 </form>
             </Popup>
+
+            {/* Generate Loading Screen */}
+            <LoadingScreen
+                loading={isLoading}
+                bgColor='rgba(82, 82, 82, 0.219)'
+                spinnerColor='green'
+                textColor='green'
+                text='Generating Meal...'> 
+            </LoadingScreen>
         </div>
     );
 }
