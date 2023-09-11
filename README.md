@@ -1,6 +1,12 @@
 ![FridgeWise Logo](fridgeq/src/imgs/FridgeWise.png)
 ## A Food and Meal tracking service with the ability to AI generate meals!
 
+### Features
+- Add and manage foods in your virtual fridge
+- Create and store meals you love to make
+- Generate meals with the foods you desire using OpenAI API (ChatGPT)
+- Track the age of your foods so they don't go rotten!
+
 # Login Page
 ![Login Page](visuals/login.gif)
 
