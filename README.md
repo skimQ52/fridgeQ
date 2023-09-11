@@ -24,3 +24,5 @@
 
 # AI Generate a Meal
 ![AI Generate a Meal](visuals/generateMeal.gif)
+
+![AI generated Meal](visuals/AIGeneratedMeal.png)
