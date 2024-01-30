@@ -12,3 +12,4 @@ fridgeq/build
 
 fridge_api/.env
 fridge_api/node_modules
+.idea/
