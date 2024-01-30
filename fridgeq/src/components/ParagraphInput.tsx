@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 
-export default function ParagraphInput(props) {
+interface ParagraphInputProps {
+    defaultValue: string;
+    maxlength: number;
+    onTextChange: (text: string) => void;
+    label: string;
+}
+
+export default function ParagraphInput(props: ParagraphInputProps) {
   const [text, setText] = useState(props.defaultValue);
   const maxLength = props.maxlength;
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     const newText = e.target.value;
     if (newText.length <= maxLength) {
       setText(newText);
@@ -16,8 +23,8 @@ export default function ParagraphInput(props) {
     <div className='ParagraphInput'>
         <label className='labelInput'>{props.label}</label>
         <textarea
-            rows="4"
-            cols="50"
+            rows={4}
+            cols={50}
             value={text}
             onChange={handleChange}
             placeholder="Type your text here..."

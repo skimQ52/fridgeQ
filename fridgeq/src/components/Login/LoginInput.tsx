@@ -8,7 +8,7 @@ interface LoginInputProps {
     label: string;
 }
 
-const LoginInput: React.FC<LoginInputProps> = (props) => {
+const LoginInput = (props: LoginInputProps) => {
     const { onChange, value, type, placeholder, label } = props;
     return (
         <div className='FormInput'>

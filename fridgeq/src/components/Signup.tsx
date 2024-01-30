@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import LoginInput from "./LoginInput";
+import LoginInput from "./Login/LoginInput";
 import { useSignup } from "../hooks/useSignup";
 import { Link } from 'react-router-dom';
 import FridgeWise from '../imgs/FridgeWise.png';

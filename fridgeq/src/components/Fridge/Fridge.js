@@ -1,13 +1,13 @@
 import Fade from 'react-reveal/Fade';
 import React, { useEffect, useState, useRef } from "react";
-import Item from './Item';
-import Popup from './Popup';
+import FridgeItem from './FridgeItem';
+import Popup from '../Popup';
 import config from 'react-reveal/globals';
-import FormInput from './FormInput';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { usePage } from '../context/PageContext';
+import FormInput from '../FormInput';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { usePage } from '../../context/PageContext';
 
-config({ ssrFadeout: true });
+// config({ ssrFadeout: true });
 
 const Fridge = () => {
 
@@ -102,12 +102,12 @@ const Fridge = () => {
     }
 
     const handleSubmit = (e) => {
-        console.log(foodRef.current.value);
-        console.log(quanRef.current.value);
+        console.log(foodRef.current);
+        console.log(quanRef.current);
         console.log(typeSelectState);
 
         //TODO: ** MAKE THIS BACKEND
-        if (!foodRef.current.value || !quanRef.current.value || !typeSelectState) {
+        if (!foodRef.current || !quanRef.current || !typeSelectState) {
             e.preventDefault();
             return;
         }
@@ -115,7 +115,7 @@ const Fridge = () => {
         // Check if food name already exists to prevent dupes
         let check = false;
         Object.values(foods).forEach(food => {
-            if (food.name.toLowerCase() === foodRef.current.value.toLowerCase()) {
+            if (food.name.toLowerCase() === foodRef.current.toLowerCase()) {
                 check = true;
             }
         });
@@ -126,9 +126,9 @@ const Fridge = () => {
         //TODO: ** MAKE THIS BACKEND
 
         const data = {
-            name: foodRef.current.value,
+            name: foodRef.current,
             type: typeSelectState,
-            quantity: quanRef.current.value,
+            quantity: quanRef.current,
         };
     
         // Send the POST request
@@ -140,7 +140,7 @@ const Fridge = () => {
             },
             body: JSON.stringify(data)
         }).then(response => response.json())
-            .then(result => {
+            .then(() => {
             // Handle the response or do something with the result
             })
             .catch(error => {
@@ -297,7 +297,7 @@ const Fridge = () => {
                 <Fade>
                     <div className="Fridge">
                         {foods.map((item, index) => (
-                            <Item key={index} type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></Item>
+                            <FridgeItem type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></FridgeItem>
                         ))}
                     </div>
                 </Fade>

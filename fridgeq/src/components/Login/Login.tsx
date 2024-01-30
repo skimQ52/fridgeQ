@@ -1,8 +1,8 @@
 import React, { useState } from "react"
-import LoginInput from "./LoginInput";
-import { useLogin } from "../hooks/useLogin";
+import LoginInput from "./LoginInput.tsx";
+import { useLogin } from "../../hooks/useLogin";
 import { Link } from 'react-router-dom';
-import FridgeWise from '../imgs/FridgeWise.png';
+import FridgeWise from '../../imgs/FridgeWise.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
