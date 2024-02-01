@@ -7,12 +7,11 @@ import { usePage } from '../context/PageContext';
 const Topbar = () => {
   const { logout } = useLogout();
   const { user } = useAuthContext();
+  const { currentPage } = usePage();
 
   const handleClick = () => {
     logout()
   }
-
-  const { currentPage } = usePage();
 
   return (
     <header>

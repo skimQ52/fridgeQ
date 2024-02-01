@@ -32,6 +32,20 @@ export const getFood = async <T>(name: string, userToken: string): Promise<T> =>
     }
 };
 
+export const getFoods = async <T>(userToken: string): Promise<T> => {
+    try {
+        const response = await fetch(`${BASE_URL}/foods`, {
+            headers: {
+                'Authorization': `Bearer ${userToken}` // Pass token in for authorization
+            }
+        })
+        console.log(response);
+        return handleApiResponse(response);
+    } catch (error) {
+        throw new Error('Network error');
+    }
+};
+
 export const updateFood = async <T>(name: string, quantity: number, userToken: string): Promise<T> => {
     try {
         const response = await fetch(`${BASE_URL}/update_food?name=${name}&quan=${quantity}`, {

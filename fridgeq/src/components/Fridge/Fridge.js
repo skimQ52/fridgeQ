@@ -3,12 +3,11 @@ import React, { useEffect, useState, useRef } from "react";
 import FridgeItem from './FridgeItem';
 import Popup from '../Popup';
 import FormInput from '../FormInput';
+
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { usePage } from '../../context/PageContext';
 
-import {addFood, deleteFood, getFood, updateFood} from '../../services/foodService';
-
-// config({ ssrFadeout: true });
+import {addFood, deleteFood, getFood, getFoods, updateFood} from '../../services/foodService';
 
 const Fridge = () => {
 
@@ -18,7 +17,8 @@ const Fridge = () => {
     const [filteredFoods, setFilteredFoods] = useState(); // Filtered food map
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
-    const [sortedState, setSortedState] = useState(false); // Sorted or no
+    const [isSorted, setIsSorted] = useState(false); // Sorted or no
+
     const [buttonPopup, setButtonPopup] = useState({ trigger: false });
     const [foodPopup, setFoodPopup] = useState({
         trigger: false,
@@ -36,23 +36,16 @@ const Fridge = () => {
     const quanRef = useRef();
     const [typeSelectState, setTypeSelectState] = useState('');
 
-    const fetchFoods = () => {
-        fetch("http://localhost:9000/mongoAPI/foods", {
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        })
-            .then(response => {
-            return response.json()
-            })
-            .then(data => {
-                setFoods(data)
-                setFilteredFoods(data)
-                setAllFoods(data)
-            })
+    const fetchFoods = async () => {
+        try {
+            const data = await getFoods(user.token);
+            setFoods(data)
+            setFilteredFoods(data)
+            setAllFoods(data)
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
-
-    const fetchFoodsRef = useRef(fetchFoods);
 
     const fetchFood = async (name) => {
         console.log(name);
@@ -82,7 +75,7 @@ const Fridge = () => {
     const handleDelete = async (name) => {
         try {
             const response = await deleteFood(name, user.token);
-            fetchFoods()
+            console.log(response);
             setFoodPopup( prevData => ({
                 ...prevData,
                 trigger: false
@@ -92,7 +85,7 @@ const Fridge = () => {
         }
     }
 
-    const handleNewFood = (e) => {
+    const handleNewFood = async (e) => {
         console.log(foodRef.current.value);
         console.log(quanRef.current.value);
         console.log(typeSelectState);
@@ -124,9 +117,9 @@ const Fridge = () => {
 
         try {
             const dataString = JSON.stringify(data)
-            const response = addFood(dataString, user.token);
+            const response = await addFood(dataString, user.token);
             console.log(response);
-            // fetchFoods();
+            await fetchFoods();
         } catch (error) {
             e.preventDefault();
             console.error('Error:', error);
@@ -134,28 +127,15 @@ const Fridge = () => {
 
     }
 
-    const handleIncrement = () => {
-        if (tempFood.food.quan === 99) {
+    const handleQuantityChange = (change) => {
+        if (tempFood.food.quan === 99 || tempFood.food.quan === 0) {
             return;
         }
         setTempFood(prevData => ({
           ...prevData,
           food: {
             ...prevData.food,
-            quan: prevData.food.quan + 1
-          }
-        }));
-    };
-
-    const handleDecrement = () => {
-        if (tempFood.food.quan === 0) {
-            return;
-        }
-        setTempFood(prevData => ({
-          ...prevData,
-          food: {
-            ...prevData.food,
-            quan: prevData.food.quan - 1
+            quan: prevData.food.quan + change
           }
         }));
     };
@@ -168,15 +148,16 @@ const Fridge = () => {
             try {
                 const response = await updateFood(tempFood.food.name, tempFood.food.quan, user.token);
                 console.log(response);
-                setFoodPopup({
+                setFoodPopup(prevState => ({
+                    ...prevState,
                     trigger: false,
                     food: {
                         name: '',
                         quan: 0,
                         type: '',
                     }
-                });
-                fetchFoods();
+                }));
+                await fetchFoods();
             } catch (error) {
                 e.preventDefault();
                 console.error('Error:', error);
@@ -189,7 +170,7 @@ const Fridge = () => {
         const query = event.target.value;
         setSearchQuery(query);
 
-        setSortedState(false);
+        setIsSorted(false);
         sortAlphabetically(false);
         // Filter items based on search query
         const filtered = allFoods.filter(item =>
@@ -211,7 +192,7 @@ const Fridge = () => {
         if (query === "none") {
             return;
         }
-        setSortedState(false);
+        setIsSorted(false);
         sortAlphabetically(false);
         // Filter items based on filter query
         const filtered = allFoods.filter(item =>
@@ -227,8 +208,8 @@ const Fridge = () => {
     };
 
     const handleSort = () => {
-        setSortedState(!sortedState);
-        sortAlphabetically(sortedState)
+        setIsSorted(!isSorted);
+        sortAlphabetically(isSorted)
     }
 
     // Handle type select of adding change
@@ -238,7 +219,7 @@ const Fridge = () => {
     };
 
     function sortAlphabetically() {
-        if (!sortedState) {
+        if (!isSorted) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
             setFoods(sortedFoods);
             return;
@@ -250,11 +231,15 @@ const Fridge = () => {
     useEffect(() => {
         if (user) {
             setCurrentPage('Fridge');
-            setTypeSelectState('');
-            const fetchFoods2 = fetchFoodsRef.current;
-            fetchFoods2();
+            (async () => {//IIFE
+                try {
+                    const data = await fetchFoods(user.token)
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            })();
         }
-    }, [user])
+    },[])
 
     return (
         <div className='page'>
@@ -272,7 +257,7 @@ const Fridge = () => {
                         <option value="condiments">Condiments</option>
                         <option value="snacks">Snacks</option>
                     </select>
-                    <div onClick={handleSort} className={(sortedState) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
+                    <div onClick={handleSort} className={(isSorted) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
                         Sort Alphabetically
                     </div>
                 </div>
@@ -320,8 +305,8 @@ const Fridge = () => {
                     <h2>You currently have:</h2>
                     <h3>{tempFood.food.quan}x</h3>
                     <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
-                        <button onClick={handleDecrement} className="small-btn">-</button>
-                        <button onClick={handleIncrement} className="small-btn">+</button>
+                        <button onClick={() => {handleQuantityChange(-1)}} className="small-btn">-</button>
+                        <button onClick={() => {handleQuantityChange(1)}} className="small-btn">+</button>
                     </div>
                     <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
                 </Popup>
