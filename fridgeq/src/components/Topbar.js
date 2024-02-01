@@ -1,8 +1,8 @@
+import React from "react"
 import { Link } from 'react-router-dom'
 import { useLogout } from '../hooks/useLogout'
 import { useAuthContext } from '../hooks/useAuthContext';
 import { usePage } from '../context/PageContext';
-import Fade from 'react-reveal/Fade';
 
 const Topbar = () => {
   const { logout } = useLogout();

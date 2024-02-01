@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
-import { usePage } from '../context/PageContext';
-import { useAuthContext } from '../hooks/useAuthContext';
-import Fade from 'react-reveal/Fade';
+import { usePage } from '../../context/PageContext';
+import { useAuthContext } from '../../hooks/useAuthContext';
+// import Fade from 'react-reveal/Fade';
 import Meal from "./Meal";
-import Popup from "./Popup";
-import FormInput from "./FormInput";
+import Popup from "../Popup";
+import FormInput from "../FormInput";
 import ParagraphInput from "./ParagraphInput";
 import LoadingScreen from 'react-loading-screen'
 
@@ -311,13 +311,13 @@ const Meals = () => {
                     </div>
                 </div>
 
-                <Fade>
+                {/*<Fade>*/}
                     <div className="Meals">
                         {meals.map((item, index) => (
                             <Meal key={index} name={item.name} type={item.type} desc={item.description} onItemClicked={handleMealClicked}></Meal>
                         ))}
                     </div>
-                </Fade>
+                {/*</Fade>*/}
                 <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
 

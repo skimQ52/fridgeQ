@@ -1,11 +1,12 @@
-import Fade from 'react-reveal/Fade';
+// import Fade from 'react-reveal/Fade';
 import React, { useEffect, useState, useRef } from "react";
 import FridgeItem from './FridgeItem';
 import Popup from '../Popup';
-import config from 'react-reveal/globals';
 import FormInput from '../FormInput';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { usePage } from '../../context/PageContext';
+
+import {addFood, deleteFood, getFood, updateFood} from '../../services/foodService';
 
 // config({ ssrFadeout: true });
 
@@ -53,16 +54,10 @@ const Fridge = () => {
 
     const fetchFoodsRef = useRef(fetchFoods);
 
-    const fetchFood = (name) => {
-        fetch(`http://localhost:9000/mongoAPI/food?param=${name}`, {
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        }).then(response => {
-            return response.json()
-            })
-            .then(data => {
-            console.log(data[0].name)
+    const fetchFood = async (name) => {
+        console.log(name);
+        try {
+            const data = await getFood(name, user.token);
             setFoodPopup({
                 trigger: true,
                 food: {
@@ -79,35 +74,31 @@ const Fridge = () => {
                     type: data[0].type,
                 }
             })
-        })
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
-    const deleteFood = () => {
-        fetch(`http://localhost:9000/mongoAPI/delete_food?name=${foodPopup.food.name}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        }).then(response => response.json())
-            .then(result => {
-                fetchFoods()
-                setFoodPopup( prevData => ({
-                    ...prevData,
-                    trigger: false
-                }))
-            }).catch(error => {
-                console.error('Error:', error);
-            }
-        );
+    const handleDelete = async (name) => {
+        try {
+            const response = await deleteFood(name, user.token);
+            fetchFoods()
+            setFoodPopup( prevData => ({
+                ...prevData,
+                trigger: false
+            }))
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
-    const handleSubmit = (e) => {
-        console.log(foodRef.current);
-        console.log(quanRef.current);
+    const handleNewFood = (e) => {
+        console.log(foodRef.current.value);
+        console.log(quanRef.current.value);
         console.log(typeSelectState);
 
         //TODO: ** MAKE THIS BACKEND
-        if (!foodRef.current || !quanRef.current || !typeSelectState) {
+        if (!foodRef.current.value || !quanRef.current.value || !typeSelectState) {
             e.preventDefault();
             return;
         }
@@ -115,7 +106,7 @@ const Fridge = () => {
         // Check if food name already exists to prevent dupes
         let check = false;
         Object.values(foods).forEach(food => {
-            if (food.name.toLowerCase() === foodRef.current.toLowerCase()) {
+            if (food.name.toLowerCase() === foodRef.current.value.toLowerCase()) {
                 check = true;
             }
         });
@@ -126,32 +117,22 @@ const Fridge = () => {
         //TODO: ** MAKE THIS BACKEND
 
         const data = {
-            name: foodRef.current,
+            name: foodRef.current.value,
             type: typeSelectState,
-            quantity: quanRef.current,
+            quantity: quanRef.current.value,
         };
-    
-        // Send the POST request
-        fetch("http://localhost:9000/mongoAPI/add_food", {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            },
-            body: JSON.stringify(data)
-        }).then(response => response.json())
-            .then(() => {
-            // Handle the response or do something with the result
-            })
-            .catch(error => {
-                e.preventDefault();
-                console.error('Error:', error);
-        });
-    }
 
-    const handleItemClicked = (value) => {
-        fetchFood(value);
-    };
+        try {
+            const dataString = JSON.stringify(data)
+            const response = addFood(dataString, user.token);
+            console.log(response);
+            // fetchFoods();
+        } catch (error) {
+            e.preventDefault();
+            console.error('Error:', error);
+        }
+
+    }
 
     const handleIncrement = () => {
         if (tempFood.food.quan === 99) {
@@ -179,25 +160,27 @@ const Fridge = () => {
         }));
     };
 
-    const handleUpdate = (e) => {
+    const handleUpdate = async (e) => {
         if (tempFood.food.quan === 0) { // Need to delete
-            deleteFood();
+            await handleDelete(tempFood.food.name);
         }
         else { // Update quantity
-            fetch(`http://localhost:9000/mongoAPI/update_food?name=${tempFood.food.name}&quan=${tempFood.food.quan}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-                }
-            })
-            .then(result => {
-                fetchFoods()
-            })
-            .catch(error => {
+            try {
+                const response = await updateFood(tempFood.food.name, tempFood.food.quan, user.token);
+                console.log(response);
+                setFoodPopup({
+                    trigger: false,
+                    food: {
+                        name: '',
+                        quan: 0,
+                        type: '',
+                    }
+                });
+                fetchFoods();
+            } catch (error) {
                 e.preventDefault();
                 console.error('Error:', error);
-            });
+            }
         }
     }
 
@@ -294,44 +277,55 @@ const Fridge = () => {
                     </div>
                 </div>
 
-                <Fade>
+                {/*<Fade>*/}
                     <div className="Fridge">
                         {foods.map((item, index) => (
-                            <FridgeItem type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={handleItemClicked}></FridgeItem>
+                            <FridgeItem type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={fetchFood}></FridgeItem>
                         ))}
                     </div>
-                </Fade>
+                {/*</Fade>*/}
                 
                 <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
-            <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
-                <h1>Add to your Fridge</h1>
-                <form onSubmit={handleSubmit}>
-                    <FormInput refer={foodRef} maxlength={18} type="text" placeholder="Banana" label="Name"/>
-                    <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
-                    <select onChange={handleTypeSelect} className='input input-select'>
-                    <option value="" defaultValue="true">Type</option>
-                        <option value="vegetables">Vegetables</option>
-                        <option value="proteins">Proteins</option>
-                        <option value="fruits">Fruits</option>
-                        <option value="grains">Grains</option>
-                        <option value="dairy">Dairy</option>
-                        <option value="condiments">Condiments</option>
-                        <option value="snacks">Snacks</option>
-                    </select>
-                    <button className='glow-on-hover confirmButton'>Confirm</button>
-                </form>
-            </Popup>
-            <Popup trigger={foodPopup.trigger} setTrigger={setFoodPopup}>
-                <h1>{foodPopup.food.name}</h1>
-                <h2>You currently have:</h2>
-                <h3>{tempFood.food.quan}x</h3>
-                <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
-                    <button onClick={handleDecrement} className="small-btn">-</button>
-                    <button onClick={handleIncrement} className="small-btn">+</button>
-                </div>
-                <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
-            </Popup>
+            { buttonPopup.trigger &&
+                <Popup onClick={() => setButtonPopup(prevData => ({...prevData, trigger: false}))}>
+                    <h1>Add to your Fridge</h1>
+                    <form onSubmit={handleNewFood}>
+                        <FormInput refer={foodRef} maxlength={18} type="text" placeholder="Banana" label="Name"/>
+                        <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
+                        <select onChange={handleTypeSelect} className='input input-select'>
+                            <option value="" defaultValue="true">Type</option>
+                            <option value="vegetables">Vegetables</option>
+                            <option value="proteins">Proteins</option>
+                            <option value="fruits">Fruits</option>
+                            <option value="grains">Grains</option>
+                            <option value="dairy">Dairy</option>
+                            <option value="condiments">Condiments</option>
+                            <option value="snacks">Snacks</option>
+                        </select>
+                        <button className='glow-on-hover confirmButton'>Confirm</button>
+                    </form>
+                </Popup>
+            }
+            { foodPopup.trigger &&
+                <Popup onClick={() => setFoodPopup({
+                    trigger: false,
+                    food: {
+                        name: '',
+                        quan: 0,
+                        type: '',
+                    }
+                })}>
+                    <h1>{foodPopup.food.name}</h1>
+                    <h2>You currently have:</h2>
+                    <h3>{tempFood.food.quan}x</h3>
+                    <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
+                        <button onClick={handleDecrement} className="small-btn">-</button>
+                        <button onClick={handleIncrement} className="small-btn">+</button>
+                    </div>
+                    <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
+                </Popup>
+            }
         </div>
     );
 }
