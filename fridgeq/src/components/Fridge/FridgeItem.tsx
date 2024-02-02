@@ -12,11 +12,11 @@ interface FridgeItemProps {
     name: string;
     quan: number;
     time: Date;
-    onItemClicked: (name: string) => void;
+    onItemClicked: (name: string, quan: number) => void;
 }
 export default function FridgeItem(props: FridgeItemProps) {
     const handleClick = () => {
-        props.onItemClicked(props.name); // Pass the desired string value
+        props.onItemClicked(props.name, props.quan); // Pass the desired string value
     };
     const timeUpdated = new Date(props.time); //when object was last updated
     const currentDate = new Date(); // current date

@@ -1,40 +1,31 @@
-// import Fade from 'react-reveal/Fade';
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState} from "react";
 import FridgeItem from './FridgeItem';
-import Popup from '../Popup';
-import FormInput from '../FormInput';
 
-import { useAuthContext } from '../../hooks/useAuthContext';
-import { usePage } from '../../context/PageContext';
+import {useAuthContext} from '../../hooks/useAuthContext';
+import {usePage} from '../../context/PageContext';
 
-import {addFood, deleteFood, getFood, getFoods, updateFood} from '../../services/foodService';
+import {addFood, deleteFood, getFoods, updateFood} from '../../services/foodService';
+
+import {AddFoodPopup} from "./AddFoodPopup";
+import {EditFoodPopup} from "./EditFoodPopup";
 
 const Fridge = () => {
 
     const {user} = useAuthContext();
+    const { setCurrentPage } = usePage();
+
     const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
-    const [allFoods, setAllFoods] = useState(); // Full food map
-    const [filteredFoods, setFilteredFoods] = useState(); // Filtered food map
+    const [allFoods, setAllFoods] = useState([]); // Full food map
+    const [filteredFoods, setFilteredFoods] = useState([]); // Filtered food map
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
     const [isSorted, setIsSorted] = useState(false); // Sorted or no
 
-    const [buttonPopup, setButtonPopup] = useState({ trigger: false });
-    const [foodPopup, setFoodPopup] = useState({
-        trigger: false,
-        food: {
-            name: '',
-            quan: 0,
-            type: '',
-        }
-    });
+    const [isAddFoodPopup, setIsAddFoodPopup] = useState(false);
+    const [isEditFoodPopup, setIsEditFoodPopup] = useState(false);
+    const [editFoodPopupName, setEditFoodPopupName] = useState('');
+    const [editFoodPopupQuan, setEditFoodPopupQuan] = useState(0);
 
-    const [tempFood, setTempFood] = useState(foodPopup);
-    const { setCurrentPage } = usePage();
-
-    const foodRef = useRef();
-    const quanRef = useRef();
-    const [typeSelectState, setTypeSelectState] = useState('');
 
     const fetchFoods = async () => {
         try {
@@ -47,72 +38,40 @@ const Fridge = () => {
         }
     };
 
-    const fetchFood = async (name) => {
-        console.log(name);
-        try {
-            const data = await getFood(name, user.token);
-            setFoodPopup({
-                trigger: true,
-                food: {
-                    name: data[0].name,
-                    quan: data[0].quantity,
-                    type: data[0].type,
-                }
-            })
-            setTempFood({
-                trigger: true,
-                food: {
-                    name: data[0].name,
-                    quan: data[0].quantity,
-                    type: data[0].type,
-                }
-            })
-        } catch (error) {
-            console.error('Error:', error);
-        }
+    const showEditFoodPopup = (name, quan) => {
+        setIsEditFoodPopup(true);
+        setEditFoodPopupName(name);
+        setEditFoodPopupQuan(parseInt(quan));
     }
 
     const handleDelete = async (name) => {
         try {
             const response = await deleteFood(name, user.token);
             console.log(response);
-            setFoodPopup( prevData => ({
-                ...prevData,
-                trigger: false
-            }))
+            setIsEditFoodPopup(false);
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
-    const handleNewFood = async (e) => {
-        console.log(foodRef.current.value);
-        console.log(quanRef.current.value);
-        console.log(typeSelectState);
+    const handleNewFood = async (name, quantity, type, e) => {
 
-        //TODO: ** MAKE THIS BACKEND
-        if (!foodRef.current.value || !quanRef.current.value || !typeSelectState) {
-            e.preventDefault();
-            return;
-        }
-
-        // Check if food name already exists to prevent dupes
+        // Check if food name already exists to prevent dupes //TODO: FIX THIS
         let check = false;
         Object.values(foods).forEach(food => {
-            if (food.name.toLowerCase() === foodRef.current.value.toLowerCase()) {
+            if (food.name.toLowerCase() === name.toLowerCase()) {
                 check = true;
             }
         });
-        if (check) {
+        if (check) { // TODO: Update food here
             e.preventDefault();
             return;
         }
-        //TODO: ** MAKE THIS BACKEND
 
         const data = {
-            name: foodRef.current.value,
-            type: typeSelectState,
-            quantity: quanRef.current.value,
+            name: name,
+            type: type,
+            quantity: quantity,
         };
 
         try {
@@ -124,39 +83,17 @@ const Fridge = () => {
             e.preventDefault();
             console.error('Error:', error);
         }
-
     }
 
-    const handleQuantityChange = (change) => {
-        if (tempFood.food.quan === 99 || tempFood.food.quan === 0) {
-            return;
-        }
-        setTempFood(prevData => ({
-          ...prevData,
-          food: {
-            ...prevData.food,
-            quan: prevData.food.quan + change
-          }
-        }));
-    };
-
-    const handleUpdate = async (e) => {
-        if (tempFood.food.quan === 0) { // Need to delete
-            await handleDelete(tempFood.food.name);
+    const handleUpdateFood = async (name, quantity, e) => {
+        if (quantity === 0) { // Need to delete
+            await handleDelete(name);
         }
         else { // Update quantity
             try {
-                const response = await updateFood(tempFood.food.name, tempFood.food.quan, user.token);
+                const response = await updateFood(name, quantity, user.token);
                 console.log(response);
-                setFoodPopup(prevState => ({
-                    ...prevState,
-                    trigger: false,
-                    food: {
-                        name: '',
-                        quan: 0,
-                        type: '',
-                    }
-                }));
+                setIsEditFoodPopup(false);
                 await fetchFoods();
             } catch (error) {
                 e.preventDefault();
@@ -212,12 +149,6 @@ const Fridge = () => {
         sortAlphabetically(isSorted)
     }
 
-    // Handle type select of adding change
-    const handleTypeSelect = (event) => {
-        const query = event.target.value;
-        setTypeSelectState(query);
-    };
-
     function sortAlphabetically() {
         if (!isSorted) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
@@ -225,7 +156,7 @@ const Fridge = () => {
             return;
         }
         setFoods(filteredFoods);
-    };
+    }
 
     // On load
     useEffect(() => {
@@ -233,7 +164,7 @@ const Fridge = () => {
             setCurrentPage('Fridge');
             (async () => {//IIFE
                 try {
-                    const data = await fetchFoods(user.token)
+                    await fetchFoods(user.token)
                 } catch (error) {
                     console.error('Error:', error);
                 }
@@ -243,8 +174,7 @@ const Fridge = () => {
 
     return (
         <div className='page'>
-            <div className={(buttonPopup.trigger || foodPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
-
+            <div className={(isAddFoodPopup || isEditFoodPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <div className='filter-bar'>
                     <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
                     <select onChange={handleFilterChange} className='filter select'>
@@ -262,54 +192,19 @@ const Fridge = () => {
                     </div>
                 </div>
 
-                {/*<Fade>*/}
-                    <div className="Fridge">
-                        {foods.map((item, index) => (
-                            <FridgeItem type={item.type} name={item.name} quan={item.quantity} time={item.updatedAt} onItemClicked={fetchFood}></FridgeItem>
-                        ))}
-                    </div>
-                {/*</Fade>*/}
+                <div className="Fridge">
+                    {foods.map((item, index) => (
+                        <FridgeItem type={item.type} name={item.name} quan={item.quantity} onItemClicked={showEditFoodPopup} time={item.updatedAt}></FridgeItem>
+                    ))}
+                </div>
                 
-                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
+                <button onClick={() => setIsAddFoodPopup(true)} className='glow-on-hover add-btn'>+</button>
             </div>
-            { buttonPopup.trigger &&
-                <Popup onClick={() => setButtonPopup(prevData => ({...prevData, trigger: false}))}>
-                    <h1>Add to your Fridge</h1>
-                    <form onSubmit={handleNewFood}>
-                        <FormInput refer={foodRef} maxlength={18} type="text" placeholder="Banana" label="Name"/>
-                        <FormInput refer={quanRef} type="number" min="1" max="100" placeholder="1" label="Quantity"/>
-                        <select onChange={handleTypeSelect} className='input input-select'>
-                            <option value="" defaultValue="true">Type</option>
-                            <option value="vegetables">Vegetables</option>
-                            <option value="proteins">Proteins</option>
-                            <option value="fruits">Fruits</option>
-                            <option value="grains">Grains</option>
-                            <option value="dairy">Dairy</option>
-                            <option value="condiments">Condiments</option>
-                            <option value="snacks">Snacks</option>
-                        </select>
-                        <button className='glow-on-hover confirmButton'>Confirm</button>
-                    </form>
-                </Popup>
+            { isAddFoodPopup &&
+                <AddFoodPopup onClick={() => setIsAddFoodPopup(false)} onSubmit={handleNewFood}/>
             }
-            { foodPopup.trigger &&
-                <Popup onClick={() => setFoodPopup({
-                    trigger: false,
-                    food: {
-                        name: '',
-                        quan: 0,
-                        type: '',
-                    }
-                })}>
-                    <h1>{foodPopup.food.name}</h1>
-                    <h2>You currently have:</h2>
-                    <h3>{tempFood.food.quan}x</h3>
-                    <div style={{width: '100%', justifyContent:'space-between', display: 'flex', flexDirection: 'row', paddingBottom: '20px'}}>
-                        <button onClick={() => {handleQuantityChange(-1)}} className="small-btn">-</button>
-                        <button onClick={() => {handleQuantityChange(1)}} className="small-btn">+</button>
-                    </div>
-                    <button onClick={handleUpdate} className='glow-on-hover confirmButton'>Update</button>
-                </Popup>
+            { isEditFoodPopup &&
+                <EditFoodPopup onClick={() => setIsEditFoodPopup(false)} onSubmit={handleUpdateFood} name={editFoodPopupName} quantity={editFoodPopupQuan}/>
             }
         </div>
     );
