@@ -8,18 +8,16 @@ import {addFood, deleteFood, getFoods, updateFood} from '../../services/foodServ
 
 import {AddFoodPopup} from "./AddFoodPopup";
 import {EditFoodPopup} from "./EditFoodPopup";
+import {FilterBar} from "./FilterBar";
 
 const Fridge = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
 
-    const [foods, setFoods] = useState([]); // Displayed food map (can be filtered)
-    const [allFoods, setAllFoods] = useState([]); // Full food map
-    const [filteredFoods, setFilteredFoods] = useState([]); // Filtered food map
-    const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
-    const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
-    const [isSorted, setIsSorted] = useState(false); // Sorted or no
+    const [foods, setFoods] = useState([]);
+    const [allFoods, setAllFoods] = useState([]);
+    const [filteredFoods, setFilteredFoods] = useState([]);
 
     const [isAddFoodPopup, setIsAddFoodPopup] = useState(false);
     const [isEditFoodPopup, setIsEditFoodPopup] = useState(false);
@@ -101,56 +99,17 @@ const Fridge = () => {
             }
         }
     }
-
-    // Handle search query change
-    const handleSearchChange = (event) => {
-        const query = event.target.value;
-        setSearchQuery(query);
-
-        setIsSorted(false);
-        sortAlphabetically(false);
-        // Filter items based on search query
+    const handleQueryChange = (query, filter) => {
         const filtered = allFoods.filter(item =>
-            item.name.toLowerCase().includes(query.toLowerCase())
+            filter ? item.type.toLowerCase().includes(filter.toLowerCase()) : item.name.toLowerCase().includes(filter.toLowerCase())
         );
-
-        // Filter items based on filter query
-        const filtered2 = filtered.filter(item =>
-            item.type.toLowerCase().includes(filterQuery.toLowerCase())
-        );
+        const filtered2 = query ? filtered.filter(item => item.name.toLowerCase().includes(query.toLowerCase())) : filtered;
         setFoods(filtered2);
-        setFilteredFoods(filtered2); // Hold the filtered map for sorting
+        setFilteredFoods(filtered2);
     };
 
-    // Handle filter query change
-    const handleFilterChange = (event) => {
-        const query = event.target.value;
-        setFilterQuery(query);
-        if (query === "none") {
-            return;
-        }
-        setIsSorted(false);
-        sortAlphabetically(false);
-        // Filter items based on filter query
-        const filtered = allFoods.filter(item =>
-            item.type.toLowerCase().includes(query.toLowerCase())
-        );
-
-        // Filter items based on search query
-        const filtered2 = filtered.filter(item =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFoods(filtered2);
-        setFilteredFoods(filtered2); // Hold the filtered map for sorting
-    };
-
-    const handleSort = () => {
-        setIsSorted(!isSorted);
-        sortAlphabetically(isSorted)
-    }
-
-    function sortAlphabetically() {
-        if (!isSorted) {
+    function sortAlphabetically(sort) {
+        if (!sort) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
             setFoods(sortedFoods);
             return;
@@ -175,36 +134,23 @@ const Fridge = () => {
     return (
         <div className='page'>
             <div className={(isAddFoodPopup || isEditFoodPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
-                <div className='filter-bar'>
-                    <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
-                    <select onChange={handleFilterChange} className='filter select'>
-                        <option value="" defaultValue="true">Type</option>
-                        <option value="vegetables">Vegetables</option>
-                        <option value="proteins">Proteins</option>
-                        <option value="fruits">Fruits</option>
-                        <option value="grains">Grains</option>
-                        <option value="dairy">Dairy</option>
-                        <option value="condiments">Condiments</option>
-                        <option value="snacks">Snacks</option>
-                    </select>
-                    <div onClick={handleSort} className={(isSorted) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
-                        Sort Alphabetically
-                    </div>
-                </div>
+                <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}/>
 
                 <div className="Fridge">
                     {foods.map((item, index) => (
-                        <FridgeItem type={item.type} name={item.name} quan={item.quantity} onItemClicked={showEditFoodPopup} time={item.updatedAt}></FridgeItem>
+                        <FridgeItem key={index} type={item.type} name={item.name} quan={item.quantity}
+                                    onItemClicked={showEditFoodPopup} time={item.updatedAt}></FridgeItem>
                     ))}
                 </div>
-                
+
                 <button onClick={() => setIsAddFoodPopup(true)} className='glow-on-hover add-btn'>+</button>
             </div>
-            { isAddFoodPopup &&
+            {isAddFoodPopup &&
                 <AddFoodPopup onClick={() => setIsAddFoodPopup(false)} onSubmit={handleNewFood}/>
             }
-            { isEditFoodPopup &&
-                <EditFoodPopup onClick={() => setIsEditFoodPopup(false)} onSubmit={handleUpdateFood} name={editFoodPopupName} quantity={editFoodPopupQuan}/>
+            {isEditFoodPopup &&
+                <EditFoodPopup onClick={() => setIsEditFoodPopup(false)} onSubmit={handleUpdateFood}
+                               name={editFoodPopupName} quantity={editFoodPopupQuan}/>
             }
         </div>
     );
