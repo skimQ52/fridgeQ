@@ -5,7 +5,7 @@ import TextInput from "../TextInput.tsx";
 
 interface AddFoodPopupProps {
     onClick: () => void;
-    onSubmit: (name: string, quan: number, type: string) => void;
+    onSubmit: (name: string, quan: number, type: string, e: React.FormEvent<HTMLFormElement>) => void;
 }
 
 
@@ -17,10 +17,9 @@ export function AddFoodPopup(props: AddFoodPopupProps) {
 
     const makeNewFood = async (e: any) => {
         if (!foodRef.current || !quanRef.current || !typeSelectState) {
-            e.preventDefault();
             return;
         }
-        props.onSubmit(foodRef.current.value, parseInt(quanRef.current.value), typeSelectState);
+        props.onSubmit(foodRef.current.value, parseInt(quanRef.current.value), typeSelectState, e);
     }
 
     const handleTypeSelect = (event: any) => {

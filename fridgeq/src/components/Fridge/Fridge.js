@@ -24,7 +24,6 @@ const Fridge = () => {
     const [editFoodPopupName, setEditFoodPopupName] = useState('');
     const [editFoodPopupQuan, setEditFoodPopupQuan] = useState(0);
 
-
     const fetchFoods = async () => {
         try {
             const data = await getFoods(user.token);
@@ -34,12 +33,6 @@ const Fridge = () => {
         } catch (error) {
             console.error('Error:', error);
         }
-    };
-
-    const showEditFoodPopup = (name, quan) => {
-        setIsEditFoodPopup(true);
-        setEditFoodPopupName(name);
-        setEditFoodPopupQuan(parseInt(quan));
     }
 
     const handleDelete = async (name) => {
@@ -47,22 +40,18 @@ const Fridge = () => {
             const response = await deleteFood(name, user.token);
             console.log(response);
             setIsEditFoodPopup(false);
+            await fetchFoods()
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
     const handleNewFood = async (name, quantity, type, e) => {
-
-        // Check if food name already exists to prevent dupes //TODO: FIX THIS
-        let check = false;
-        Object.values(foods).forEach(food => {
-            if (food.name.toLowerCase() === name.toLowerCase()) {
-                check = true;
-            }
-        });
-        if (check) { // TODO: Update food here
-            e.preventDefault();
+        const existingFood = Object.values(foods).find(food => food.name.toLowerCase() === name.toLowerCase());
+        if (existingFood) {
+            const newQuantity = existingFood.quantity + quantity;
+            const response = await handleUpdateFood(existingFood.name, newQuantity);
+            console.log(response);
             return;
         }
 
@@ -84,19 +73,19 @@ const Fridge = () => {
     }
 
     const handleUpdateFood = async (name, quantity, e) => {
+        console.log(name + quantity);
         if (quantity === 0) { // Need to delete
             await handleDelete(name);
+            return;
         }
-        else { // Update quantity
-            try {
-                const response = await updateFood(name, quantity, user.token);
-                console.log(response);
-                setIsEditFoodPopup(false);
-                await fetchFoods();
-            } catch (error) {
-                e.preventDefault();
-                console.error('Error:', error);
-            }
+        try {
+            const response = await updateFood(name, quantity, user.token);
+            console.log(response);
+            setIsEditFoodPopup(false);
+            await fetchFoods();
+        } catch (error) {
+            e.preventDefault();
+            console.error('Error:', error);
         }
     }
     const handleQueryChange = (query, filter) => {
@@ -108,13 +97,19 @@ const Fridge = () => {
         setFilteredFoods(filtered2);
     };
 
-    function sortAlphabetically(sort) {
+    const sortAlphabetically = (sort) => {
         if (!sort) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
             setFoods(sortedFoods);
             return;
         }
         setFoods(filteredFoods);
+    }
+
+    const showEditFoodPopup = (name, quan) => {
+        setIsEditFoodPopup(true);
+        setEditFoodPopupName(name);
+        setEditFoodPopupQuan(parseInt(quan));
     }
 
     // On load

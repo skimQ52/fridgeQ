@@ -4,7 +4,7 @@ import * as PropTypes from "prop-types";
 interface FilterBarProps {
     onChange: (search: string, filter: string) => void;
     sort: (sort: boolean) => void;
-};
+}
 
 export function FilterBar(props: FilterBarProps) {
 
