@@ -10,14 +10,22 @@ import {AddFoodPopup} from "./AddFoodPopup";
 import {EditFoodPopup} from "./EditFoodPopup";
 import {FilterBar} from "./FilterBar";
 
+interface Food {
+    _id: string;
+    name: string;
+    type: string;
+    quantity: number;
+    updatedAt: string;
+}
+
 const Fridge = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
 
-    const [foods, setFoods] = useState([]);
-    const [allFoods, setAllFoods] = useState([]);
-    const [filteredFoods, setFilteredFoods] = useState([]);
+    const [foods, setFoods] = useState<Food[]>([]);
+    const [allFoods, setAllFoods] = useState<Food[]>([]);
+    const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
 
     const [isAddFoodPopup, setIsAddFoodPopup] = useState(false);
     const [isEditFoodPopup, setIsEditFoodPopup] = useState(false);
@@ -25,8 +33,11 @@ const Fridge = () => {
     const [editFoodPopupQuan, setEditFoodPopupQuan] = useState(0);
 
     const fetchFoods = async () => {
+        if (!user) {
+            return;
+        }
         try {
-            const data = await getFoods(user.token);
+            const data = await getFoods(user.token) as Food[];
             setFoods(data)
             setFilteredFoods(data)
             setAllFoods(data)
@@ -35,22 +46,14 @@ const Fridge = () => {
         }
     }
 
-    const handleDelete = async (name) => {
-        try {
-            const response = await deleteFood(name, user.token);
-            console.log(response);
-            setIsEditFoodPopup(false);
-            await fetchFoods()
-        } catch (error) {
-            console.error('Error:', error);
+    const handleNewFood = async (name: string, quantity: number, type: string, e: React.FormEvent) => {
+        if (!user) {
+            return;
         }
-    }
-
-    const handleNewFood = async (name, quantity, type, e) => {
         const existingFood = Object.values(foods).find(food => food.name.toLowerCase() === name.toLowerCase());
         if (existingFood) {
             const newQuantity = existingFood.quantity + quantity;
-            const response = await handleUpdateFood(existingFood.name, newQuantity);
+            const response = await handleUpdateFood(existingFood.name, newQuantity, e);
             console.log(response);
             return;
         }
@@ -72,8 +75,10 @@ const Fridge = () => {
         }
     }
 
-    const handleUpdateFood = async (name, quantity, e) => {
-        console.log(name + quantity);
+    const handleUpdateFood = async (name: string, quantity: number, e: React.FormEvent) => {
+        if (!user) {
+            return;
+        }
         if (quantity === 0) { // Need to delete
             await handleDelete(name);
             return;
@@ -88,7 +93,22 @@ const Fridge = () => {
             console.error('Error:', error);
         }
     }
-    const handleQueryChange = (query, filter) => {
+
+    const handleDelete = async (name: string) => {
+        if (!user) {
+            return;
+        }
+        try {
+            const response = await deleteFood(name, user.token);
+            console.log(response);
+            setIsEditFoodPopup(false);
+            await fetchFoods()
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleQueryChange = (query: string, filter: string) => {
         const filtered = allFoods.filter(item =>
             filter ? item.type.toLowerCase().includes(filter.toLowerCase()) : item.name.toLowerCase().includes(filter.toLowerCase())
         );
@@ -97,7 +117,7 @@ const Fridge = () => {
         setFilteredFoods(filtered2);
     };
 
-    const sortAlphabetically = (sort) => {
+    const sortAlphabetically = (sort: boolean) => {
         if (!sort) {
             const sortedFoods = [...filteredFoods].sort((a, b) => a.name.localeCompare(b.name));
             setFoods(sortedFoods);
@@ -106,10 +126,10 @@ const Fridge = () => {
         setFoods(filteredFoods);
     }
 
-    const showEditFoodPopup = (name, quan) => {
+    const showEditFoodPopup = (name: string, quan: number) => {
         setIsEditFoodPopup(true);
         setEditFoodPopupName(name);
-        setEditFoodPopupQuan(parseInt(quan));
+        setEditFoodPopupQuan(quan);
     }
 
     // On load
@@ -118,7 +138,7 @@ const Fridge = () => {
             setCurrentPage('Fridge');
             (async () => {//IIFE
                 try {
-                    await fetchFoods(user.token)
+                    await fetchFoods()
                 } catch (error) {
                     console.error('Error:', error);
                 }

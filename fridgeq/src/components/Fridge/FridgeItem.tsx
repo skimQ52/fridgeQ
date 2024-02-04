@@ -11,7 +11,7 @@ interface FridgeItemProps {
     type: string;
     name: string;
     quan: number;
-    time: Date;
+    time: string;
     onItemClicked: (name: string, quan: number) => void;
 }
 export default function FridgeItem(props: FridgeItemProps) {

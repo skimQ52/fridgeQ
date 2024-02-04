@@ -4,7 +4,7 @@ import React, {useState} from "react";
 interface EditFoodPopupProps {
     name: string,
     quantity: number,
-    onSubmit: (name: string, quan: number) => void,
+    onSubmit: (name: string, quan: number, e: React.FormEvent) => void,
     onClick: () => void,
 }
 
@@ -14,15 +14,14 @@ export function EditFoodPopup(props: EditFoodPopupProps) {
     const [quantity, setQuantity] = useState(props.quantity);
 
     const handleQuantityChange = (change: 1 | -1) => {
-        if (quantity === 99 || quantity === 0) {
+        if ((quantity === 99 && change === 1) || (quantity === 0 && change === -1)) {
             return;
         }
-        console.log(quantity);
         setQuantity(quantity + change);
     };
 
-    function updateFood() {
-        props.onSubmit(name, quantity);
+    function updateFood(e: React.FormEvent) {
+        props.onSubmit(name, quantity, e);
     }
 
     return (
