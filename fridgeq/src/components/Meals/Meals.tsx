@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { usePage } from '../../context/PageContext';
 import { useAuthContext } from '../../hooks/useAuthContext';
-// import Fade from 'react-reveal/Fade';
 import Meal from "./Meal";
 import Popup from "../Popup";
 import FormInput from "../FormInput";
@@ -12,8 +11,8 @@ const Meals = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
-    const [buttonPopup, setButtonPopup] = useState({ trigger: false });
-    const [newMealPopup, setNewMealPopup] = useState({ trigger: false });
+    const [isEditMealPopup, setIsEditMealPopup] = useState(false);
+    const [isAddMealPopup, setIsAddMealPopup] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
     const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
     const [sortedState, setSortedState] = useState(false); // Sorted or no
@@ -156,7 +155,7 @@ const Meals = () => {
             return;
         }
         setMeals(filteredMeals);
-    };
+    }
 
     // Add/Remove checked item from list
     const handleCheck = (event) => {
@@ -295,7 +294,7 @@ const Meals = () => {
         <div className='page'>
 
             {/* Outer component */}
-            <div className={(buttonPopup.trigger) ? 'fridge-outer blur' : 'fridge-outer'}>
+            <div className={(isEditMealPopup + isAddMealPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <div className='filter-bar'>
                     <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
                     <select onChange={handleFilterChange} className='filter select'>
@@ -318,11 +317,11 @@ const Meals = () => {
                         ))}
                     </div>
                 {/*</Fade>*/}
-                <button onClick={() => setButtonPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
+                <button onClick={() => setIsEditMealPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
             </div>
 
             {/* Meal Popup! */}
-            <Popup trigger={mealPopup.trigger} setTrigger={setMealPopup}>
+            <Popup trigger={mealPopup} setTrigger={setMealPopup}>
                 <div className="mealBig">
                     <div className="headerMeal">
                         <h1>{mealPopup.meal.name}</h1>
@@ -348,7 +347,7 @@ const Meals = () => {
             </Popup>
 
             {/* Select Foods For new Meal Popup */}
-            <Popup trigger={buttonPopup.trigger} setTrigger={setButtonPopup}>
+            <Popup trigger={isEditMealPopup} setTrigger={setIsEditMealPopup}>
                 <h1>Select Foods For New Meal</h1>
                 <div className="mealFoodList">
                     {foods.map((item, index) => (
@@ -359,7 +358,7 @@ const Meals = () => {
                     ))}
                 </div>
                 <div className="buttonSpread">
-                   <button onClick={() => {setNewMealPopup(prevData => ({...prevData, trigger: true})); setButtonPopup(prevData => ({...prevData, trigger: false})); setError(null)}} 
+                   <button onClick={() => {setIsAddMealPopup(prevData => ({...prevData, trigger: true})); setIsEditMealPopup(prevData => ({...prevData, trigger: false})); setError(null)}}
                         className='glow-on-hover confirmButton'>Create Meal</button>
                     <div className="generateMealContainer">
                         <button onClick={generateMeal} className='glow-on-hover confirmButton'>Generate Meal</button>
@@ -376,7 +375,7 @@ const Meals = () => {
             </Popup>
 
             {/* Create New Meal Manually Popup */}
-            <Popup trigger={newMealPopup.trigger} setTrigger={setNewMealPopup}>
+            <Popup trigger={isAddMealPopup.trigger} setTrigger={setIsAddMealPopup}>
                 <h1>Create New Meal</h1>
                 <div className="ingredients">
                     {checked.map((item, index) => (
