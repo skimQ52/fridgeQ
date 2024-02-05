@@ -2,13 +2,13 @@
 
 const BASE_URL = 'http://localhost:9000/mongoAPI';
 
-interface ApiResponse<T> {
+export interface ApiResponse<T> {
     data: T;
     status: number;
     message?: string;
 }
 
-const handleApiResponse = async <T>(response: Response): Promise<T> => {
+export const handleApiResponse = async <T>(response: Response): Promise<T> => {
     if (response.ok) {
         const data: ApiResponse<T> = await response.json();
         console.log(data);
@@ -79,7 +79,7 @@ export const addFood = async <T>(data: string, userToken: string): Promise<T> =>
 
 export const deleteFood = async <T>(name: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`http://localhost:9000/mongoAPI/delete_food?name=${name}`, {
+        const response = await fetch(`${BASE_URL}/delete_food?name=${name}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization

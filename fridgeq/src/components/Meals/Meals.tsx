@@ -1,41 +1,44 @@
-import React, { useEffect, useState, useRef } from "react";
-import { usePage } from '../../context/PageContext';
-import { useAuthContext } from '../../hooks/useAuthContext';
-import Meal from "./Meal";
-import Popup from "../Popup";
-import FormInput from "../FormInput";
-import ParagraphInput from "./ParagraphInput";
-import LoadingScreen from 'react-loading-screen'
+import React, {useEffect, useState} from "react";
+import {usePage} from '../../context/PageContext';
+import {useAuthContext} from '../../hooks/useAuthContext';
+import MealItem from "./MealItem";
+import {addMeal, deleteMeal, getMeal, getMeals} from "../../services/mealService.ts";
+import MealPopup from "./MealPopup.tsx";
+import {FilterBar} from "../Fridge/FilterBar.tsx";
+import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
+import {AddMealPopup} from "./AddMealPopup.tsx";
+// import LoadingScreen from 'react-loading-screen'
+
+interface Food {
+    name: string;
+    type: string;
+    quantity: number;
+    updatedAt: string;
+}
+
+export interface Meal {
+    name: string;
+    description: string;
+    type: string;
+    recipe: string;
+    ingredients: string[];
+}
 
 const Meals = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
-    const [isEditMealPopup, setIsEditMealPopup] = useState(false);
+    const [isSelectFoodsPopup, setIsSelectFoodsPopup] = useState(false);
     const [isAddMealPopup, setIsAddMealPopup] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(''); // Search query from search bar
-    const [filterQuery, setFilterQuery] = useState(''); // Filter Query from drop down
-    const [sortedState, setSortedState] = useState(false); // Sorted or no
-    const [meals, setMeals] = useState([]);
-    const [allMeals, setAllMeals] = useState();
-    const [filteredMeals, setFilteredMeals] = useState();
-    const [foods, setFoods] = useState([]);
-    const [checked, setChecked] = useState([]);
-    const nameRef = useRef();
-    const descRef = useRef();
-    const [typeSelectState, setTypeSelectState] = useState('');
-    const [recipe, setRecipe] = useState('');
+
+    const [meals, setMeals] = useState<Meal[]>([]);
+    const [allMeals, setAllMeals] = useState<Meal[]>([]);
+    const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
+
+    const [selectedFoods, setSelectedFoods] = useState<Food[]>([]);
+
     const [error, setError] = useState(null);
-    const [mealPopup, setMealPopup] = useState({
-        trigger: false,
-        meal: {
-            name: '',
-            desc: '',
-            type: '',
-            recipe: '',
-            ingredients: []
-        }
-    });
+
     const [generateMealPopup, setGenerateMealPopup] = useState({
         trigger: false,
         meal: {
@@ -45,111 +48,85 @@ const Meals = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchMeals = () => {
-        fetch("http://localhost:9000/meals/meals", {
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        })
-            .then(response => {
-            return response.json()
-            })
-            .then(data => {
-                setMeals(data);
-                setAllMeals(data);
-                setFilteredMeals(data);
-            })
-    };
+    const [isMealPopup, setIsMealPopup] = useState(false);
+    const [mealPopup, setMealPopup] = useState<Meal>({
+        name: '',
+        description: '',
+        type: '',
+        recipe: '',
+        ingredients: [],
+    });
 
-    const fetchFoods = () => {
-        fetch("http://localhost:9000/mongoAPI/foods", {
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        })
-            .then(response => {
-            return response.json()
-            })
-            .then(data => {
-                setFoods(data)
-            })
-    };
-
-    const fetchMeal = (name) => {
-        fetch(`http://localhost:9000/meals/meal?param=${name}`, {
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        }).then(response => {
-            return response.json()
-            })
-            .then(data => {
-            setMealPopup({
-                trigger: true,
-                meal: {
-                    name: data[0].name,
-                    desc: data[0].description,
-                    type: data[0].type,
-                    recipe: data[0].recipe,
-                    ingredients: data[0].ingredients
-                }
-            })
-        })
-    }
-
-    const handleMealClicked = (value) => {
-        fetchMeal(value);
-    };
-
-    // Handle search query change
-    const handleSearchChange = (event) => {
-        const query = event.target.value;
-        setSearchQuery(query);
-
-        setSortedState(false);
-        sortAlphabetically(false);
-        // Filter items based on search query
-        const filtered = allMeals.filter(item =>
-            item.name.toLowerCase().includes(query.toLowerCase())
-        );
-
-        // // Filter items based on filter query
-        const filtered2 = filtered.filter(item =>
-            item.type.toLowerCase().includes(filterQuery.toLowerCase())
-        );
-        setMeals(filtered2);
-        setFilteredMeals(filtered2); // Hold the filtered map for sorting
-    };
-
-    // Handle filter query change
-    const handleFilterChange = (event) => {
-        const query = event.target.value;
-        setFilterQuery(query);
-        if (query === "none") {
+    const fetchMeals = async () => {
+        if (!user) {
             return;
         }
-        setSortedState(false);
-        sortAlphabetically(false);
-        // Filter items based on filter query
-        const filtered = allMeals.filter(item =>
-            item.type.toLowerCase().includes(query.toLowerCase())
-        );
-
-        // Filter items based on search query
-        const filtered2 = filtered.filter(item =>
-            item.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setMeals(filtered2);
-        setFilteredMeals(filtered2); // Hold the filtered map for sorting
-    };
-
-    const handleSort = () => {
-        setSortedState(!sortedState);
-        sortAlphabetically(sortedState);
+        try {
+            const data = await getMeals(user.token) as Meal[];
+            console.log(data+ "ASLUDHA");
+            if (data) {
+                setMeals(data);
+                setFilteredMeals(data);
+                setAllMeals(data);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
 
-    function sortAlphabetically() {
-        if (!sortedState) {
+    const fetchMeal = async (name: string) => {
+        if (!user) {
+            return;
+        }
+        try {
+            const data = await getMeal(name, user.token) as Meal;
+            setIsMealPopup(true);
+            setMealPopup(data);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleNewMeal = async (meal: Meal, e: any) => {
+        if (!user) {
+            return;
+        }
+        const dataString = JSON.stringify(meal)
+        try {
+            const response = await addMeal(dataString, user.token);
+            console.log(response);
+            await fetchMeals();
+        } catch (error) {
+            e.preventDefault();
+            console.error('Error:', error);
+        }
+    };
+
+    const handleDelete = async (name: string) => {
+        if (!user) {
+            return;
+        }
+        try {
+            const response = await deleteMeal(name, user.token);
+            console.log(response);
+            setIsMealPopup(false);
+            // await fetchFoods()
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    const handleQueryChange = (query: string, filter: string) => {
+        const filtered = allMeals.filter(item =>
+            filter ? item.type.toLowerCase().includes(filter.toLowerCase()) : item.name.toLowerCase().includes(filter.toLowerCase())
+        );
+        const filtered2 = query ? filtered.filter(item => item.name.toLowerCase().includes(query.toLowerCase())) : filtered;
+        setMeals(filtered2);
+        setFilteredMeals(filtered2);
+    };
+
+    const sortAlphabetically = (sort: boolean) => {
+        if (!sort) {
             const sortedMeals = [...filteredMeals].sort((a, b) => a.name.localeCompare(b.name));
             setMeals(sortedMeals);
             return;
@@ -157,285 +134,151 @@ const Meals = () => {
         setMeals(filteredMeals);
     }
 
-    // Add/Remove checked item from list
-    const handleCheck = (event) => {
-        var updatedList = [...checked];
-        if (event.target.checked) {
-            updatedList = [...checked, event.target.value];
-        } else {
-            updatedList.splice(checked.indexOf(event.target.value), 1);
-        }
-        setChecked(updatedList);
-    };
+    // const generateMeal = async (e) => {
+    //     e.preventDefault();
+    //
+    //     const data = {
+    //         ingredients: selectedFoods,
+    //         type: typeSelectState
+    //     };
+    //     setIsLoading(true);
+    //     // Send the POST request
+    //     const response = await fetch("http://localhost:9000/meals/generate_meal", {
+    //         method: 'POST',
+    //         headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${user.token}` // Pass token in for authorization
+    //         },
+    //         body: JSON.stringify(data)
+    //     });
+    //     const json = await response.json();
+    //     setIsLoading(false);
+    //     if (!response.ok) {
+    //         setError(json.error);
+    //     }
+    //     else { //success
+    //         console.log(json);
+    //         setRecipe(json.recipe); // So it doesn't require change
+    //         setGenerateMealPopup({
+    //             trigger: true,
+    //             meal: {
+    //                 name: json.name,
+    //                 desc: json.description,
+    //             }
+    //         })
+    //     }
+    // };
 
-    // Check if item is checked off
-    const isChecked = (item) => checked.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
+    // const discardGeneratedMeal = () => {
+    //     setSelectedFoods([]);
+    //     setTypeSelectState('');
+    //     setError(null);
+    //     setGenerateMealPopup({
+    //         trigger: false,
+    //         meal: {
+    //             name: '',
+    //             desc: '',
+    //         }
+    //     });
+    // }
 
-    // Handle type select of adding change
-    const handleTypeSelect = (event) => {
-        const query = event.target.value;
-        setTypeSelectState(query);
-    };
-
-
-    const createNewMeal = async (e) => {
-        e.preventDefault()
-        const data = {
-            name: nameRef.current.value,
-            description: descRef.current.value,
-            type: typeSelectState,
-            recipe: recipe,
-            ingredients: checked
-        };
-
-        // Send the POST request
-        const response = await fetch("http://localhost:9000/meals/add_meal", {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            },
-            body: JSON.stringify(data)
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-            setError(json.error);
-        }
-        else { //success 
-            window.location.reload();
-        }
-    };
-
-    const handleRecipeChange = (newText) => {
-        setRecipe(newText); // Update the parent's state with the new text
-    };
-
-    const handleDelete = () => {
-        fetch(`http://localhost:9000/meals/delete_meal?name=${mealPopup.meal.name}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            }
-        }).then(response => response.json())
-            .then(() => {
-                fetchMeals()
-                setMealPopup( prevData => ({
-                    ...prevData,
-                    trigger: false
-                }))
-            }).catch(error => {
-                console.error('Error:', error);
-            }
-        );
+    function closeSelectPopupAndOpenAddPopup(checkedFoods: Food[]) {
+        setIsSelectFoodsPopup(false);
+        setIsAddMealPopup(true);
+        setSelectedFoods(checkedFoods);
     }
 
-    const generateMeal = async (e) => {
-        e.preventDefault();
-
-        const data = {
-            ingredients: checked,
-            type: typeSelectState
-        };
-        setIsLoading(true);
-        // Send the POST request
-        const response = await fetch("http://localhost:9000/meals/generate_meal", {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-            },
-            body: JSON.stringify(data)
-        });
-        const json = await response.json();
-        setIsLoading(false);
-        if (!response.ok) {
-            setError(json.error);
-        }
-        else { //success
-            console.log(json);
-            setRecipe(json.recipe); // So it doesn't require change
-            setGenerateMealPopup({
-                trigger: true,
-                meal: {
-                    name: json.name,
-                    desc: json.description,
-                }
-            })
-        }
-    };
-
-    const discardGeneratedMeal = () => {
-        setChecked([]);
-        setTypeSelectState('');
-        setError(null);
-        setGenerateMealPopup({
-            trigger: false,
-            meal: {
-                name: '',
-                desc: '',
-            }
-        });
-    }
-
-    // On load
     useEffect(() => {
         if (user) {
             setCurrentPage('Meals');
-            fetchMeals();
-            fetchFoods();
-            setChecked([]);
-            setTypeSelectState('');
-            setError(null);
+            (async () => {//IIFE
+                try {
+                    await fetchMeals()
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            })();
         }
-    }, [user])
+    },[])
 
     return (
         <div className='page'>
+            <div className={(isAddMealPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
+                <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
+                    <option value="" defaultValue="true">Type</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                    <option value="other">Other</option>
+                </FilterBar>
 
-            {/* Outer component */}
-            <div className={(isEditMealPopup + isAddMealPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
-                <div className='filter-bar'>
-                    <input onChange={handleSearchChange} className='filter search' type="text" placeholder='Search...' value={searchQuery}></input>
-                    <select onChange={handleFilterChange} className='filter select'>
-                        <option value="" defaultValue="true">Type</option>
-                        <option value="breakfast">Breakfast</option>
-                        <option value="lunch">Lunch</option>
-                        <option value="dinner">Dinner</option>
-                        <option value="snack">Snack</option>
-                        <option value="other">Other</option>
-                    </select>
-                    <div onClick={handleSort} className={(sortedState) ? 'filter ToggleButton ToggleButtonActive' : 'filter ToggleButton'}>
-                        Sort Alphabetically
-                    </div>
+                <div className="Meals">
+                    {meals.length === 0 ? ( //TODO: IMPROVE
+                        <p>No meals available</p>
+                    ) : (
+                        <ul>
+                            {meals.map((item, index) => (
+                                <MealItem key={index} name={item.name} type={item.type} desc={item.description}
+                                      onItemClicked={fetchMeal}></MealItem>
+                            ))}
+                        </ul>
+                    )}
                 </div>
-
-                {/*<Fade>*/}
-                    <div className="Meals">
-                        {meals.map((item, index) => (
-                            <Meal key={index} name={item.name} type={item.type} desc={item.description} onItemClicked={handleMealClicked}></Meal>
-                        ))}
-                    </div>
-                {/*</Fade>*/}
-                <button onClick={() => setIsEditMealPopup(prevData => ({...prevData, trigger: true}))} className='glow-on-hover add-btn'>+</button>
+                <button onClick={() => setIsSelectFoodsPopup(true)} className='glow-on-hover add-btn'>+</button>
             </div>
 
-            {/* Meal Popup! */}
-            <Popup trigger={mealPopup} setTrigger={setMealPopup}>
-                <div className="mealBig">
-                    <div className="headerMeal">
-                        <h1>{mealPopup.meal.name}</h1>
-                        <div className="descContainerMeal">
-                            <p className="descMeal">"{mealPopup.meal.desc}"</p>
-                        </div>
-                    </div>
-                    <p className="mealLineBreak"/>
-                    <div className="ingredients">
-                        {mealPopup.meal.ingredients.map((item, index) => (
-                            <div className="ingredient" key={index}>
-                                {item}
-                                {index < mealPopup.meal.ingredients.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
-                            </div>
-                        ))}
-                    </div>
-                    <textarea disabled={true} defaultValue={mealPopup.meal.recipe}/>
-                    <div className="footerMeal">
-                        <button onClick={handleDelete} className='glow-on-hover deleteButton'>Delete</button>
-                    </div>
-                    
-                </div>
-            </Popup>
+            {isMealPopup &&
+                <MealPopup onClick={() => setIsMealPopup(false)} meal={mealPopup} onDelete={handleDelete}/>
+            }
 
-            {/* Select Foods For new Meal Popup */}
-            <Popup trigger={isEditMealPopup} setTrigger={setIsEditMealPopup}>
-                <h1>Select Foods For New Meal</h1>
-                <div className="mealFoodList">
-                    {foods.map((item, index) => (
-                        <div key={index}>
-                            <input value={item.name} type="checkbox" onChange={handleCheck}/>
-                            <span className={isChecked(item.name)}>{item.name}</span>
-                        </div>
-                    ))}
-                </div>
-                <div className="buttonSpread">
-                   <button onClick={() => {setIsAddMealPopup(prevData => ({...prevData, trigger: true})); setIsEditMealPopup(prevData => ({...prevData, trigger: false})); setError(null)}}
-                        className='glow-on-hover confirmButton'>Create Meal</button>
-                    <div className="generateMealContainer">
-                        <button onClick={generateMeal} className='glow-on-hover confirmButton'>Generate Meal</button>
-                        <select onChange={handleTypeSelect} className='input'>
-                            <option value="" defaultValue="true">Type</option>
-                            <option value="Breakfast">Breakfast</option>
-                            <option value="Lunch">Lunch</option>
-                            <option value="Dinner">Dinner</option>
-                            <option value="Snack">Snack</option>
-                        </select>
-                    </div>
-                </div>
-                {error && <div className="error">{error}</div>}
-            </Popup>
+            {isSelectFoodsPopup &&
+                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)}
+                                  onSubmit={closeSelectPopupAndOpenAddPopup}  error={error}/>
+            }
 
-            {/* Create New Meal Manually Popup */}
-            <Popup trigger={isAddMealPopup.trigger} setTrigger={setIsAddMealPopup}>
-                <h1>Create New Meal</h1>
-                <div className="ingredients">
-                    {checked.map((item, index) => (
-                        <div className="ingredient" key={index}>
-                            {item}
-                            {index < checked.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
-                        </div>
-                    ))}
-                </div>
-                <form onSubmit={createNewMeal}>
-                    <FormInput maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
-                    <FormInput maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
-                    <ParagraphInput defaultValue="" maxlength={1200} label="Recipe" onTextChange={handleRecipeChange} />
-                    <select onChange={handleTypeSelect} className='input input-select'>
-                        <option value="" defaultValue="true">Type</option>
-                        <option value="Breakfast">Breakfast</option>
-                        <option value="Lunch">Lunch</option>
-                        <option value="Dinner">Dinner</option>
-                        <option value="Snack">Snack</option>
-                        <option value="Other">Other</option>
-                    </select>
-                    { error && <div className="error">{error}</div>}
-                    <button className='glow-on-hover confirmButton'>Confirm</button>
-                </form>
-            </Popup>
+            {isAddMealPopup &&
+                <AddMealPopup onClick={() => setIsAddMealPopup(false)} onSubmit={handleNewMeal} error={error} foods={selectedFoods}/>
+            }
 
-            {/* Generated Meal Popup */}
-            <Popup trigger={generateMealPopup.trigger} setTrigger={setGenerateMealPopup}>
-                <h1 className="AIText">AI Generated Meal</h1>
-                <div className="ingredients">
-                    {checked.map((item, index) => (
-                        <div className="ingredient" key={index}>
-                            {item}
-                            {index < checked.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
-                        </div>
-                    ))}
-                </div>
-                <form onSubmit={createNewMeal}>
-                    <FormInput defaultValue={generateMealPopup.meal.name} maxlength={50} refer={nameRef} type="text" placeholder="Egg in a hole" label="Name"/>
-                    <FormInput defaultValue={generateMealPopup.meal.desc} maxlength={200} refer={descRef} type="text" placeholder="My Favourite Comfort Breakfast Food" label="Description"/>
-                    <ParagraphInput defaultValue={recipe} maxlength={1200} label="Recipe" onTextChange={handleRecipeChange}/>
-                    <select onChange={handleTypeSelect} disabled={true} className='input input-select'>
-                        <option value={typeSelectState}>{typeSelectState}</option>
-                    </select>
-                    { error && <div className="error">{error}</div>}
-                    <div className="buttonSpread">
-                        <button onClick={discardGeneratedMeal}className='glow-on-hover confirmButton'>Discard</button>
-                        <button type="submit" className='glow-on-hover confirmButton'>Save Meal</button>
-                    </div>
-                </form>
-            </Popup>
+            {/* Generated MealItem Popup */}
+            {/*<Popup trigger={generateMealPopup.trigger} setTrigger={setGenerateMealPopup}>*/}
+            {/*    <h1 className="AIText">AI Generated MealItem</h1>*/}
+            {/*    <div className="ingredients">*/}
+            {/*        {selectedFoods.map((item, index) => (*/}
+            {/*            <div className="ingredient" key={index}>*/}
+            {/*                {item}*/}
+            {/*                {index < selectedFoods.length - 1 &&*/}
+            {/*                    <span>, &nbsp;</span>} /!* Add comma and space for all items except the last one *!/*/}
+            {/*            </div>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*    <form onSubmit={handleNewMeal}>*/}
+            {/*        <FormInput defaultValue={generateMealPopup.meal.name} maxlength={50} refer={nameRef} type="text"*/}
+            {/*                   placeholder="Egg in a hole" label="Name"/>*/}
+            {/*        <FormInput defaultValue={generateMealPopup.meal.desc} maxlength={200} refer={descRef} type="text"*/}
+            {/*                   placeholder="My Favourite Comfort Breakfast Food" label="Description"/>*/}
+            {/*        <ParagraphInput defaultValue={recipe} maxlength={1200} label="Recipe"*/}
+            {/*                        onTextChange={handleRecipeChange}/>*/}
+            {/*        <select onChange={handleTypeSelect} disabled={true} className='input input-select'>*/}
+            {/*            <option value={typeSelectState}>{typeSelectState}</option>*/}
+            {/*        </select>*/}
+            {/*        {error && <div className="error">{error}</div>}*/}
+            {/*        <div className="buttonSpread">*/}
+            {/*            <button onClick={discardGeneratedMeal} className='glow-on-hover confirmButton'>Discard</button>*/}
+            {/*            <button type="submit" className='glow-on-hover confirmButton'>Save MealItem</button>*/}
+            {/*        </div>*/}
+            {/*    </form>*/}
+            {/*</Popup>*/}
 
             {/* Generate Loading Screen */}
-            <LoadingScreen
-                loading={isLoading}
-                bgColor='rgba(82, 82, 82, 0.219)'
-                spinnerColor='green'
-                textColor='green'
-                text='Generating Meal...'> 
-            </LoadingScreen>
+            {/*<LoadingScreen*/}
+            {/*    loading={isLoading}*/}
+            {/*    bgColor='rgba(82, 82, 82, 0.219)'*/}
+            {/*    spinnerColor='green'*/}
+            {/*    textColor='green'*/}
+            {/*    text='Generating MealItem...'> */}
+            {/*</LoadingScreen>*/}
         </div>
     );
 }

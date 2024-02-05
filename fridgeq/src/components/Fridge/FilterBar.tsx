@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
-import * as PropTypes from "prop-types";
+import React, {ReactNode, useEffect, useState} from "react";
 
 interface FilterBarProps {
+    children: ReactNode,
     onChange: (search: string, filter: string) => void;
     sort: (sort: boolean) => void;
 }
@@ -40,14 +40,7 @@ export function FilterBar(props: FilterBarProps) {
         <input onChange={handleSearchChange} className="filter search" type="text" placeholder="Search..."
                value={searchQuery}></input>
         <select onChange={handleFilterChange} className="filter select">
-            <option value="" defaultValue="true">Type</option>
-            <option value="vegetables">Vegetables</option>
-            <option value="proteins">Proteins</option>
-            <option value="fruits">Fruits</option>
-            <option value="grains">Grains</option>
-            <option value="dairy">Dairy</option>
-            <option value="condiments">Condiments</option>
-            <option value="snacks">Snacks</option>
+            {props.children}
         </select>
         <div onClick={handleSort}
              className={(isSorted) ? "filter ToggleButton ToggleButtonActive" : "filter ToggleButton"}>

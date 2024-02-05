@@ -132,7 +132,6 @@ const Fridge = () => {
         setEditFoodPopupQuan(quan);
     }
 
-    // On load
     useEffect(() => {
         if (user) {
             setCurrentPage('Fridge');
@@ -149,7 +148,16 @@ const Fridge = () => {
     return (
         <div className='page'>
             <div className={(isAddFoodPopup || isEditFoodPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
-                <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}/>
+                <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
+                    <option value="" defaultValue="true">Type</option>
+                    <option value="vegetables">Vegetables</option>
+                    <option value="proteins">Proteins</option>
+                    <option value="fruits">Fruits</option>
+                    <option value="grains">Grains</option>
+                    <option value="dairy">Dairy</option>
+                    <option value="condiments">Condiments</option>
+                    <option value="snacks">Snacks</option>
+                </FilterBar>
 
                 <div className="Fridge">
                     {foods.map((item, index) => (
