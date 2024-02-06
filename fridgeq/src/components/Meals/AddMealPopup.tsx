@@ -24,26 +24,24 @@ export function AddMealPopup(props: AddMealPopupProps) {
     const descRef = useRef<HTMLInputElement>(null);
     const [typeSelectState, setTypeSelectState] = useState<string>('');
     const [recipe, setRecipe] = useState('');
+    const [ingredients, setIngredients] = useState<string[]>([]);
 
     const makeNewFood = async (e: any) => {
-        if (!nameRef.current || !descRef.current || !typeSelectState || !recipe || !props.foods) {
+        if (!nameRef.current || !descRef.current || !typeSelectState || !props.foods) {
             return;
         }
         try {
-            const names: string[] = props.foods.map(food => food.name);
             const meal: Meal = {
                 name: nameRef.current.value,
                 description: descRef.current.value,
                 type: typeSelectState,
                 recipe:  recipe,
-                ingredients: names,
+                ingredients: ingredients,
             }
-            console.log('hahahaha' + meal);
             await props.onSubmit(meal, e);
         } catch (e) {
             console.error(e);
         }
-
     }
 
     const handleRecipeChange = (newText: string) => {
@@ -55,13 +53,17 @@ export function AddMealPopup(props: AddMealPopupProps) {
         setTypeSelectState(query);
     };
 
+    useEffect(() => {
+        setIngredients(props.foods as unknown as string[]);
+    })
+
     return (
         <Popup onClick={props.onClick}>
             <h1>Create New Meal</h1>
             <div className="ingredients">
-                {props.foods.map((item, index) => (
+                {ingredients.map((item, index) => (
                     <div className="ingredient" key={index}>
-                        {item.name}
+                        {item}
                         {index < props.foods.length - 1 && <span>, &nbsp;</span>} {/* Add comma and space for all items except the last one */}
                     </div>
                 ))}

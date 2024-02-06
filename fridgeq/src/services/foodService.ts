@@ -11,7 +11,6 @@ export interface ApiResponse<T> {
 export const handleApiResponse = async <T>(response: Response): Promise<T> => {
     if (response.ok) {
         const data: ApiResponse<T> = await response.json();
-        console.log(data);
         return data.data;
     } else {
         throw new Error((await response.json()).message || 'Something went wrong');
@@ -25,7 +24,6 @@ export const getFood = async <T>(name: string, userToken: string): Promise<T> =>
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
         })
-        console.log(response);
         return handleApiResponse(response);
     } catch (error) {
         throw new Error('Network error');
@@ -39,7 +37,6 @@ export const getFoods = async <T>(userToken: string): Promise<T> => {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
         })
-        console.log(response);
         return handleApiResponse(response);
     } catch (error) {
         throw new Error('Network error');

@@ -63,7 +63,6 @@ const Meals = () => {
         }
         try {
             const data = await getMeals(user.token) as Meal[];
-            console.log(data+ "ASLUDHA");
             if (data) {
                 setMeals(data);
                 setFilteredMeals(data);
@@ -80,8 +79,10 @@ const Meals = () => {
         }
         try {
             const data = await getMeal(name, user.token) as Meal;
-            setIsMealPopup(true);
-            setMealPopup(data);
+            if (data) {
+                setMealPopup(data);
+                setIsMealPopup(true);
+            }
         } catch (error) {
             console.error('Error:', error);
         }
@@ -91,7 +92,7 @@ const Meals = () => {
         if (!user) {
             return;
         }
-        const dataString = JSON.stringify(meal)
+        const dataString = JSON.stringify(meal);
         try {
             const response = await addMeal(dataString, user.token);
             console.log(response);
@@ -110,7 +111,7 @@ const Meals = () => {
             const response = await deleteMeal(name, user.token);
             console.log(response);
             setIsMealPopup(false);
-            // await fetchFoods()
+            await fetchMeals()
         } catch (error) {
             console.error('Error:', error);
         }
@@ -212,19 +213,16 @@ const Meals = () => {
                     <option value="snack">Snack</option>
                     <option value="other">Other</option>
                 </FilterBar>
-
-                <div className="Meals">
-                    {meals.length === 0 ? ( //TODO: IMPROVE
-                        <p>No meals available</p>
-                    ) : (
-                        <ul>
-                            {meals.map((item, index) => (
-                                <MealItem key={index} name={item.name} type={item.type} desc={item.description}
-                                      onItemClicked={fetchMeal}></MealItem>
-                            ))}
-                        </ul>
-                    )}
-                </div>
+                {meals.length === 0 ? ( //TODO: IMPROVE
+                    <p>No meals available</p>
+                ) : (
+                    <ul className={"Meals"}>
+                        {meals.map((item, index) => (
+                            <MealItem key={index} name={item.name} type={item.type} desc={item.description}
+                                  onItemClicked={fetchMeal}></MealItem>
+                        ))}
+                    </ul>
+                )}
                 <button onClick={() => setIsSelectFoodsPopup(true)} className='glow-on-hover add-btn'>+</button>
             </div>
 
@@ -233,8 +231,7 @@ const Meals = () => {
             }
 
             {isSelectFoodsPopup &&
-                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)}
-                                  onSubmit={closeSelectPopupAndOpenAddPopup}  error={error}/>
+                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup}  error={error}/>
             }
 
             {isAddMealPopup &&

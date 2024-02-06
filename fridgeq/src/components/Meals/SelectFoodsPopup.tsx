@@ -10,7 +10,6 @@ interface SelectFoodsPopupProps {
 }
 
 interface Food {
-    _id: string;
     name: string;
     type: string;
     quantity: number;

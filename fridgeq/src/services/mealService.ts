@@ -9,7 +9,6 @@ export const getMeal = async <T>(name: string, userToken: string): Promise<T> =>
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
         })
-        console.log(response);
         return handleApiResponse(response);
     } catch (error) {
         throw new Error('Network error');
@@ -23,7 +22,6 @@ export const getMeals = async <T>(userToken: string): Promise<T> => {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
         })
-        console.log(response+ "SUI");
         return handleApiResponse(response);
     } catch (error) {
         throw new Error('Network error');
@@ -50,8 +48,8 @@ export const addMeal = async <T>(data: string, userToken: string): Promise<T> =>
         const response = await fetch(`${BASE_URL}/add_meal`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken}` // Pass token in for authorization
+                'Authorization': `Bearer ${userToken}`,
+                'Content-Type': 'application/json'
             },
             body: data,
         });
