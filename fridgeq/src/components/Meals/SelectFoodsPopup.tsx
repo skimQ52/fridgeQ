@@ -46,7 +46,6 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     };
 
     const handleGenerate = async (e: any) => {
-        // const names: string[] = selectedFoods.map(food => food.name);
         props.onGenerate(selectedFoods as unknown as string[], typeSelectState, e);
     }
 

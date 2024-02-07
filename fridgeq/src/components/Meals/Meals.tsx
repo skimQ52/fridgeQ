@@ -8,8 +8,7 @@ import {FilterBar} from "../Fridge/FilterBar.tsx";
 import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
 import {AddMealPopup} from "./AddMealPopup.tsx";
 import {GeneratedMealPopup} from "./GeneratedMealPopup.tsx";
-
-// import LoadingScreen from 'react-loading-screen'
+import LoadingOverlay from 'react-loading-overlay-ts';
 
 interface Food {
     name: string;
@@ -162,16 +161,6 @@ const Meals = () => {
     const discardGeneratedMeal = async () => {
         setIsGeneratedPopup(false);
         await fetchMeals();
-        // setSelectedFoods([]);
-        // setTypeSelectState('');
-        // setError(null);
-        // setGenerateMealPopup({
-        //     trigger: false,
-        //     meal: {
-        //         name: '',
-        //         desc: '',
-        //     }
-        // });
     }
 
     function closeSelectPopupAndOpenAddPopup(checkedFoods: Food[]) {
@@ -194,6 +183,7 @@ const Meals = () => {
     },[])
 
     return (
+        <LoadingOverlay active={isLoading} spinner text='Generating Meal...' styles={{wrapper: {height: '100%'}}}>
         <div className='page'>
             <div className={(isAddMealPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
@@ -243,6 +233,7 @@ const Meals = () => {
             {/*    text='Generating MealItem...'> */}
             {/*</LoadingScreen>*/}
         </div>
+        </LoadingOverlay>
     );
 }
 
