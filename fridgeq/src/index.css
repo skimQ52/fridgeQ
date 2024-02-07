@@ -412,10 +412,10 @@ div.error {
 }
 
 .Item img {
-  max-width: 100%;
-  max-height: 100%;
+  max-width: 95%;
+  max-height: 95%;
   display: block;
-  margin: 0 auto;
+  margin: auto;
 }
 
 .nameItem {
@@ -430,7 +430,7 @@ div.error {
 
 .quanItem {
   position: absolute;
-  font-size: 200%;
+  font-size: 150%;
   bottom: 8px;
   right: 12px;
 }
@@ -575,8 +575,8 @@ form {
   justify-content: center;
   filter: drop-shadow(4px 4px 4px #00000025);
   border-radius: 20px;
-  width: 47%;
-  margin: 20px 20px 20px 20px;
+  width: 46%;
+  margin: 2%;
   padding: 0;
   height: 170px;
 }
@@ -588,20 +588,23 @@ form {
 
 .nameMeal {
   position: absolute;
-  top: 0px;
-  left: 0px;
-  font-size: 150%;
+  top: 0;
+  left: 0;
+  font-size: 120%;
   margin-top: 10px;
   margin-left: 20px;
+  font-family: Futura;
+  /*font-weight: bold;*/
 }
 
 .typeMeal {
   position: absolute;
-  top: 0px;
-  right: 0px;
-  margin-top: 10px;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 10px;
   margin-right: 20px;
   font-size: 20px;
+  font-family: "Avenir Next";
 }
 
 .descContainer {

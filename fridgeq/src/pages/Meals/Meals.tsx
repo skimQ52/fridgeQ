@@ -222,15 +222,6 @@ const Meals = () => {
             {isGeneratedPopup &&
                 <GeneratedMealPopup onClick={discardGeneratedMeal} onSubmit={handleNewMeal} generated={mealPopup}/>
             }
-
-            {/* Generate Loading Screen */}
-            {/*<LoadingScreen*/}
-            {/*    loading={isLoading}*/}
-            {/*    bgColor='rgba(82, 82, 82, 0.219)'*/}
-            {/*    spinnerColor='green'*/}
-            {/*    textColor='green'*/}
-            {/*    text='Generating MealItem...'> */}
-            {/*</LoadingScreen>*/}
         </div>
         </LoadingOverlay>
     );
