@@ -2,11 +2,13 @@ import React, {useEffect, useState} from "react";
 import {usePage} from '../../context/PageContext';
 import {useAuthContext} from '../../hooks/useAuthContext';
 import MealItem from "./MealItem";
-import {addMeal, deleteMeal, getMeal, getMeals} from "../../services/mealService.ts";
+import {addMeal, deleteMeal, generateMeal, getMeal, getMeals} from "../../services/mealService.ts";
 import MealPopup from "./MealPopup.tsx";
 import {FilterBar} from "../Fridge/FilterBar.tsx";
 import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
 import {AddMealPopup} from "./AddMealPopup.tsx";
+import {GeneratedMealPopup} from "./GeneratedMealPopup.tsx";
+
 // import LoadingScreen from 'react-loading-screen'
 
 interface Food {
@@ -28,25 +30,19 @@ const Meals = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
-    const [isSelectFoodsPopup, setIsSelectFoodsPopup] = useState(false);
-    const [isAddMealPopup, setIsAddMealPopup] = useState(false);
 
     const [meals, setMeals] = useState<Meal[]>([]);
     const [allMeals, setAllMeals] = useState<Meal[]>([]);
     const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
-
     const [selectedFoods, setSelectedFoods] = useState<Food[]>([]);
 
     const [error, setError] = useState(null);
-
-    const [generateMealPopup, setGenerateMealPopup] = useState({
-        trigger: false,
-        meal: {
-            name: '',
-            desc: '',
-        }
-    });
     const [isLoading, setIsLoading] = useState(false);
+
+    const [isSelectFoodsPopup, setIsSelectFoodsPopup] = useState(false);
+    const [isAddMealPopup, setIsAddMealPopup] = useState(false);
+
+    const [isGeneratedPopup, setIsGeneratedPopup] = useState(false);
 
     const [isMealPopup, setIsMealPopup] = useState(false);
     const [mealPopup, setMealPopup] = useState<Meal>({
@@ -135,53 +131,48 @@ const Meals = () => {
         setMeals(filteredMeals);
     }
 
-    // const generateMeal = async (e) => {
-    //     e.preventDefault();
-    //
-    //     const data = {
-    //         ingredients: selectedFoods,
-    //         type: typeSelectState
-    //     };
-    //     setIsLoading(true);
-    //     // Send the POST request
-    //     const response = await fetch("http://localhost:9000/meals/generate_meal", {
-    //         method: 'POST',
-    //         headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${user.token}` // Pass token in for authorization
-    //         },
-    //         body: JSON.stringify(data)
-    //     });
-    //     const json = await response.json();
-    //     setIsLoading(false);
-    //     if (!response.ok) {
-    //         setError(json.error);
-    //     }
-    //     else { //success
-    //         console.log(json);
-    //         setRecipe(json.recipe); // So it doesn't require change
-    //         setGenerateMealPopup({
-    //             trigger: true,
-    //             meal: {
-    //                 name: json.name,
-    //                 desc: json.description,
-    //             }
-    //         })
-    //     }
-    // };
+    const handleGenerateMeal = async (ingredients: string[], type: string, e: any) => {
+        if (!user) {
+            return;
+        }
+        const data = {
+            ingredients: ingredients,
+            type: type
+        };
+        const dataString = JSON.stringify(data);
+        setIsLoading(true);
+        try {
+            const response = await generateMeal(dataString, user.token) as Meal;
+            console.log(response);
+            setIsLoading(false);
+            setMealPopup({
+                name: response.name,
+                description: response.description,
+                type: type,
+                recipe: response.recipe,
+                ingredients: ingredients,
+            })
+            setIsGeneratedPopup(true);
+        } catch (error) {
+            e.preventDefault();
+            console.error('Error:', error);
+        }
+    };
 
-    // const discardGeneratedMeal = () => {
-    //     setSelectedFoods([]);
-    //     setTypeSelectState('');
-    //     setError(null);
-    //     setGenerateMealPopup({
-    //         trigger: false,
-    //         meal: {
-    //             name: '',
-    //             desc: '',
-    //         }
-    //     });
-    // }
+    const discardGeneratedMeal = async () => {
+        setIsGeneratedPopup(false);
+        await fetchMeals();
+        // setSelectedFoods([]);
+        // setTypeSelectState('');
+        // setError(null);
+        // setGenerateMealPopup({
+        //     trigger: false,
+        //     meal: {
+        //         name: '',
+        //         desc: '',
+        //     }
+        // });
+    }
 
     function closeSelectPopupAndOpenAddPopup(checkedFoods: Food[]) {
         setIsSelectFoodsPopup(false);
@@ -231,7 +222,7 @@ const Meals = () => {
             }
 
             {isSelectFoodsPopup &&
-                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup}  error={error}/>
+                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup} onGenerate={handleGenerateMeal} error={error}/>
             }
 
             {isAddMealPopup &&
@@ -239,34 +230,9 @@ const Meals = () => {
             }
 
             {/* Generated MealItem Popup */}
-            {/*<Popup trigger={generateMealPopup.trigger} setTrigger={setGenerateMealPopup}>*/}
-            {/*    <h1 className="AIText">AI Generated MealItem</h1>*/}
-            {/*    <div className="ingredients">*/}
-            {/*        {selectedFoods.map((item, index) => (*/}
-            {/*            <div className="ingredient" key={index}>*/}
-            {/*                {item}*/}
-            {/*                {index < selectedFoods.length - 1 &&*/}
-            {/*                    <span>, &nbsp;</span>} /!* Add comma and space for all items except the last one *!/*/}
-            {/*            </div>*/}
-            {/*        ))}*/}
-            {/*    </div>*/}
-            {/*    <form onSubmit={handleNewMeal}>*/}
-            {/*        <FormInput defaultValue={generateMealPopup.meal.name} maxlength={50} refer={nameRef} type="text"*/}
-            {/*                   placeholder="Egg in a hole" label="Name"/>*/}
-            {/*        <FormInput defaultValue={generateMealPopup.meal.desc} maxlength={200} refer={descRef} type="text"*/}
-            {/*                   placeholder="My Favourite Comfort Breakfast Food" label="Description"/>*/}
-            {/*        <ParagraphInput defaultValue={recipe} maxlength={1200} label="Recipe"*/}
-            {/*                        onTextChange={handleRecipeChange}/>*/}
-            {/*        <select onChange={handleTypeSelect} disabled={true} className='input input-select'>*/}
-            {/*            <option value={typeSelectState}>{typeSelectState}</option>*/}
-            {/*        </select>*/}
-            {/*        {error && <div className="error">{error}</div>}*/}
-            {/*        <div className="buttonSpread">*/}
-            {/*            <button onClick={discardGeneratedMeal} className='glow-on-hover confirmButton'>Discard</button>*/}
-            {/*            <button type="submit" className='glow-on-hover confirmButton'>Save MealItem</button>*/}
-            {/*        </div>*/}
-            {/*    </form>*/}
-            {/*</Popup>*/}
+            {isGeneratedPopup &&
+                <GeneratedMealPopup onClick={discardGeneratedMeal} onSubmit={handleNewMeal} generated={mealPopup} error={error}/>
+            }
 
             {/* Generate Loading Screen */}
             {/*<LoadingScreen*/}

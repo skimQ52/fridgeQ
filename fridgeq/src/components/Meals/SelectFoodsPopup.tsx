@@ -7,6 +7,7 @@ interface SelectFoodsPopupProps {
     onClick: () => void;
     onSubmit: (selectedFoods: Food[]) => void;
     error: any;
+    onGenerate: (ingredients: string[], type: string, e: any) => void;
 }
 
 interface Food {
@@ -45,7 +46,8 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     };
 
     const handleGenerate = async (e: any) => {
-        // await props.onGenerate();
+        // const names: string[] = selectedFoods.map(food => food.name);
+        props.onGenerate(selectedFoods as unknown as string[], typeSelectState, e);
     }
 
     const fetchFoods = async () => {

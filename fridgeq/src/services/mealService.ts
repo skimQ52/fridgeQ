@@ -72,3 +72,19 @@ export const deleteMeal = async <T>(name: string, userToken: string): Promise<T>
         throw new Error('Network error');
     }
 }
+
+export const generateMeal = async <T>(data: string, userToken: string): Promise<T> => {
+    try {
+        const response = await fetch(`${BASE_URL}/generate_meal`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${userToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: data,
+        });
+        return handleApiResponse(response);
+    } catch (error) {
+        throw new Error('Network error');
+    }
+}
