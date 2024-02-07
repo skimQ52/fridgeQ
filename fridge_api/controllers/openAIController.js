@@ -30,7 +30,7 @@ const generateMeal = async (req, res) => {
             recipe: sections[3].trim(), // Instructions section
         }
         console.log(meal);
-        res.send(meal);
+        res.send({ data: meal, status: 200 });
     } catch (error) {
         res.status(400).json({error: error.message});
     }

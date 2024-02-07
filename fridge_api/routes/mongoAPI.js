@@ -24,7 +24,7 @@ router.get("/foods", async (request, response) => {
     const user_id = request.user._id;
     const foods = await foodModel.find({ user_id });
     try {
-      response.send(foods);
+      response.send({ data: foods, status: 200 });
     } catch (error) {
       response.status(500).send(error);
     }
@@ -36,7 +36,7 @@ router.get("/food", async (request, response) => {
   const food = await foodModel.find({ name, user_id });
   console.log(food);
   try {
-    response.send(food);
+    response.send({ data: food, status: 200 });
   } catch (error) {
     response.status(500).send(error);
   }

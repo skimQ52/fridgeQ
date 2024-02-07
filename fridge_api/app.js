@@ -1,20 +1,20 @@
 require("dotenv").config(); // environment variable
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require("cors");
-var mongoose = require("mongoose");
+let createError = require('http-errors');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
+let cors = require("cors");
+let mongoose = require("mongoose");
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var testAPIRouter = require("./routes/testAPI");
-var mongoAPIRouter = require("./routes/mongoAPI");
-var mealsRouter = require('./routes/meals');
+let indexRouter = require('./routes/index');
+let usersRouter = require('./routes/users');
+let testAPIRouter = require("./routes/testAPI");
+let mongoAPIRouter = require("./routes/mongoAPI");
+let mealsRouter = require('./routes/meals');
 
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,7 +37,8 @@ app.use("/meals", mealsRouter);
 mongoose.connect(process.env.MONGODB_URL,
   {
     useNewUrlParser: true,
-  }
+    dbName: "fridgeQ",
+  },
 );
 
 const db = mongoose.connection;

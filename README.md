@@ -1,5 +1,5 @@
 ![FridgeWise Logo](fridgeq/src/imgs/FridgeWise.png)
-## A Food and Meal tracking service with the ability to AI generate meals!
+## A Food and MealItem tracking service with the ability to AI generate meals!
 
 ### Features
 - Add and manage foods in your virtual fridge
@@ -28,13 +28,13 @@
 ## Meals Page
 ![Meals Page](visuals/meals.gif)
 
-## View a Meal
-![View a Meal](visuals/viewMeal.gif)
+## View a MealItem
+![View a MealItem](visuals/viewMeal.gif)
 
-## Create a Meal
-![Create a Meal](visuals/createMeal.gif)
+## Create a MealItem
+![Create a MealItem](visuals/createMeal.gif)
 
-## AI Generate a Meal
-![AI Generate a Meal](visuals/generateMeal.gif)
+## AI Generate a MealItem
+![AI Generate a MealItem](visuals/generateMeal.gif)
 
-![AI generated Meal](visuals/AIGeneratedMeal.png)
+![AI generated MealItem](visuals/AIGeneratedMeal.png)
