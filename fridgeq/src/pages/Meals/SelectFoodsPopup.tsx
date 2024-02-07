@@ -1,4 +1,4 @@
-import Popup from "../Popup.tsx";
+import Popup from "../../components/Popup.tsx";
 import React, {useEffect, useState} from "react";
 import {getFoods} from "../../services/foodService.ts";
 import {useAuthContext} from "../../hooks/useAuthContext.ts";
@@ -6,7 +6,6 @@ import {useAuthContext} from "../../hooks/useAuthContext.ts";
 interface SelectFoodsPopupProps {
     onClick: () => void;
     onSubmit: (selectedFoods: Food[]) => void;
-    error: any;
     onGenerate: (ingredients: string[], type: string, e: any) => void;
 }
 
@@ -97,6 +96,6 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
                 </select>
             </div>
         </div>
-        {props.error && <div className="error">{props.error}</div>}
+        {/*{props.error && <div className="error">{props.error}</div>}*/}
     </Popup>;
 }

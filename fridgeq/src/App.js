@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
-import Fridge from './components/Fridge/Fridge';
+import Fridge from './pages/Fridge/Fridge';
 import Navbar from './components/Navbar';
-import Login from './components/Login/Login';
-import Signup from './components/Signup';
+import Login from './pages/Login/Login';
+import Signup from './pages/Login/Signup';
 import Topbar from './components/Topbar';
-import Landing from './components/Landing/Landing';
-import Meals from './components/Meals/Meals';
+import Landing from './pages/Landing/Landing';
+import Meals from './pages/Meals/Meals';
 import { useAuthContext } from './hooks/useAuthContext';
 import { PageProvider } from './context/PageContext';
 

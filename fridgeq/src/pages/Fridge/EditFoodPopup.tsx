@@ -1,4 +1,4 @@
-import Popup from "../Popup";
+import Popup from "../../components/Popup.tsx";
 import React, {useState} from "react";
 
 interface EditFoodPopupProps {

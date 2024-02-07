@@ -4,7 +4,7 @@ import {useAuthContext} from '../../hooks/useAuthContext';
 import MealItem from "./MealItem";
 import {addMeal, deleteMeal, generateMeal, getMeal, getMeals} from "../../services/mealService.ts";
 import MealPopup from "./MealPopup.tsx";
-import {FilterBar} from "../Fridge/FilterBar.tsx";
+import {FilterBar} from "../../components/FilterBar.tsx";
 import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
 import {AddMealPopup} from "./AddMealPopup.tsx";
 import {GeneratedMealPopup} from "./GeneratedMealPopup.tsx";
@@ -35,7 +35,6 @@ const Meals = () => {
     const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
     const [selectedFoods, setSelectedFoods] = useState<Food[]>([]);
 
-    const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const [isSelectFoodsPopup, setIsSelectFoodsPopup] = useState(false);
@@ -212,16 +211,16 @@ const Meals = () => {
             }
 
             {isSelectFoodsPopup &&
-                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup} onGenerate={handleGenerateMeal} error={error}/>
+                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup} onGenerate={handleGenerateMeal}/>
             }
 
             {isAddMealPopup &&
-                <AddMealPopup onClick={() => setIsAddMealPopup(false)} onSubmit={handleNewMeal} error={error} foods={selectedFoods}/>
+                <AddMealPopup onClick={() => setIsAddMealPopup(false)} onSubmit={handleNewMeal} foods={selectedFoods}/>
             }
 
             {/* Generated MealItem Popup */}
             {isGeneratedPopup &&
-                <GeneratedMealPopup onClick={discardGeneratedMeal} onSubmit={handleNewMeal} generated={mealPopup} error={error}/>
+                <GeneratedMealPopup onClick={discardGeneratedMeal} onSubmit={handleNewMeal} generated={mealPopup}/>
             }
 
             {/* Generate Loading Screen */}

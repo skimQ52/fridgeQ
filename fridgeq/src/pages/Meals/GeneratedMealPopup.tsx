@@ -1,14 +1,13 @@
 import React, {useRef, useState} from "react";
 import {Meal} from "./Meals.tsx";
-import Popup from "../Popup.tsx";
-import TextInput from "../TextInput.tsx";
-import ParagraphInput from "./ParagraphInput.tsx";
+import Popup from "../../components/Popup.tsx";
+import TextInput from "../../components/TextInput.tsx";
+import ParagraphInput from "../../components/ParagraphInput.tsx";
 
 interface GeneratedMealPopupProps {
     onClick: () => void;
     generated: Meal;
     onSubmit: (meal: Meal, e: any) => {};
-    error: any;
 }
 
 export function GeneratedMealPopup(props: GeneratedMealPopupProps) {
@@ -64,7 +63,7 @@ export function GeneratedMealPopup(props: GeneratedMealPopupProps) {
             <select onChange={handleTypeSelect} disabled={true} className="input input-select">
                 <option value={props.generated.type}>{props.generated.type}</option>
             </select>
-            {props.error && <div className="error">{props.error}</div>}
+            {/*{props.error && <div className="error">{props.error}</div>}*/}
             <div className="buttonSpread">
                 <button onClick={props.onClick} className="glow-on-hover confirmButton">Discard</button>
                 <button onClick={makeNewFood} type="submit" className="glow-on-hover confirmButton">Save Meal</button>

@@ -1,7 +1,7 @@
-import Popup from "../Popup";
+import Popup from "../../components/Popup.tsx";
 import React, {useRef, useState} from "react";
-import NumberInput from "../NumberInput.tsx";
-import TextInput from "../TextInput.tsx";
+import NumberInput from "../../components/NumberInput.tsx";
+import TextInput from "../../components/TextInput.tsx";
 
 interface AddFoodPopupProps {
     onClick: () => void;

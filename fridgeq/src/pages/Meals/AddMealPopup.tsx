@@ -1,12 +1,11 @@
 import React, {useEffect, useRef, useState} from "react";
-import ParagraphInput from "./ParagraphInput.tsx";
+import ParagraphInput from "../../components/ParagraphInput.tsx";
 import {Meal} from "./Meals.tsx";
-import TextInput from "../TextInput.tsx";
-import Popup from "../Popup.tsx";
+import TextInput from "../../components/TextInput.tsx";
+import Popup from "../../components/Popup.tsx";
 
 interface AddMealPopupProps {
     onSubmit: (meal: Meal, e: React.FormEvent) => Promise<void>;
-    error: any;
     foods: Food[];
     onClick: () => void;
 }
@@ -80,7 +79,7 @@ export function AddMealPopup(props: AddMealPopupProps) {
                     <option value="Snack">Snack</option>
                     <option value="Other">Other</option>
                 </select>
-                {props.error && <div className="error">{props.error}</div>}
+                {/*{props.error && <div className="error">{props.error}</div>}*/}
                 <button className="glow-on-hover confirmButton">Confirm</button>
             </form>
         </Popup>

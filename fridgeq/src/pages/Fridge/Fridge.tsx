@@ -8,7 +8,7 @@ import {addFood, deleteFood, getFoods, updateFood} from '../../services/foodServ
 
 import {AddFoodPopup} from "./AddFoodPopup";
 import {EditFoodPopup} from "./EditFoodPopup";
-import {FilterBar} from "./FilterBar";
+import {FilterBar} from "../../components/FilterBar.tsx";
 
 interface Food {
     _id: string;

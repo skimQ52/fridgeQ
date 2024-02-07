@@ -1,4 +1,4 @@
-import Popup from "../Popup.tsx";
+import Popup from "../../components/Popup.tsx";
 import React from "react";
 import { Meal } from "./Meals.tsx";
 

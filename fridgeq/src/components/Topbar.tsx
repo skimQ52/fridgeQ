@@ -1,8 +1,8 @@
 import React from "react"
 import { Link } from 'react-router-dom'
-import { useLogout } from '../hooks/useLogout'
-import { useAuthContext } from '../hooks/useAuthContext';
-import { usePage } from '../context/PageContext';
+import { useLogout } from '../hooks/useLogout.ts'
+import { useAuthContext } from '../hooks/useAuthContext.ts';
+import { usePage } from '../context/PageContext.tsx';
 
 const Topbar = () => {
   const { logout } = useLogout();
