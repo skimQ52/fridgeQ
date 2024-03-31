@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Food;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 
 class FoodController extends Controller
 {
@@ -55,7 +54,7 @@ class FoodController extends Controller
                 'type' => $validated['type'],
                 'user_id' => "TEMPUSERID1231412312412312", //todo: Fix user id to real
             ]);
-            return response()->json(['data' => $food], 200);
+            return response()->json(['data' => $food]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
