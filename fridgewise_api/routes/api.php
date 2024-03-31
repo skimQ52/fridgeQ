@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\MealController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,3 +28,5 @@ Route::post('/food', [FoodController::class, 'store']);
 Route::get('/food', [FoodController::class, 'index']);
 Route::delete('/food', [FoodController::class, 'destroy']);
 Route::patch('/food', [FoodController::class, 'update']);
+
+Route::post('/meal', [MealController::class, 'store']);

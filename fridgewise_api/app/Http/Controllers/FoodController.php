@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 
 class FoodController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         try {
@@ -17,10 +14,10 @@ class FoodController extends Controller
 
             if ($foodName) {
                 $food = Food::query()->where('name', $foodName)->first(); // todo: where user_id
-                return response()->json(['data' => $food], 200);
+                return response()->json(['data' => $food]);
             }
             $foods = Food::query()->get(); // todo: where user_id
-            return response()->json(['data' => $foods], 200);
+            return response()->json(['data' => $foods]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -45,7 +42,13 @@ class FoodController extends Controller
                 'type.in' => 'The selected type is invalid.',
             ]);
 
-            //TODO: check for existing food with name and call update instead
+            //TODO: check for existing food with name and update instead
+            $food = Food::query()->where('name', $validated['name'])->first();
+
+            if ($food) {
+                //TODO: use foodservice to update instead?
+                return redirect()->action([FoodController::class, 'update'], ['name' => $validated['name'], 'quan' => $validated['quantity']]);
+            }
 
 //            $data['user_id'] = $request->user()->_id;
             $food = Food::query()->create([
@@ -73,9 +76,13 @@ class FoodController extends Controller
             $food = Food::query()
                 ->where('name', $name)
 //                ->where('user_id', $user_id)
-                ->update(['quantity' => $quan]);
+                ->first();
+            if (!$food) {
+                return response()->json(['message' => 'User does not have this food']);
+            }
 
-            return response()->json(['message' => 'Food updated successfully'], 200);
+            $food->update(['quantity' => $quan]);
+            return response()->json(['message' => 'Food updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -90,8 +97,14 @@ class FoodController extends Controller
 //            $user_id = $request->user()->_id; // Assuming you have authentication set up correctly
             $name = $request->query('name');
 
-            $food = Food::query()->where('name', $name)->delete();
-
+            $food = Food::query()
+                ->where('name', $name)
+//                ->where('user_id', $user_id)
+                ->first();
+            if (!$food) {
+                return response()->json(['message' => 'User does not have this food']);
+            }
+            $food->delete();
             return response()->json(['message' => 'Food Deleted']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
