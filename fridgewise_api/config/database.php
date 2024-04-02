@@ -41,6 +41,12 @@ return [
             'database' => env('DB_DATABASE', 'fridge'),
         ],
 
+        'mongodb_testing' => [
+            'driver' => 'mongodb',
+            'dsn' => env('DB_URI', ''),
+            'database' => env('DB_DATABASE', 'fridge_testing'),
+        ],
+
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DATABASE_URL'),

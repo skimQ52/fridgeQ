@@ -47,6 +47,8 @@ class FoodController extends Controller
 
             if ($food) {
                 //TODO: use foodservice to update instead?
+                //upsert
+
                 return redirect()->action([FoodController::class, 'update'], ['name' => $validated['name'], 'quan' => $validated['quantity']]);
             }
 
@@ -70,19 +72,19 @@ class FoodController extends Controller
     {
         try {
 //            $user_id = $request->user()->_id; // Assuming you have authentication set up correctly
-            $name = $request->query('name');
-            $quan = $request->query('quan');
+            $name = $request->input('name');
+            $quan = $request->input('quan');
 
             $food = Food::query()
                 ->where('name', $name)
 //                ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
-                return response()->json(['message' => 'User does not have this food']);
+                return response()->json(['message' => 'User does not have the food: ' . $name]);
             }
 
             $food->update(['quantity' => $quan]);
-            return response()->json(['message' => 'Food updated successfully']);
+            return response()->json(['message' => $name . ' updated successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -95,17 +97,16 @@ class FoodController extends Controller
     {
         try {
 //            $user_id = $request->user()->_id; // Assuming you have authentication set up correctly
-            $name = $request->query('name');
-
+            $name = $request->input("name");
             $food = Food::query()
                 ->where('name', $name)
 //                ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
-                return response()->json(['message' => 'User does not have this food']);
+                return response()->json(['message' => 'User does not have the food: '. $name]);
             }
             $food->delete();
-            return response()->json(['message' => 'Food Deleted']);
+            return response()->json(['message' => $name.' deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

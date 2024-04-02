@@ -3,14 +3,16 @@
 namespace Tests\Feature;
 
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\Food;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use function PHPUnit\Framework\assertEquals;
 
+
 class FoodControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_post_creates_new_food(): void
     {
@@ -137,9 +139,9 @@ class FoodControllerTest extends TestCase
             'quantity' => 7,
         ]);
 
-        $response = $this->delete('/api/food', ['name' => 'bread']);
+        $response = $this->delete('/api/food', ['name' => 'orange']);
 
-        $response->assertStatus(200)->assertJson(['message' => 'Food Deleted']);
+        $response->assertStatus(200)->assertJson(['message' => 'orange deleted successfully']);
 
         $this->assertCount(1, Food::query()->get());
     }
@@ -154,7 +156,7 @@ class FoodControllerTest extends TestCase
 
         $response = $this->delete('/api/food', ['name' => 'bread']);
 
-        $response->assertStatus(200)->assertJson(['message' => 'User does not have this food']);
+        $response->assertStatus(200)->assertJson(['message' => 'User does not have the food: bread']);
 
         $this->assertCount(1, Food::query()->get());
     }
@@ -171,14 +173,14 @@ class FoodControllerTest extends TestCase
         $bread = $bread->fresh();
         $this->assertEquals(16, $bread->quantity);
 
-        $response->assertStatus(200)->assertJson(['message' => 'Food updated successfully']);
+        $response->assertStatus(200)->assertJson(['message' => 'bread updated successfully']);
     }
 
     public function test_patch_doesnt_update_missing_food() {
 
         $response = $this->patch('/api/food', ['name' => 'bread', 'quan' => 16]);
 
-        $response->assertStatus(200)->assertJson(['message' => 'User does not have this food']);
+        $response->assertStatus(200)->assertJson(['message' => 'User does not have the food: bread']);
     }
 
     public function test_get_returns_all_foods(): void
