@@ -42,17 +42,15 @@ class FoodController extends Controller
                 'type.in' => 'The selected type is invalid.',
             ]);
 
-            //TODO: check for existing food with name and update instead
+
             $food = Food::query()->where('name', $validated['name'])->first();
-
             if ($food) {
-                //TODO: use foodservice to update instead?
-                //upsert
-
-                return redirect()->action([FoodController::class, 'update'], ['name' => $validated['name'], 'quan' => $validated['quantity']]);
+                $food->update([
+                    'quantity' => $validated['quantity'],
+                ]);
+                return response()->json(['data' => $food]);
             }
 
-//            $data['user_id'] = $request->user()->_id;
             $food = Food::query()->create([
                 'name' => $validated['name'],
                 'quantity' => $validated['quantity'],
@@ -71,7 +69,7 @@ class FoodController extends Controller
     public function update(Request $request)
     {
         try {
-//            $user_id = $request->user()->_id; // Assuming you have authentication set up correctly
+//            $user_id = $request->user()->_id;
             $name = $request->input('name');
             $quan = $request->input('quan');
 
@@ -96,7 +94,7 @@ class FoodController extends Controller
     public function destroy(Request $request)
     {
         try {
-//            $user_id = $request->user()->_id; // Assuming you have authentication set up correctly
+//            $user_id = $request->user()->_id;
             $name = $request->input("name");
             $food = Food::query()
                 ->where('name', $name)

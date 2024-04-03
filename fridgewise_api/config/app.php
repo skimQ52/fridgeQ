@@ -185,7 +185,8 @@ return [
         /*
          * Package Service Providers...
          */
-
+        MongoDB\Laravel\MongoDBServiceProvider::class,
+        Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -195,7 +196,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        MongoDB\Laravel\MongoDBServiceProvider::class,
 
 
     ],

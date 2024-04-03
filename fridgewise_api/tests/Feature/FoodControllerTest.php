@@ -19,15 +19,45 @@ class FoodControllerTest extends TestCase
         $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
-            "quantity" => "29",
+            "quantity" => 29,
         ]);
 
-        $response->assertStatus(200);
-
         $food = Food::query()->where("name", "taco")->firstOrFail();
-
         $this->assertEquals('fruit', $food->type);
         $this->assertEquals(29, $food->quantity);
+
+        $response->assertStatus(200);
+        $this->assertArraySubset([
+            "name" => "taco",
+            "type" => "fruit",
+            "quantity" => 29
+        ], $response->json('data'));
+    }
+
+    public function test_put_updates_existing_food_quantity(): void
+    {
+        Food::query()->create([
+            'name' => 'taco',
+            'type' => 'fruit',
+            'quantity' => 3,
+        ]);
+
+        $response = $this->put('/api/food', [
+            "name" => "taco",
+            "type" => "grains",
+            "quantity" => 29,
+        ]);
+
+        $food = Food::query()->where("name", "taco")->firstOrFail();
+        $this->assertEquals('fruit', $food->type);
+        $this->assertEquals(29, $food->quantity);
+
+        $response->assertStatus(200);
+        $this->assertArraySubset([
+            "name" => "taco",
+            "type" => "fruit",
+            "quantity" => 29
+        ], $response->json('data'));
     }
 
     public function test_put_fails_if_fields_are_missing(): void

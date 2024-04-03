@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\MealController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,13 +17,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::get('/ping', function () {
     return response()->json(['message' => 'Pong!'], 200);
 });
+
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+Route::post('/user/login', [UserController::class, 'login']);
+Route::post('/user/signup', [UserController::class, 'signup']);
 
 Route::put('/food', [FoodController::class, 'store']);
 Route::get('/food', [FoodController::class, 'index']);
