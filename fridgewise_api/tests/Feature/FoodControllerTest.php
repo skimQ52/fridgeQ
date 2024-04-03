@@ -12,11 +12,11 @@ use function PHPUnit\Framework\assertEquals;
 
 class FoodControllerTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
-    public function test_post_creates_new_food(): void
+    public function test_put_creates_new_food(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "29",
@@ -30,10 +30,10 @@ class FoodControllerTest extends TestCase
         $this->assertEquals(29, $food->quantity);
     }
 
-    public function test_post_fails_if_fields_are_missing(): void
+    public function test_put_fails_if_fields_are_missing(): void
     {
         //TODO: this test sux
-        $response = $this->post('/api/food', []);
+        $response = $this->put('/api/food', []);
 
         $response->assertStatus(500);
 
@@ -41,9 +41,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_name_is_max_25_chars(): void
+    public function test_put_name_is_max_25_chars(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco45678910111111111111111111111111111",
             "type" => "fruit",
             "quantity" => "99",
@@ -55,9 +55,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_quantity_cant_be_over_99(): void
+    public function test_put_quantity_cant_be_over_99(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "100",
@@ -69,9 +69,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_quantity_cant_be_negative(): void
+    public function test_put_quantity_cant_be_negative(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "-1",
@@ -83,9 +83,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_quantity_cant_be_string(): void
+    public function test_put_quantity_cant_be_string(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "SudoWoodo",
@@ -97,9 +97,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_type_cant_be_random(): void
+    public function test_put_type_cant_be_random(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => "SudoWoodo",
             "quantity" => "5",
@@ -111,9 +111,9 @@ class FoodControllerTest extends TestCase
         $this->assertDatabaseCount('foods', 0);
     }
 
-    public function test_post_type_must_be_string(): void
+    public function test_put_type_must_be_string(): void
     {
-        $response = $this->post('/api/food', [
+        $response = $this->put('/api/food', [
             "name" => "taco",
             "type" => 48,
             "quantity" => "5",
@@ -185,7 +185,6 @@ class FoodControllerTest extends TestCase
 
     public function test_get_returns_all_foods(): void
     {
-        //TODO: fix text
         $bread = Food::query()->create([
             'name' => 'bread',
             'type' => 'grain',
@@ -203,35 +202,27 @@ class FoodControllerTest extends TestCase
         $response = $this->get('/api/food');
 
         $response->assertStatus(200);
-//            ->assertJson([
-//                "data" => [
-//                    [
-//                        "_id" => $bread->id,
-//                        "name" => $bread->name,
-//                        "type" => $bread->type,
-//                        "quantity" => $bread->quantity,
-//                        "updated_at" => Carbon::parse($bread->updated_at)->format('Y-m-d\TH:i:s'),
-//                        "created_at" => Carbon::parse($bread->created_at)->format('Y-m-d\TH:i:s'),
-//                    ],
-//                    [
-//                        "_id" => $banana->id,
-//                        "name" => $banana->name,
-//                        "type" => $banana->type,
-//                        "quantity" => $banana->quantity,
-//                        "updated_at" => Carbon::parse($banana->updated_at)->format('Y-m-d\TH:i:s'),
-//                        "created_at" => Carbon::parse($bread->created_at)->format('Y-m-d\TH:i:s'),
-//                    ]
-//                ]
-//            ]);
+        $this->assertArraySubset([
+            "_id" => $bread->id,
+            "name" => $bread->name,
+            "type" => $bread->type,
+            "quantity" => $bread->quantity,
+        ], $response->json('data')[0]);
+
+        $this->assertArraySubset([
+            "_id" => $banana->id,
+            "name" => $banana->name,
+            "type" => $banana->type,
+            "quantity" => $banana->quantity,
+        ], $response->json('data')[1]);
     }
 
     public function test_get_with_name_returns_the_food(): void
     {
-        //Todo: fix test
         $taco = Food::query()->create([
             'name' => 'taco',
             'type' => 'fruit',
-            'quan' => 7,
+            'quantity' => 7,
         ]);
 
         $response = $this->get('/api/food', [
@@ -239,5 +230,11 @@ class FoodControllerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
+        $this->assertArraySubset([
+            "_id" => $taco->id,
+            "name" => $taco->name,
+            "type" => $taco->type,
+            "quantity" => $taco->quantity,
+        ], $response->json('data')[0]);
     }
 }

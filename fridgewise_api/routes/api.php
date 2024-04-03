@@ -24,7 +24,7 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'Pong!'], 200);
 });
 
-Route::post('/food', [FoodController::class, 'store']);
+Route::put('/food', [FoodController::class, 'store']);
 Route::get('/food', [FoodController::class, 'index']);
 Route::delete('/food', [FoodController::class, 'destroy']);
 Route::patch('/food', [FoodController::class, 'update']);
