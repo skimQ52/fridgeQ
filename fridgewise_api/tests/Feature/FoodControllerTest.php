@@ -16,53 +16,51 @@ class FoodControllerTest extends TestCase
 
     public function test_put_creates_new_food(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => 29,
+        ])
+            ->assertStatus(200)
+            ->assertJsonFragment([ // put data
+                "name" => "taco",
+                "type" => "fruit",
+                "quantity" => 29
         ]);
 
         $food = Food::query()->where("name", "taco")->firstOrFail();
         $this->assertEquals('fruit', $food->type);
         $this->assertEquals(29, $food->quantity);
-
-        $response->assertStatus(200);
-        $this->assertArraySubset([
-            "name" => "taco",
-            "type" => "fruit",
-            "quantity" => 29
-        ], $response->json('data'));
     }
 
     public function test_put_updates_existing_food_quantity(): void
     {
-        Food::query()->create([
+        $food = Food::query()->create([ //use factory
             'name' => 'taco',
             'type' => 'fruit',
             'quantity' => 3,
         ]);
 
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "grains",
             "quantity" => 29,
+        ])
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                "name" => "taco",
+                "type" => "fruit",
+                "quantity" => 29
         ]);
 
-        $food = Food::query()->where("name", "taco")->firstOrFail();
+        $food->refresh();
+        $this->assertEquals('taco', $food->name);
         $this->assertEquals('fruit', $food->type);
         $this->assertEquals(29, $food->quantity);
-
-        $response->assertStatus(200);
-        $this->assertArraySubset([
-            "name" => "taco",
-            "type" => "fruit",
-            "quantity" => 29
-        ], $response->json('data'));
     }
 
     public function test_put_fails_if_fields_are_missing(): void
     {
-        //TODO: this test sux
         $response = $this->put('/api/food', []);
 
         $response->assertStatus(500);
@@ -73,85 +71,79 @@ class FoodControllerTest extends TestCase
 
     public function test_put_name_is_max_25_chars(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco45678910111111111111111111111111111",
             "type" => "fruit",
             "quantity" => "99",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The name may not be greater than 25 characters."]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The name may not be greater than 25 characters.", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
     public function test_put_quantity_cant_be_over_99(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "100",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The quantity must be between 1 and 99."]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The quantity must be between 1 and 99.", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
     public function test_put_quantity_cant_be_negative(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "-1",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The quantity must be between 1 and 99."]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The quantity must be between 1 and 99.", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
     public function test_put_quantity_cant_be_string(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "SudoWoodo",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The quantity must be a number."]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The quantity must be a number.", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
     public function test_put_type_cant_be_random(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => "SudoWoodo",
             "quantity" => "5",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The selected type is invalid."]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The selected type is invalid.", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
     public function test_put_type_must_be_string(): void
     {
-        $response = $this->put('/api/food', [
+        $this->put('/api/food', [
             "name" => "taco",
             "type" => 48,
             "quantity" => "5",
-        ]);
+        ])
+            ->assertStatus(500)
+            ->assertJsonFragment(["The type must be a string. (and 1 more error)"]);
 
-        $response->assertStatus(500);
-
-        $this->assertEquals("The type must be a string. (and 1 more error)", $response->json()['error']);
         $this->assertDatabaseCount('foods', 0);
     }
 
@@ -169,11 +161,12 @@ class FoodControllerTest extends TestCase
             'quantity' => 7,
         ]);
 
-        $response = $this->delete('/api/food', ['name' => 'orange']);
-
-        $response->assertStatus(200)->assertJson(['message' => 'orange deleted successfully']);
+        $this->delete('/api/food', ['name' => 'orange'])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'orange deleted successfully']);
 
         $this->assertCount(1, Food::query()->get());
+        $this->assertEquals('bread', Food::query()->first()->name);
     }
 
     public function test_delete_doesnt_destroy_missing_food() {
@@ -184,33 +177,33 @@ class FoodControllerTest extends TestCase
             'quantity' => 7,
         ]);
 
-        $response = $this->delete('/api/food', ['name' => 'bread']);
-
-        $response->assertStatus(200)->assertJson(['message' => 'User does not have the food: bread']);
+        $this->delete('/api/food', ['name' => 'bread'])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'User does not have the food: bread']);
 
         $this->assertCount(1, Food::query()->get());
     }
 
     public function test_patch_updates_food() {
+
         $bread = Food::query()->create([
             'name' => 'bread',
             'type' => 'grain',
             'quantity' => 3,
         ]);
 
-        $response = $this->patch('/api/food', ['name' => 'bread', 'quan' => 16]);
+        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'bread updated successfully']);
 
         $bread = $bread->fresh();
         $this->assertEquals(16, $bread->quantity);
-
-        $response->assertStatus(200)->assertJson(['message' => 'bread updated successfully']);
     }
 
     public function test_patch_doesnt_update_missing_food() {
-
-        $response = $this->patch('/api/food', ['name' => 'bread', 'quan' => 16]);
-
-        $response->assertStatus(200)->assertJson(['message' => 'User does not have the food: bread']);
+        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'User does not have the food: bread']);
     }
 
     public function test_get_returns_all_foods(): void
@@ -229,22 +222,19 @@ class FoodControllerTest extends TestCase
 
         $foods = Food::query()->get();
         $this->assertCount(2, $foods);
-        $response = $this->get('/api/food');
+        $this->get('/api/food')
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                "_id" => $bread->id,
+                "name" => $bread->name,
+                "type" => $bread->type,
+                "quantity" => $bread->quantity,
 
-        $response->assertStatus(200);
-        $this->assertArraySubset([
-            "_id" => $bread->id,
-            "name" => $bread->name,
-            "type" => $bread->type,
-            "quantity" => $bread->quantity,
-        ], $response->json('data')[0]);
-
-        $this->assertArraySubset([
-            "_id" => $banana->id,
-            "name" => $banana->name,
-            "type" => $banana->type,
-            "quantity" => $banana->quantity,
-        ], $response->json('data')[1]);
+                "_id" => $banana->id,
+                "name" => $banana->name,
+                "type" => $banana->type,
+                "quantity" => $banana->quantity,
+            ]);
     }
 
     public function test_get_with_name_returns_the_food(): void
@@ -255,16 +245,15 @@ class FoodControllerTest extends TestCase
             'quantity' => 7,
         ]);
 
-        $response = $this->get('/api/food', [
+        $this->get('/api/food', [
             "name" => "taco",
-        ]);
-
-        $response->assertStatus(200);
-        $this->assertArraySubset([
-            "_id" => $taco->id,
-            "name" => $taco->name,
-            "type" => $taco->type,
-            "quantity" => $taco->quantity,
-        ], $response->json('data')[0]);
+        ])
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                "_id" => $taco->id,
+                "name" => $taco->name,
+                "type" => $taco->type,
+                "quantity" => $taco->quantity,
+            ]);
     }
 }

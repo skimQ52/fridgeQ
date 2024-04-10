@@ -4,27 +4,34 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            $token = $user->createToken('AuthToken')->plainTextToken;
+        $request->validate([
+           'email' => 'required|email',
+           'password' => 'required',
+        ]);
 
-            return response()->json([
-                'user' => $user,
-                'token' => $token
+        $user = User::query()->where('email', Str::lower($request->email))->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        return response()->json(['error' => 'Invalid credentials'], 401);
+        $plainTextToken = $user->createToken($user->name)->plainTextToken;
+        return response()->json([
+            'token' => $plainTextToken,
+            'email' => $user->email,
+            'name' => $user->name,
+        ]);
     }
 
     public function register(Request $request)
@@ -32,18 +39,25 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
         ]);
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
+        $hashedPass = Hash::make($validatedData['password']);
 
-        $user = User::query()->create($validatedData);
-//        $token = $user->createToken('AuthToken')->plainTextToken;
+        User::query()->create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => $hashedPass,
+        ]);
 
+        $user = User::query()->where('email', Str::lower($request->email))->first();
+
+        $plainTextToken = $user->createToken($user->name)->plainTextToken;
         return response()->json([
-            'user' => $user,
-            'token' => $token
-        ], 201);
+            'token' => $plainTextToken,
+            'email' => $user->email,
+            'name' => $user->name,
+        ]);
     }
 
     public function logout(Request $request)

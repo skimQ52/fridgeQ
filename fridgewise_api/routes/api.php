@@ -21,15 +21,19 @@ Route::get('/ping', function () {
     return response()->json(['message' => 'Pong!'], 200);
 });
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
 Route::post('/user/login', [UserController::class, 'login']);
-Route::post('/user/signup', [UserController::class, 'signup']);
+Route::post('/user/register', [UserController::class, 'register']);
+
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
 
 Route::put('/food', [FoodController::class, 'store']);
-Route::get('/food', [FoodController::class, 'index']);
-Route::delete('/food', [FoodController::class, 'destroy']);
-Route::patch('/food', [FoodController::class, 'update']);
+Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
+//    Route::put('/food', [FoodController::class, 'store']);
+    Route::get('/food', [FoodController::class, 'index']);
+    Route::delete('/food', [FoodController::class, 'destroy']);
+    Route::patch('/food', [FoodController::class, 'update']);
 
-Route::post('/meal', [MealController::class, 'store']);
+    Route::post('/meal', [MealController::class, 'store']);
+});
