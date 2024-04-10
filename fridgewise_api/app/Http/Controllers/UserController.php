@@ -13,20 +13,20 @@ class UserController extends Controller
     public function login(Request $request)
     {
 
-        $request->validate([
+        $validated = $request->validate([
            'email' => 'required|email',
            'password' => 'required',
         ]);
 
-        $user = User::query()->where('email', Str::lower($request->email))->first();
+        $user = User::query()->where('email', Str::lower($validated['email']))->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
+            return response()->json([
+                'message' => 'The provided credentials are incorrect.'
             ]);
         }
 
-        $plainTextToken = $user->createToken($user->name)->plainTextToken;
+        $plainTextToken = $user->createToken($user->name)->plainTextToken; // whats wrong here?
         return response()->json([
             'token' => $plainTextToken,
             'email' => $user->email,
@@ -44,17 +44,13 @@ class UserController extends Controller
 
         $hashedPass = Hash::make($validatedData['password']);
 
-        User::query()->create([
+        $user = User::query()->create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => $hashedPass,
         ]);
 
-        $user = User::query()->where('email', Str::lower($request->email))->first();
-
-        $plainTextToken = $user->createToken($user->name)->plainTextToken;
         return response()->json([
-            'token' => $plainTextToken,
             'email' => $user->email,
             'name' => $user->name,
         ]);
