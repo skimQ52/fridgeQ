@@ -16,6 +16,7 @@ class UserController extends Controller
         $validated = $request->validate([
            'email' => 'required|email',
            'password' => 'required',
+            'device_name' => 'required',
         ]);
 
         $user = User::query()->where('email', Str::lower($validated['email']))->first();
@@ -26,7 +27,7 @@ class UserController extends Controller
             ]);
         }
 
-        $plainTextToken = $user->createToken($user->name)->plainTextToken; // whats wrong here?
+        $plainTextToken = $user->createToken($request->device_name)->plainTextToken; // whats wrong here?
         return response()->json([
             'token' => $plainTextToken,
             'email' => $user->email,

@@ -12,8 +12,6 @@ class Food extends Model
         'name',
         'type',
         'quantity',
-        'updated_at',
-        'created_at',
         'user_id',
     ];
 

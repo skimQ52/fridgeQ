@@ -27,7 +27,7 @@ class FoodController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'string|required|unique:posts|max:25',
+                'name' => 'string|required|max:25',
                 'quantity' => 'numeric|required|between:1,99',
                 'type' => 'string|in:fruit,vegetable,proteins,snacks,condiments,grains'
             ], [
