@@ -97,8 +97,22 @@ class MealController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Meal $meal)
+    public function destroy(Request $request)
     {
-        //
+        try {
+//            $user_id = $request->user()->_id;
+            $name = $request->input("name");
+            $meal = Meal::query()
+                ->where('name', $name)
+//                ->where('user_id', $user_id)
+                ->first();
+            if (!$meal) {
+                return response()->json(['message' => 'User does not have the meal: '. $name]);
+            }
+            $meal->delete();
+            return response()->json(['message' => $name.' deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

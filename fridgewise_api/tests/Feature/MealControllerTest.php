@@ -118,43 +118,49 @@ class MealControllerTest extends TestCase
 
         $this->assertDatabaseCount('meals', 0);
     }
-//
-//    public function test_delete_destroys_food() {
-//
-//        Food::query()->create([
-//            'name' => 'bread',
-//            'type' => 'grain',
-//            'quantity' => 3,
-//        ]);
-//
-//        Food::query()->create([
-//            'name' => 'orange',
-//            'type' => 'fruit',
-//            'quantity' => 7,
-//        ]);
-//
-//        $this->delete('/api/food', ['name' => 'orange'])
-//            ->assertStatus(200)
-//            ->assertJsonFragment(['message' => 'orange deleted successfully']);
-//
-//        $this->assertCount(1, Food::query()->get());
-//        $this->assertEquals('bread', Food::query()->first()->name);
-//    }
-//
-//    public function test_delete_doesnt_destroy_missing_food() {
-//
-//        Food::query()->create([
-//            'name' => 'orange',
-//            'type' => 'fruit',
-//            'quantity' => 7,
-//        ]);
-//
-//        $this->delete('/api/food', ['name' => 'bread'])
-//            ->assertStatus(200)
-//            ->assertJsonFragment(['message' => 'User does not have the food: bread']);
-//
-//        $this->assertCount(1, Food::query()->get());
-//    }
+
+    public function test_delete_destroys_food() {
+
+        Meal::query()->create([
+            "name" => "Chiken ALfredo",
+            'description' => 'its chicken with alfredo',
+            'type' => 'dinner',
+            'recipe' => 'put chicken with alfredo',
+            'ingredients' => ['chicken', 'alfredo'],
+        ]);
+
+        Meal::query()->create([
+            "name" => "Pesto Salad",
+            'description' => 'its asaladwiuth pesto',
+            'type' => 'dinner',
+            'recipe' => 'put the salad with the pesto',
+            'ingredients' => ['pesto', 'lettuce', 'tomato'],
+        ]);
+
+        $this->delete('/api/meal', ['name' => 'Pesto Salad'])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'Pesto Salad deleted successfully']);
+
+        $this->assertCount(1, Meal::query()->get());
+        $this->assertEquals('Chiken ALfredo', Meal::query()->first()->name);
+    }
+
+    public function test_delete_doesnt_destroy_missing_meal() {
+
+        Meal::query()->create([
+            "name" => "Chiken ALfredo",
+            'description' => 'its chicken with alfredo',
+            'type' => 'dinner',
+            'recipe' => 'put chicken with alfredo',
+            'ingredients' => ['chicken', 'alfredo'],
+        ]);
+
+        $this->delete('/api/meal', ['name' => 'Pesto Salad'])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'User does not have the meal: Pesto Salad']);
+
+        $this->assertCount(1, Meal::query()->get());
+    }
 //
 //    public function test_patch_updates_food() {
 //
