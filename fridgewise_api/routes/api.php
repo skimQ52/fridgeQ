@@ -37,4 +37,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
     Route::put('/meal', [MealController::class, 'store']);
     Route::delete('/meal', [MealController::class, 'destroy']);
+    Route::get('/meal', [MealController::class, 'index']);
 //});

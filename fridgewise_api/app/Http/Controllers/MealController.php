@@ -10,9 +10,20 @@ class MealController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $mealName = $request->query('name');
+
+            if ($mealName) {
+                $meal = Meal::query()->where('name', $mealName)->first(); // todo: where user_id
+                return response()->json(['data' => $meal]);
+            }
+            $meals = Meal::query()->get(); // todo: where user_id
+            return response()->json(['data' => $meals]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**

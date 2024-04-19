@@ -161,77 +161,67 @@ class MealControllerTest extends TestCase
 
         $this->assertCount(1, Meal::query()->get());
     }
-//
-//    public function test_patch_updates_food() {
-//
-//        $bread = Food::query()->create([
-//            'name' => 'bread',
-//            'type' => 'grain',
-//            'quantity' => 3,
-//        ]);
-//
-//        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
-//            ->assertStatus(200)
-//            ->assertJsonFragment(['message' => 'bread updated successfully']);
-//
-//        $bread = $bread->fresh();
-//        $this->assertEquals(16, $bread->quantity);
-//    }
-//
-//    public function test_patch_doesnt_update_missing_food() {
-//        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
-//            ->assertStatus(200)
-//            ->assertJsonFragment(['message' => 'User does not have the food: bread']);
-//    }
-//
-//    public function test_get_returns_all_foods(): void
-//    {
-//        $bread = Food::query()->create([
-//            'name' => 'bread',
-//            'type' => 'grain',
-//            'quantity' => 2,
-//        ]);
-//
-//        $banana = Food::query()->create([
-//            'name' => 'banana',
-//            'type' => 'fruit',
-//            'quantity' => 7,
-//        ]);
-//
-//        $foods = Food::query()->get();
-//        $this->assertCount(2, $foods);
-//        $this->get('/api/food')
-//            ->assertStatus(200)
-//            ->assertJsonFragment([
-//                "_id" => $bread->id,
-//                "name" => $bread->name,
-//                "type" => $bread->type,
-//                "quantity" => $bread->quantity,
-//
-//                "_id" => $banana->id,
-//                "name" => $banana->name,
-//                "type" => $banana->type,
-//                "quantity" => $banana->quantity,
-//            ]);
-//    }
-//
-//    public function test_get_with_name_returns_the_food(): void
-//    {
-//        $taco = Food::query()->create([
-//            'name' => 'taco',
-//            'type' => 'fruit',
-//            'quantity' => 7,
-//        ]);
-//
-//        $this->get('/api/food', [
-//            "name" => "taco",
-//        ])
-//            ->assertStatus(200)
-//            ->assertJsonFragment([
-//                "_id" => $taco->id,
-//                "name" => $taco->name,
-//                "type" => $taco->type,
-//                "quantity" => $taco->quantity,
-//            ]);
-//    }
+
+    public function test_get_returns_all_foods(): void
+    {
+        $meal1 = Meal::query()->create([
+            "name" => "Chiken ALfredo",
+            'description' => 'its chicken with alfredo',
+            'type' => 'dinner',
+            'recipe' => 'put chicken with alfredo',
+            'ingredients' => ['chicken', 'alfredo'],
+        ]);
+
+        $meal2 = Meal::query()->create([
+            "name" => "Pesto Salad",
+            'description' => 'its asaladwiuth pesto',
+            'type' => 'dinner',
+            'recipe' => 'put the salad with the pesto',
+            'ingredients' => ['pesto', 'lettuce', 'tomato'],
+        ]);
+
+        $meals = Meal::query()->get();
+        $this->assertCount(2, $meals);
+        $this->get('/api/meal')
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                "_id" => $meal1->id,
+                "name" => $meal1->name,
+                "description" => $meal1->description,
+                "type" => $meal1->type,
+                "recipe" => $meal1->recipe,
+                "ingredients" => $meal1->ingredients,
+
+                "_id" => $meal2->id,
+                "name" => $meal2->name,
+                "description" => $meal2->description,
+                "type" => $meal2->type,
+                "recipe" => $meal2->recipe,
+                "ingredients" => $meal2->ingredients,
+            ]);
+    }
+
+    public function test_get_with_name_returns_the_food(): void
+    {
+        $taco = Meal::query()->create([
+            "name" => "Pesto Salad",
+            'description' => 'its asaladwiuth pesto',
+            'type' => 'dinner',
+            'recipe' => 'put the salad with the pesto',
+            'ingredients' => ['pesto', 'lettuce', 'tomato'],
+        ]);
+
+        $this->get('/api/meal', [
+            "name" => "Pesto Salad",
+        ])
+            ->assertStatus(200)
+            ->assertJsonFragment([
+                "_id" => $taco->id,
+                "name" => $taco->name,
+                "description" => $taco->description,
+                "type" => $taco->type,
+                "recipe" => $taco->recipe,
+                "ingredients" => $taco->ingredients,
+            ]);
+    }
 }
