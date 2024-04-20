@@ -47,7 +47,7 @@ export default function FridgeItem(props: FridgeItemProps) {
             image = snacks;
             break;
           default:
-            image = '';
+            image = fruits;
     }
 
     return (

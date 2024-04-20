@@ -36,13 +36,13 @@ class FoodControllerTest extends TestCase
     {
         $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
-            "type" => "fruit",
+            "type" => "fruits",
             "quantity" => 29,
         ])
             ->assertStatus(200)
             ->assertJsonFragment([ // put data
                 "name" => "taco",
-                "type" => "fruit",
+                "type" => "fruits",
                 "quantity" => 29
         ]);
 
@@ -50,7 +50,7 @@ class FoodControllerTest extends TestCase
             ->where("name", "taco")
             ->where('user_id', $this->user->id)
             ->firstOrFail();
-        $this->assertEquals('fruit', $food->type);
+        $this->assertEquals('fruits', $food->type);
         $this->assertEquals(29, $food->quantity);
     }
 
@@ -58,7 +58,7 @@ class FoodControllerTest extends TestCase
     {
         $food = Food::query()->create([
             'name' => 'taco',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 3,
             'user_id' => $this->user->id,
         ]);
@@ -71,13 +71,13 @@ class FoodControllerTest extends TestCase
             ->assertStatus(200)
             ->assertJsonFragment([
                 "name" => "taco",
-                "type" => "fruit",
+                "type" => "fruits",
                 "quantity" => 29
         ]);
 
         $food->refresh();
         $this->assertEquals('taco', $food->name);
-        $this->assertEquals('fruit', $food->type);
+        $this->assertEquals('fruits', $food->type);
         $this->assertEquals(29, $food->quantity);
     }
 
@@ -95,7 +95,7 @@ class FoodControllerTest extends TestCase
     {
         $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco45678910111111111111111111111111111",
-            "type" => "fruit",
+            "type" => "fruits",
             "quantity" => "99",
         ])
             ->assertStatus(500)
@@ -108,7 +108,7 @@ class FoodControllerTest extends TestCase
     {
         $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
-            "type" => "fruit",
+            "type" => "fruits",
             "quantity" => "100",
         ])
             ->assertStatus(500)
@@ -121,7 +121,7 @@ class FoodControllerTest extends TestCase
     {
         $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
-            "type" => "fruit",
+            "type" => "fruits",
             "quantity" => "-1",
         ])
             ->assertStatus(500)
@@ -134,7 +134,7 @@ class FoodControllerTest extends TestCase
     {
         $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
-            "type" => "fruit",
+            "type" => "fruits",
             "quantity" => "SudoWoodo",
         ])
             ->assertStatus(500)
@@ -173,14 +173,14 @@ class FoodControllerTest extends TestCase
 
         Food::query()->create([
             'name' => 'bread',
-            'type' => 'grain',
+            'type' => 'grains',
             'quantity' => 3,
             'user_id' => $this->user->id,
         ]);
 
         Food::query()->create([
             'name' => 'orange',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 7,
             'user_id' => $this->user->id,
         ]);
@@ -197,7 +197,7 @@ class FoodControllerTest extends TestCase
 
         Food::query()->create([
             'name' => 'orange',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 7,
             'user_id' => $this->user->id,
         ]);
@@ -220,7 +220,7 @@ class FoodControllerTest extends TestCase
 
         $bread = Food::query()->create([
             'name' => 'bread',
-            'type' => 'grain',
+            'type' => 'grains',
             'quantity' => 3,
             'user_id' => $this->user->id,
         ]);
@@ -250,21 +250,21 @@ class FoodControllerTest extends TestCase
     {
         $bread = Food::query()->create([
             'name' => 'bread',
-            'type' => 'grain',
+            'type' => 'grains',
             'quantity' => 2,
             'user_id' => $this->user->id,
         ]);
 
         $banana = Food::query()->create([
             'name' => 'banana',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 7,
             'user_id' => $this->user->id,
         ]);
 
          Food::query()->create([
             'name' => 'banana',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 7,
             'user_id' => 'SOMEOTHERUSERID',
         ]);
@@ -292,7 +292,7 @@ class FoodControllerTest extends TestCase
     {
         $taco = Food::query()->create([
             'name' => 'taco',
-            'type' => 'fruit',
+            'type' => 'fruits',
             'quantity' => 7,
             'user_id' => $this->user->id,
         ]);

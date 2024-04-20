@@ -28,8 +28,9 @@ class UserController extends Controller
             ]);
         }
 
-        $plainTextToken = $user->createToken($request->device_name)->plainTextToken; // whats wrong here?
+        $plainTextToken = $user->createToken($request->device_name)->plainTextToken;
         return response()->json([
+            'id' => $user->id,
             'token' => $plainTextToken,
             'email' => $user->email,
             'name' => $user->name,

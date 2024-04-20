@@ -10,13 +10,14 @@ interface EditFoodPopupProps {
 
 export function EditFoodPopup(props: EditFoodPopupProps) {
 
-    const [name, setName] = useState(props.name);
-    const [quantity, setQuantity] = useState(props.quantity);
+    const [name, setName] = useState<string>(props.name);
+    const [quantity, setQuantity] = useState<number>(Number(props.quantity));
 
-    const handleQuantityChange = (change: 1 | -1) => {
+    const handleQuantityChange = (change: number) => {
         if ((quantity === 99 && change === 1) || (quantity === 0 && change === -1)) {
             return;
         }
+
         setQuantity(quantity + change);
     };
 

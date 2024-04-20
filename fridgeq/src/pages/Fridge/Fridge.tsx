@@ -15,7 +15,7 @@ interface Food {
     name: string;
     type: string;
     quantity: number;
-    updatedAt: string;
+    updated_at: string;
 }
 
 const Fridge = () => {
@@ -47,6 +47,7 @@ const Fridge = () => {
     }
 
     const handleNewFood = async (name: string, quantity: number, type: string, e: React.FormEvent) => {
+        e.preventDefault()
         if (!user) {
             return;
         }
@@ -54,7 +55,6 @@ const Fridge = () => {
         if (existingFood) {
             const newQuantity = existingFood.quantity + quantity;
             const response = await handleUpdateFood(existingFood.name, newQuantity, e);
-            console.log(response);
             return;
         }
 
@@ -67,7 +67,7 @@ const Fridge = () => {
         try {
             const dataString = JSON.stringify(data)
             const response = await addFood(dataString, user.token);
-            console.log(response);
+            setIsAddFoodPopup(false);
             await fetchFoods();
         } catch (error) {
             e.preventDefault();
@@ -85,7 +85,6 @@ const Fridge = () => {
         }
         try {
             const response = await updateFood(name, quantity, user.token);
-            console.log(response);
             setIsEditFoodPopup(false);
             await fetchFoods();
         } catch (error) {
@@ -162,7 +161,7 @@ const Fridge = () => {
                 <div className="Fridge">
                     {foods.map((item, index) => (
                         <FridgeItem key={index} type={item.type} name={item.name} quan={item.quantity}
-                                    onItemClicked={showEditFoodPopup} time={item.updatedAt}></FridgeItem>
+                                    onItemClicked={showEditFoodPopup} time={item.updated_at}></FridgeItem>
                     ))}
                 </div>
 

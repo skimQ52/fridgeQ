@@ -35,7 +35,7 @@ class FoodController extends Controller
             $validated = $request->validate([
                 'name' => 'string|required|max:25',
                 'quantity' => 'numeric|required|between:1,99',
-                'type' => 'string|in:fruit,vegetable,proteins,snacks,condiments,grains'
+                'type' => 'string|in:fruits,vegetables,proteins,snacks,condiments,grains,dairy'
             ], [
                 'name.required' => 'The name field is required.',
                 'name.string' => 'The name must be a string.',
@@ -88,11 +88,19 @@ class FoodController extends Controller
                 ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
-                return response()->json(['message' => 'User does not have the food: ' . $name]);
+                return response()->json([
+                    'data' => [
+                        'message' => 'User does not have the food: ' . $name
+                    ],
+                ]);
             }
 
             $food->update(['quantity' => $quan]);
-            return response()->json(['message' => $name . ' updated successfully']);
+            return response()->json([
+                'data' => [
+                    'message' => $name . ' updated successfully'
+                ],
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -111,10 +119,18 @@ class FoodController extends Controller
                 ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
-                return response()->json(['message' => 'User does not have the food: '. $name]);
+                return response()->json([
+                    'data' => [
+                        'message' => 'User does not have the food: '. $name
+                    ]
+                ]);
             }
             $food->delete();
-            return response()->json(['message' => $name.' deleted successfully']);
+            return response()->json([
+                'data' => [
+                    'message' => $name.' deleted successfully'
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

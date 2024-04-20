@@ -10,27 +10,33 @@ export const useLogin = () => {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch('http://localhost:9000/users/login', {
+        let browser = 'browser'
+
+        const response = await fetch('http://localhost:8000/api/user/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password, "device_name": browser})
         });
-        const json = await response.json();
+        console.log(JSON.stringify({email, password, "device_name": browser}));
+        try {
+            const json = await response.json();
+            if (!json.token) {
+                console.log("HERE");
+                setIsLoading(false);
+                setError(json.error);
+            }
+            else {
+                console.log(json);
+                localStorage.setItem('user', JSON.stringify(json));
+                dispatch({type: 'LOGIN', payload: json});
 
-        if (!response.ok) {
-            setIsLoading(false);
-            setError(json.error);
+                setIsLoading(false);
+            }
         }
-        if (response.ok) {
-            // save user to local storage
-            localStorage.setItem('user', JSON.stringify(json));
-            
-            // update auth context
-            dispatch({type: 'LOGIN', payload: json});
-
-            setIsLoading(false);
+        catch (e) {
+            console.log(e);
         }
     }
 
