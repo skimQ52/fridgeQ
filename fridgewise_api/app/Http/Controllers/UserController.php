@@ -19,6 +19,7 @@ class UserController extends Controller
             'device_name' => 'required',
         ]);
 
+        /** @var User $user */
         $user = User::query()->where('email', Str::lower($validated['email']))->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
@@ -39,7 +40,7 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'email' => 'required|email',
             'password' => 'required|string|min:8',
         ]);
 

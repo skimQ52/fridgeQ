@@ -62,7 +62,12 @@ class MealController extends Controller
                 'ingredients.required' => 'The ingredients field is required.',
             ]);
 
-            $meal = Meal::query()->where('name', $validated['name'])->first();
+            $user_id = $request->user()->_id;
+
+            $meal = Meal::query()
+                ->where('user_id', $user_id)
+                ->where('name', $validated['name'])
+                ->first();
             if ($meal) {
                 return response()->json(['message' => 'The user already has this meal.'], 422);
             }
@@ -73,7 +78,7 @@ class MealController extends Controller
                 'type' => $validated['type'],
                 'recipe' => $validated['recipe'],
                 'ingredients' => $validated['ingredients'],
-                'user_id' => "TEMPUSERID1231412312412312", //todo: Fix user id to real
+                'user_id' => $user_id,
             ]);
             return response()->json((['data' => $meal]));
         } catch (\Exception $e) {
@@ -111,11 +116,11 @@ class MealController extends Controller
     public function destroy(Request $request)
     {
         try {
-//            $user_id = $request->user()->_id;
+            $user_id = $request->user()->_id;
             $name = $request->input("name");
             $meal = Meal::query()
                 ->where('name', $name)
-//                ->where('user_id', $user_id)
+                ->where('user_id', $user_id)
                 ->first();
             if (!$meal) {
                 return response()->json(['message' => 'User does not have the meal: '. $name]);

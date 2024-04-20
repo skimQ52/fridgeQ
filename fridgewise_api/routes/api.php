@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/ping', function () {
+Route::get('/user/register', function () {
     return response()->json(['message' => 'Pong!'], 200);
 });
 
@@ -28,7 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::put('/food', [FoodController::class, 'store']);
 Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
     Route::put('/food', [FoodController::class, 'store']);
     Route::get('/food', [FoodController::class, 'index']);
