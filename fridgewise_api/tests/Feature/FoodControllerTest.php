@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Http\Middleware\Authenticate;
+use App\Models\User;
 use Carbon\Carbon;
 use App\Models\Food;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -14,9 +17,24 @@ class FoodControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    /** @var User $user */
+    protected Model $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /** @var User $user */
+        $this->user = User::query()->create([
+            'name' => 'test',
+            'email' => 'test@gmail.com',
+            'password' => 'testPassword',
+        ]);
+    }
+
     public function test_put_creates_new_food(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => 29,
@@ -28,20 +46,24 @@ class FoodControllerTest extends TestCase
                 "quantity" => 29
         ]);
 
-        $food = Food::query()->where("name", "taco")->firstOrFail();
+        $food = Food::query()
+            ->where("name", "taco")
+            ->where('user_id', $this->user->id)
+            ->firstOrFail();
         $this->assertEquals('fruit', $food->type);
         $this->assertEquals(29, $food->quantity);
     }
 
     public function test_put_updates_existing_food_quantity(): void
     {
-        $food = Food::query()->create([ //use factory
+        $food = Food::query()->create([
             'name' => 'taco',
             'type' => 'fruit',
             'quantity' => 3,
+            'user_id' => $this->user->id,
         ]);
 
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "grains",
             "quantity" => 29,
@@ -61,7 +83,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_fails_if_fields_are_missing(): void
     {
-        $response = $this->put('/api/food', []);
+        $response = $this->actingAs($this->user)->putJson('/api/food', []);
 
         $response->assertStatus(500);
 
@@ -71,7 +93,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_name_is_max_25_chars(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco45678910111111111111111111111111111",
             "type" => "fruit",
             "quantity" => "99",
@@ -84,7 +106,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_quantity_cant_be_over_99(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "100",
@@ -97,7 +119,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_quantity_cant_be_negative(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "-1",
@@ -110,7 +132,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_quantity_cant_be_string(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "fruit",
             "quantity" => "SudoWoodo",
@@ -123,7 +145,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_type_cant_be_random(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => "SudoWoodo",
             "quantity" => "5",
@@ -136,7 +158,7 @@ class FoodControllerTest extends TestCase
 
     public function test_put_type_must_be_string(): void
     {
-        $this->put('/api/food', [
+        $this->actingAs($this->user)->putJson('/api/food', [
             "name" => "taco",
             "type" => 48,
             "quantity" => "5",
@@ -153,15 +175,17 @@ class FoodControllerTest extends TestCase
             'name' => 'bread',
             'type' => 'grain',
             'quantity' => 3,
+            'user_id' => $this->user->id,
         ]);
 
         Food::query()->create([
             'name' => 'orange',
             'type' => 'fruit',
             'quantity' => 7,
+            'user_id' => $this->user->id,
         ]);
 
-        $this->delete('/api/food', ['name' => 'orange'])
+        $this->actingAs($this->user)->deleteJson('/api/food', ['name' => 'orange'])
             ->assertStatus(200)
             ->assertJsonFragment(['message' => 'orange deleted successfully']);
 
@@ -175,13 +199,21 @@ class FoodControllerTest extends TestCase
             'name' => 'orange',
             'type' => 'fruit',
             'quantity' => 7,
+            'user_id' => $this->user->id,
         ]);
 
-        $this->delete('/api/food', ['name' => 'bread'])
+        Food::query()->create([
+            'name' => 'bread',
+            'type' => 'grains',
+            'quantity' => 7,
+            'user_id' => 'SOMEOTHERUSERID',
+        ]);
+
+        $this->actingAs($this->user)->deleteJson('/api/food', ['name' => 'bread'])
             ->assertStatus(200)
             ->assertJsonFragment(['message' => 'User does not have the food: bread']);
 
-        $this->assertCount(1, Food::query()->get());
+        $this->assertCount(2, Food::query()->get());
     }
 
     public function test_patch_updates_food() {
@@ -190,9 +222,10 @@ class FoodControllerTest extends TestCase
             'name' => 'bread',
             'type' => 'grain',
             'quantity' => 3,
+            'user_id' => $this->user->id,
         ]);
 
-        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
+        $this->actingAs($this->user)->patchJson('/api/food', ['name' => 'bread', 'quan' => 16])
             ->assertStatus(200)
             ->assertJsonFragment(['message' => 'bread updated successfully']);
 
@@ -201,7 +234,14 @@ class FoodControllerTest extends TestCase
     }
 
     public function test_patch_doesnt_update_missing_food() {
-        $this->patch('/api/food', ['name' => 'bread', 'quan' => 16])
+        Food::query()->create([
+            'name' => 'bread',
+            'type' => 'grains',
+            'quantity' => 7,
+            'user_id' => 'SOMEOTHERUSERID',
+        ]);
+
+        $this->actingAs($this->user)->patchJson('/api/food', ['name' => 'bread', 'quan' => 16])
             ->assertStatus(200)
             ->assertJsonFragment(['message' => 'User does not have the food: bread']);
     }
@@ -212,28 +252,39 @@ class FoodControllerTest extends TestCase
             'name' => 'bread',
             'type' => 'grain',
             'quantity' => 2,
+            'user_id' => $this->user->id,
         ]);
 
         $banana = Food::query()->create([
             'name' => 'banana',
             'type' => 'fruit',
             'quantity' => 7,
+            'user_id' => $this->user->id,
         ]);
 
-        $foods = Food::query()->get();
+         Food::query()->create([
+            'name' => 'banana',
+            'type' => 'fruit',
+            'quantity' => 7,
+            'user_id' => 'SOMEOTHERUSERID',
+        ]);
+
+        $foods = Food::query()->where('user_id', $this->user->id)->get();
         $this->assertCount(2, $foods);
-        $this->get('/api/food')
+        $this->actingAs($this->user)->getJson('/api/food')
             ->assertStatus(200)
             ->assertJsonFragment([
                 "_id" => $bread->id,
                 "name" => $bread->name,
                 "type" => $bread->type,
                 "quantity" => $bread->quantity,
+                'user_id' => $bread->user_id,
 
                 "_id" => $banana->id,
                 "name" => $banana->name,
                 "type" => $banana->type,
                 "quantity" => $banana->quantity,
+                'user_id' => $banana->user_id,
             ]);
     }
 
@@ -243,9 +294,10 @@ class FoodControllerTest extends TestCase
             'name' => 'taco',
             'type' => 'fruit',
             'quantity' => 7,
+            'user_id' => $this->user->id,
         ]);
 
-        $this->get('/api/food', [
+        $this->actingAs($this->user)->getJson('/api/food', [
             "name" => "taco",
         ])
             ->assertStatus(200)
@@ -254,6 +306,7 @@ class FoodControllerTest extends TestCase
                 "name" => $taco->name,
                 "type" => $taco->type,
                 "quantity" => $taco->quantity,
+                "user_id" => $this->user->id,
             ]);
     }
 }

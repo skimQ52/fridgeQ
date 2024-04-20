@@ -10,13 +10,19 @@ class FoodController extends Controller
     public function index(Request $request)
     {
         try {
+            $user_id = $request->user()->_id;
             $foodName = $request->query('name');
 
             if ($foodName) {
-                $food = Food::query()->where('name', $foodName)->first(); // todo: where user_id
+                $food = Food::query()
+                    ->where('name', $foodName)
+                    ->where('user_id', $user_id)
+                    ->first();
                 return response()->json(['data' => $food]);
             }
-            $foods = Food::query()->get(); // todo: where user_id
+            $foods = Food::query()
+                ->where('user_id', $user_id)
+                ->get();
             return response()->json(['data' => $foods]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -42,8 +48,12 @@ class FoodController extends Controller
                 'type.in' => 'The selected type is invalid.',
             ]);
 
+            $user_id = $request->user()->_id;
 
-            $food = Food::query()->where('name', $validated['name'])->first();
+            $food = Food::query()
+                ->where('name', $validated['name'])
+                ->where('user_id', $user_id)
+                ->first();
             if ($food) {
                 $food->update([
                     'quantity' => $validated['quantity'],
@@ -55,7 +65,7 @@ class FoodController extends Controller
                 'name' => $validated['name'],
                 'quantity' => $validated['quantity'],
                 'type' => $validated['type'],
-                'user_id' => "TEMPUSERID1231412312412312", //todo: Fix user id to real
+                'user_id' => $user_id,
             ]);
             return response()->json(['data' => $food]);
         } catch (\Exception $e) {
@@ -69,13 +79,13 @@ class FoodController extends Controller
     public function update(Request $request)
     {
         try {
-//            $user_id = $request->user()->_id;
+            $user_id = $request->user()->_id;
             $name = $request->input('name');
             $quan = $request->input('quan');
 
             $food = Food::query()
                 ->where('name', $name)
-//                ->where('user_id', $user_id)
+                ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
                 return response()->json(['message' => 'User does not have the food: ' . $name]);
@@ -94,11 +104,11 @@ class FoodController extends Controller
     public function destroy(Request $request)
     {
         try {
-//            $user_id = $request->user()->_id;
+            $user_id = $request->user()->_id;
             $name = $request->input("name");
             $food = Food::query()
                 ->where('name', $name)
-//                ->where('user_id', $user_id)
+                ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
                 return response()->json(['message' => 'User does not have the food: '. $name]);

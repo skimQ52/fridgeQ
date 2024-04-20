@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Route::put('/food', [FoodController::class, 'store']);
-//Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
+Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
     Route::put('/food', [FoodController::class, 'store']);
     Route::get('/food', [FoodController::class, 'index']);
     Route::delete('/food', [FoodController::class, 'destroy']);
@@ -38,4 +38,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::put('/meal', [MealController::class, 'store']);
     Route::delete('/meal', [MealController::class, 'destroy']);
     Route::get('/meal', [MealController::class, 'index']);
-//});
+});
