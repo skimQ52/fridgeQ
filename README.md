@@ -14,27 +14,27 @@
 # Visuals
 
 ## Login Page
-![Login Page](fridgeq/visuals/login.gif)
+![Login Page](visuals/login.gif)
 
 ## User Fridge
-![Fridge Page](fridgeq/visuals/fridge.gif)
+![Fridge Page](visuals/fridge.gif)
 
 ## Add Food to Fridge
-![Add Food to Fridge](fridgeq/visuals/addItem.gif)
+![Add Food to Fridge](visuals/addItem.gif)
 
 ## Edit food
-![Edit food](fridgeq/visuals/editItem.gif)
+![Edit food](visuals/editItem.gif)
 
 ## Meals Page
-![Meals Page](fridgeq/visuals/meals.gif)
+![Meals Page](visuals/meals.gif)
 
 ## View a MealItem
-![View a MealItem](fridgeq/visuals/viewMeal.gif)
+![View a MealItem](visuals/viewMeal.gif)
 
 ## Create a MealItem
-![Create a MealItem](fridgeq/visuals/createMeal.gif)
+![Create a MealItem](visuals/createMeal.gif)
 
 ## AI Generate a MealItem
-![AI Generate a MealItem](fridgeq/visuals/generateMeal.gif)
+![AI Generate a MealItem](visuals/generateMeal.gif)
 
-![AI generated MealItem](fridgeq/visuals/AIGeneratedMeal.png)
+![AI generated MealItem](visuals/AIGeneratedMeal.png)
