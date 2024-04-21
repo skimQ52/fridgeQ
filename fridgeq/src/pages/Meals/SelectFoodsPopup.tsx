@@ -2,18 +2,12 @@ import Popup from "../../components/Popup.tsx";
 import React, {useEffect, useState} from "react";
 import {getFoods} from "../../services/foodService.ts";
 import {useAuthContext} from "../../hooks/useAuthContext.ts";
+import {Food} from "../../interfaces/interfaces.ts";
 
 interface SelectFoodsPopupProps {
     onClick: () => void;
     onSubmit: (selectedFoods: Food[]) => void;
     onGenerate: (ingredients: string[], type: string, e: any) => void;
-}
-
-interface Food {
-    name: string;
-    type: string;
-    quantity: number;
-    updatedAt: string;
 }
 
 export function SelectFoodsPopup(props: SelectFoodsPopupProps) {

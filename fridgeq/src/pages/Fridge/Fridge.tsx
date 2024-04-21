@@ -9,14 +9,7 @@ import {addFood, deleteFood, getFoods, updateFood} from '../../services/foodServ
 import {AddFoodPopup} from "./AddFoodPopup";
 import {EditFoodPopup} from "./EditFoodPopup";
 import {FilterBar} from "../../components/FilterBar.tsx";
-
-interface Food {
-    _id: string;
-    name: string;
-    type: string;
-    quantity: number;
-    updated_at: string;
-}
+import {Food} from "../../interfaces/interfaces.ts";
 
 const Fridge = () => {
 

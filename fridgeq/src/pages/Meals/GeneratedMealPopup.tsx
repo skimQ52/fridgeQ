@@ -1,8 +1,8 @@
 import React, {useRef, useState} from "react";
-import {Meal} from "./Meals.tsx";
 import Popup from "../../components/Popup.tsx";
 import TextInput from "../../components/TextInput.tsx";
 import ParagraphInput from "../../components/ParagraphInput.tsx";
+import {Meal} from "../../interfaces/interfaces.ts";
 
 interface GeneratedMealPopupProps {
     onClick: () => void;

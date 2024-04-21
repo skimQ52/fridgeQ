@@ -1,10 +1,10 @@
 import { handleApiResponse } from "./foodService.ts";
 
-const BASE_URL = 'http://localhost:9000/meals';
+const BASE_URL = 'http://localhost:8000/api/meal';
 
 export const getMeal = async <T>(name: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/meal?param=${name}`, {
+        const response = await fetch(`${BASE_URL}?name=${name}`, {
             headers: {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
@@ -17,7 +17,7 @@ export const getMeal = async <T>(name: string, userToken: string): Promise<T> =>
 
 export const getMeals = async <T>(userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/meals`, {
+        const response = await fetch(`${BASE_URL}`, {
             headers: {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization
             }
@@ -28,25 +28,10 @@ export const getMeals = async <T>(userToken: string): Promise<T> => {
     }
 };
 
-export const updateFood = async <T>(name: string, quantity: number, userToken: string): Promise<T> => {
-    try {
-        const response = await fetch(`${BASE_URL}/update_food?name=${name}&quan=${quantity}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${userToken}`
-            },
-        });
-        return handleApiResponse(response);
-    } catch (error) {
-        throw new Error('Could not update');
-    }
-}
-
 export const addMeal = async <T>(data: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/add_meal`, {
-            method: 'POST',
+        const response = await fetch(`${BASE_URL}`, {
+            method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${userToken}`,
                 'Content-Type': 'application/json'
@@ -61,7 +46,7 @@ export const addMeal = async <T>(data: string, userToken: string): Promise<T> =>
 
 export const deleteMeal = async <T>(name: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/delete_meal?name=${name}`, {
+        const response = await fetch(`${BASE_URL}?name=${name}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${userToken}` // Pass token in for authorization

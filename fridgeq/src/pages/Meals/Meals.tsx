@@ -9,21 +9,7 @@ import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
 import {AddMealPopup} from "./AddMealPopup.tsx";
 import {GeneratedMealPopup} from "./GeneratedMealPopup.tsx";
 import LoadingOverlay from 'react-loading-overlay-ts';
-
-interface Food {
-    name: string;
-    type: string;
-    quantity: number;
-    updatedAt: string;
-}
-
-export interface Meal {
-    name: string;
-    description: string;
-    type: string;
-    recipe: string;
-    ingredients: string[];
-}
+import {Food, Meal} from "../../interfaces/interfaces.ts";
 
 const Meals = () => {
 
@@ -83,6 +69,7 @@ const Meals = () => {
     }
 
     const handleNewMeal = async (meal: Meal, e: any) => {
+        e.preventDefault();
         if (!user) {
             return;
         }
@@ -91,6 +78,7 @@ const Meals = () => {
             const response = await addMeal(dataString, user.token);
             console.log(response);
             await fetchMeals();
+            setIsAddMealPopup(false);
         } catch (error) {
             e.preventDefault();
             console.error('Error:', error);

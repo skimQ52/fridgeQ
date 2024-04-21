@@ -1,6 +1,6 @@
 import Popup from "../../components/Popup.tsx";
 import React from "react";
-import { Meal } from "./Meals.tsx";
+import {Meal} from "../../interfaces/interfaces.ts";
 
 interface MealPopupProps {
     onClick: () => void;

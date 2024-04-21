@@ -1,20 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 import ParagraphInput from "../../components/ParagraphInput.tsx";
-import {Meal} from "./Meals.tsx";
 import TextInput from "../../components/TextInput.tsx";
 import Popup from "../../components/Popup.tsx";
+import {Food, Meal} from "../../interfaces/interfaces.ts";
 
 interface AddMealPopupProps {
     onSubmit: (meal: Meal, e: React.FormEvent) => Promise<void>;
     foods: Food[];
     onClick: () => void;
-}
-
-interface Food {
-    name: string;
-    type: string;
-    quantity: number;
-    updatedAt: string;
 }
 
 export function AddMealPopup(props: AddMealPopupProps) {
@@ -73,11 +66,11 @@ export function AddMealPopup(props: AddMealPopupProps) {
                 <ParagraphInput defaultValue="" maxlength={1200} label="Recipe" onTextChange={handleRecipeChange}/>
                 <select onChange={handleTypeSelect} className="input input-select">
                     <option value="" defaultValue="true">Type</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Snack">Snack</option>
-                    <option value="Other">Other</option>
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                    <option value="dessert">Dessert</option>
                 </select>
                 {/*{props.error && <div className="error">{props.error}</div>}*/}
                 <button className="glow-on-hover confirmButton">Confirm</button>
