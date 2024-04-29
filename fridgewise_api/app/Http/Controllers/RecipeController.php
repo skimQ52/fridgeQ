@@ -16,7 +16,7 @@ class RecipeController extends Controller
             $recipeName = $request->query('name');
 
             if ($recipeName) {
-                $recipe = Recipe::query()->where('name', $recipeName)->first(); // todo: where user_id
+                $recipe = Recipe::query()->where('name', $recipeName)->first();
                 return response()->json(['data' => $recipe]);
             }
             $recipes = Recipe::query()->get(); // todo: where user_id

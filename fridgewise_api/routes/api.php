@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FoodController;
+use App\Http\Controllers\MealController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -33,6 +34,8 @@ Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
     Route::get('/food', [FoodController::class, 'index']);
     Route::delete('/food', [FoodController::class, 'destroy']);
     Route::patch('/food', [FoodController::class, 'update']);
+
+    Route::put('/meal', [MealController::class, 'store']);
 
     Route::put('/recipe', [RecipeController::class, 'store']);
     Route::delete('/recipe', [RecipeController::class, 'destroy']);
