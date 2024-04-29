@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Meal;
+use App\Models\Recipe;
 use Illuminate\Http\Request;
 
-class MealController extends Controller
+class RecipeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -13,14 +13,14 @@ class MealController extends Controller
     public function index(Request $request)
     {
         try {
-            $mealName = $request->query('name');
+            $recipeName = $request->query('name');
 
-            if ($mealName) {
-                $meal = Meal::query()->where('name', $mealName)->first(); // todo: where user_id
-                return response()->json(['data' => $meal]);
+            if ($recipeName) {
+                $recipe = Recipe::query()->where('name', $recipeName)->first(); // todo: where user_id
+                return response()->json(['data' => $recipe]);
             }
-            $meals = Meal::query()->get(); // todo: where user_id
-            return response()->json(['data' => $meals]);
+            $recipes = Recipe::query()->get(); // todo: where user_id
+            return response()->json(['data' => $recipes]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -64,15 +64,15 @@ class MealController extends Controller
 
             $user_id = $request->user()->_id;
 
-            $meal = Meal::query()
+            $recipe = Recipe::query()
                 ->where('user_id', $user_id)
                 ->where('name', $validated['name'])
                 ->first();
-            if ($meal) {
-                return response()->json(['message' => 'The user already has this meal.'], 422);
+            if ($recipe) {
+                return response()->json(['message' => 'The user already has this recipe.'], 422);
             }
 
-            $meal = Meal::query()->create([
+            $recipe = Recipe::query()->create([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'type' => $validated['type'],
@@ -80,7 +80,7 @@ class MealController extends Controller
                 'ingredients' => $validated['ingredients'],
                 'user_id' => $user_id,
             ]);
-            return response()->json((['data' => $meal]));
+            return response()->json((['data' => $recipe]));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -89,7 +89,7 @@ class MealController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Meal $meal)
+    public function show(Recipe $recipe)
     {
         //
     }
@@ -97,7 +97,7 @@ class MealController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Meal $meal)
+    public function edit(Recipe $recipe)
     {
         //
     }
@@ -105,7 +105,7 @@ class MealController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Meal $meal)
+    public function update(Request $request, Recipe $recipe)
     {
         //
     }
@@ -118,14 +118,14 @@ class MealController extends Controller
         try {
             $user_id = $request->user()->_id;
             $name = $request->input("name");
-            $meal = Meal::query()
+            $recipe = Recipe::query()
                 ->where('name', $name)
                 ->where('user_id', $user_id)
                 ->first();
-            if (!$meal) {
-                return response()->json(['message' => 'User does not have the meal: '. $name]);
+            if (!$recipe) {
+                return response()->json(['message' => 'User does not have the recipe: ' . $name]);
             }
-            $meal->delete();
+            $recipe->delete();
             return response()->json(['message' => $name.' deleted successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
