@@ -1,8 +1,8 @@
 import { handleApiResponse } from "./foodService.ts";
 
-const BASE_URL = 'http://localhost:8000/api/meal';
+const BASE_URL = 'http://localhost:8000/api/recipe';
 
-export const getMeal = async <T>(name: string, userToken: string): Promise<T> => {
+export const getRecipe = async <T>(name: string, userToken: string): Promise<T> => {
     try {
         const response = await fetch(`${BASE_URL}?name=${name}`, {
             headers: {
@@ -15,7 +15,7 @@ export const getMeal = async <T>(name: string, userToken: string): Promise<T> =>
     }
 };
 
-export const getMeals = async <T>(userToken: string): Promise<T> => {
+export const getRecipes = async <T>(userToken: string): Promise<T> => {
     try {
         const response = await fetch(`${BASE_URL}`, {
             headers: {
@@ -28,7 +28,7 @@ export const getMeals = async <T>(userToken: string): Promise<T> => {
     }
 };
 
-export const addMeal = async <T>(data: string, userToken: string): Promise<T> => {
+export const addRecipe = async <T>(data: string, userToken: string): Promise<T> => {
     try {
         const response = await fetch(`${BASE_URL}`, {
             method: 'PUT',
@@ -44,7 +44,7 @@ export const addMeal = async <T>(data: string, userToken: string): Promise<T> =>
     }
 }
 
-export const deleteMeal = async <T>(name: string, userToken: string): Promise<T> => {
+export const deleteRecipe = async <T>(name: string, userToken: string): Promise<T> => {
     try {
         const response = await fetch(`${BASE_URL}?name=${name}`, {
             method: 'DELETE',
@@ -58,9 +58,9 @@ export const deleteMeal = async <T>(name: string, userToken: string): Promise<T>
     }
 }
 
-export const generateMeal = async <T>(data: string, userToken: string): Promise<T> => {
+export const generateRecipe = async <T>(data: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/generate_meal`, {
+        const response = await fetch(`${BASE_URL}/generate_recipe`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${userToken}`,

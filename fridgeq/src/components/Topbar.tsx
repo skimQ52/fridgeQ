@@ -14,19 +14,19 @@ const Topbar = () => {
   }
 
   return (
-    <header>
-      {user && ( // if have a user
-        <h2 className="title">{user.name}'s {currentPage}</h2>
+    <div className="flex absolute w-full h-12 bg-gray-200 z-10 drop-shadow-md items-center gap-10">
+      {user && (
+        <h2 className="text-2xl absolute left-72">{user.name}'s {currentPage}</h2>
       )}
-      <div className="container">
+      <div className="absolute right-8 flex items-center">
         <nav>
-          {user && ( // if have a user
+          {user && (
             <div>
                 <span>{user.email}</span>
                 <button className='topbarButton glow-on-hover' onClick={handleClick}>Log out</button>
             </div>
           )}
-          {!user && ( // if no user
+          {!user && (
             <div>
                 <Link className='topbarButton glow-on-hover' to="/login">Login</Link>
                 <Link className='topbarButton glow-on-hover' to="/signup">Signup</Link>
@@ -34,7 +34,7 @@ const Topbar = () => {
           )}
         </nav>
       </div>
-    </header>
+    </div>
   )
 }
 

@@ -9,16 +9,16 @@ import {addFood, deleteFood, getFoods, updateFood} from '../../services/foodServ
 import {AddFoodPopup} from "./AddFoodPopup";
 import {EditFoodPopup} from "./EditFoodPopup";
 import {FilterBar} from "../../components/FilterBar.tsx";
-import {Food} from "../../interfaces/interfaces.ts";
+import {FoodInterface} from "../../interfaces/interfaces.ts";
 
 const Fridge = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
 
-    const [foods, setFoods] = useState<Food[]>([]);
-    const [allFoods, setAllFoods] = useState<Food[]>([]);
-    const [filteredFoods, setFilteredFoods] = useState<Food[]>([]);
+    const [foods, setFoods] = useState<FoodInterface[]>([]);
+    const [allFoods, setAllFoods] = useState<FoodInterface[]>([]);
+    const [filteredFoods, setFilteredFoods] = useState<FoodInterface[]>([]);
 
     const [isAddFoodPopup, setIsAddFoodPopup] = useState(false);
     const [isEditFoodPopup, setIsEditFoodPopup] = useState(false);
@@ -30,7 +30,7 @@ const Fridge = () => {
             return;
         }
         try {
-            const data = await getFoods(user.token) as Food[];
+            const data = await getFoods(user.token) as FoodInterface[];
             setFoods(data)
             setFilteredFoods(data)
             setAllFoods(data)
@@ -137,9 +137,11 @@ const Fridge = () => {
         }
     },[])
 
+    // const outerFridge = "relative bg-gray-100 rounded-2xl h-full m-1 mt-4 p-1"; //todo: breaking stuff and zooming
+
     return (
         <div className='page'>
-            <div className={(isAddFoodPopup || isEditFoodPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
+            <div className={`fridge-outer ${isAddFoodPopup || isEditFoodPopup ? 'blur' : ''}`}>
                 <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
                     <option value="" defaultValue="true">Type</option>
                     <option value="vegetables">Vegetables</option>
@@ -151,7 +153,7 @@ const Fridge = () => {
                     <option value="snacks">Snacks</option>
                 </FilterBar>
 
-                <div className="Fridge">
+                <div className="h-96 flex flex-row flex-wrap m-10 overflow-y-auto overflow-x-hidden gap-4">
                     {foods.map((item, index) => (
                         <FridgeItem key={index} type={item.type} name={item.name} quan={item.quantity}
                                     onItemClicked={showEditFoodPopup} time={item.updated_at}></FridgeItem>

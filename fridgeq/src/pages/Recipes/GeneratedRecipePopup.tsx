@@ -2,23 +2,23 @@ import React, {useRef, useState} from "react";
 import Popup from "../../components/Popup.tsx";
 import TextInput from "../../components/TextInput.tsx";
 import ParagraphInput from "../../components/ParagraphInput.tsx";
-import {Meal} from "../../interfaces/interfaces.ts";
+import {RecipeInterface} from "../../interfaces/interfaces.ts";
 
-interface GeneratedMealPopupProps {
+interface GeneratedRecipePopupProps {
     onClick: () => void;
-    generated: Meal;
-    onSubmit: (meal: Meal, e: any) => {};
+    generated: RecipeInterface;
+    onSubmit: (recipe: RecipeInterface, e: any) => {};
 }
 
-export function GeneratedMealPopup(props: GeneratedMealPopupProps) {
+export function GeneratedRecipePopup(props: GeneratedRecipePopupProps) {
 
     const nameRef = useRef<HTMLInputElement>(null);
     const descRef = useRef<HTMLInputElement>(null);
-    const [recipe, setRecipe] = useState(props.generated.recipe);
+    const [recipeText, setRecipeText] = useState(props.generated.recipe);
     const [typeSelectState, setTypeSelectState] = useState(props.generated.type);
 
     const handleRecipeChange = (newText: string) => {
-        setRecipe(newText); // Update the parent's state with the new text
+        setRecipeText(newText); // Update the parent's state with the new text
     };
 
     const handleTypeSelect = (e: any) => {
@@ -31,21 +31,21 @@ export function GeneratedMealPopup(props: GeneratedMealPopupProps) {
             return;
         }
         try {
-            const meal: Meal = {
+            const recipe: RecipeInterface = {
                 name: nameRef.current.value,
                 description: descRef.current.value,
                 type: typeSelectState,
-                recipe:  recipe,
+                recipe:  recipeText,
                 ingredients: props.generated.ingredients,
             }
-            props.onSubmit(meal, e);
+            props.onSubmit(recipe, e);
         } catch (e) {
             console.error(e);
         }
     }
 
     return <Popup onClick={props.onClick}>
-        <h1 className="AIText">AI Generated Meal</h1>
+        <h1 className="AIText">AI Generated Recipe</h1>
         <div className="ingredients">
             {props.generated.ingredients.map((item, index) => (
                 <div className="ingredient" key={index}>
@@ -66,7 +66,7 @@ export function GeneratedMealPopup(props: GeneratedMealPopupProps) {
             {/*{props.error && <div className="error">{props.error}</div>}*/}
             <div className="buttonSpread">
                 <button onClick={props.onClick} className="glow-on-hover confirmButton">Discard</button>
-                <button onClick={makeNewFood} type="submit" className="glow-on-hover confirmButton">Save Meal</button>
+                <button onClick={makeNewFood} type="submit" className="glow-on-hover confirmButton">Save Recipe</button>
             </div>
         </form>
     </Popup>;

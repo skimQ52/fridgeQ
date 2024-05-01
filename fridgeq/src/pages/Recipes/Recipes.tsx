@@ -1,35 +1,35 @@
 import React, {useEffect, useState} from "react";
 import {usePage} from '../../context/PageContext';
 import {useAuthContext} from '../../hooks/useAuthContext';
-import MealItem from "./MealItem";
-import {addMeal, deleteMeal, generateMeal, getMeal, getMeals} from "../../services/mealService.ts";
-import MealPopup from "./MealPopup.tsx";
+import Recipe from "./Recipe.tsx";
+import {addRecipe, deleteRecipe, generateRecipe, getRecipe, getRecipes} from "../../services/recipeService.ts";
+import RecipePopup from "./RecipePopup.tsx";
 import {FilterBar} from "../../components/FilterBar.tsx";
 import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
-import {AddMealPopup} from "./AddMealPopup.tsx";
-import {GeneratedMealPopup} from "./GeneratedMealPopup.tsx";
+import {AddRecipePopup} from "./AddRecipePopup.tsx";
+import {GeneratedRecipePopup} from "./GeneratedRecipePopup.tsx";
 import LoadingOverlay from 'react-loading-overlay-ts';
-import {Food, Meal} from "../../interfaces/interfaces.ts";
+import {FoodInterface, RecipeInterface} from "../../interfaces/interfaces.ts";
 
-const Meals = () => {
+const Recipes = () => {
 
     const {user} = useAuthContext();
     const { setCurrentPage } = usePage();
 
-    const [meals, setMeals] = useState<Meal[]>([]);
-    const [allMeals, setAllMeals] = useState<Meal[]>([]);
-    const [filteredMeals, setFilteredMeals] = useState<Meal[]>([]);
-    const [selectedFoods, setSelectedFoods] = useState<Food[]>([]);
+    const [recipes, setRecipes] = useState<RecipeInterface[]>([]);
+    const [allRecipes, setAllRecipes] = useState<RecipeInterface[]>([]);
+    const [filteredRecipes, setFilteredRecipes] = useState<RecipeInterface[]>([]);
+    const [selectedFoods, setSelectedFoods] = useState<FoodInterface[]>([]);
 
     const [isLoading, setIsLoading] = useState(false);
 
     const [isSelectFoodsPopup, setIsSelectFoodsPopup] = useState(false);
-    const [isAddMealPopup, setIsAddMealPopup] = useState(false);
+    const [isAddRecipePopup, setIsAddRecipePopup] = useState(false);
 
     const [isGeneratedPopup, setIsGeneratedPopup] = useState(false);
 
-    const [isMealPopup, setIsMealPopup] = useState(false);
-    const [mealPopup, setMealPopup] = useState<Meal>({
+    const [isRecipePopup, setIsRecipePopup] = useState(false);
+    const [recipePopup, setRecipePopup] = useState<RecipeInterface>({
         name: '',
         description: '',
         type: '',
@@ -37,48 +37,48 @@ const Meals = () => {
         ingredients: [],
     });
 
-    const fetchMeals = async () => {
+    const fetchRecipes = async () => {
         if (!user) {
             return;
         }
         try {
-            const data = await getMeals(user.token) as Meal[];
+            const data = await getRecipes(user.token) as RecipeInterface[];
             if (data) {
-                setMeals(data);
-                setFilteredMeals(data);
-                setAllMeals(data);
+                setRecipes(data);
+                setFilteredRecipes(data);
+                setAllRecipes(data);
             }
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
-    const fetchMeal = async (name: string) => {
+    const fetchRecipe = async (name: string) => {
         if (!user) {
             return;
         }
         try {
-            const data = await getMeal(name, user.token) as Meal;
+            const data = await getRecipe(name, user.token) as RecipeInterface;
             if (data) {
-                setMealPopup(data);
-                setIsMealPopup(true);
+                setRecipePopup(data);
+                setIsRecipePopup(true);
             }
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
-    const handleNewMeal = async (meal: Meal, e: any) => {
+    const handleNewRecipe = async (recipe: RecipeInterface, e: any) => {
         e.preventDefault();
         if (!user) {
             return;
         }
-        const dataString = JSON.stringify(meal);
+        const dataString = JSON.stringify(recipe);
         try {
-            const response = await addMeal(dataString, user.token);
+            const response = await addRecipe(dataString, user.token);
             console.log(response);
-            await fetchMeals();
-            setIsAddMealPopup(false);
+            await fetchRecipes();
+            setIsAddRecipePopup(false);
         } catch (error) {
             e.preventDefault();
             console.error('Error:', error);
@@ -90,34 +90,34 @@ const Meals = () => {
             return;
         }
         try {
-            const response = await deleteMeal(name, user.token);
+            const response = await deleteRecipe(name, user.token);
             console.log(response);
-            setIsMealPopup(false);
-            await fetchMeals()
+            setIsRecipePopup(false);
+            await fetchRecipes()
         } catch (error) {
             console.error('Error:', error);
         }
     }
 
     const handleQueryChange = (query: string, filter: string) => {
-        const filtered = allMeals.filter(item =>
+        const filtered = allRecipes.filter(item =>
             filter ? item.type.toLowerCase().includes(filter.toLowerCase()) : item.name.toLowerCase().includes(filter.toLowerCase())
         );
         const filtered2 = query ? filtered.filter(item => item.name.toLowerCase().includes(query.toLowerCase())) : filtered;
-        setMeals(filtered2);
-        setFilteredMeals(filtered2);
+        setRecipes(filtered2);
+        setFilteredRecipes(filtered2);
     };
 
     const sortAlphabetically = (sort: boolean) => {
         if (!sort) {
-            const sortedMeals = [...filteredMeals].sort((a, b) => a.name.localeCompare(b.name));
-            setMeals(sortedMeals);
+            const sortedRecipes = [...filteredRecipes].sort((a, b) => a.name.localeCompare(b.name));
+            setRecipes(sortedRecipes);
             return;
         }
-        setMeals(filteredMeals);
+        setRecipes(filteredRecipes);
     }
 
-    const handleGenerateMeal = async (ingredients: string[], type: string, e: any) => {
+    const handleGenerateRecipe = async (ingredients: string[], type: string, e: any) => {
         if (!user) {
             return;
         }
@@ -128,10 +128,10 @@ const Meals = () => {
         const dataString = JSON.stringify(data);
         setIsLoading(true);
         try {
-            const response = await generateMeal(dataString, user.token) as Meal;
+            const response = await generateRecipe(dataString, user.token) as RecipeInterface;
             console.log(response);
             setIsLoading(false);
-            setMealPopup({
+            setRecipePopup({
                 name: response.name,
                 description: response.description,
                 type: type,
@@ -145,23 +145,23 @@ const Meals = () => {
         }
     };
 
-    const discardGeneratedMeal = async () => {
+    const discardGeneratedRecipe = async () => {
         setIsGeneratedPopup(false);
-        await fetchMeals();
+        await fetchRecipes();
     }
 
-    function closeSelectPopupAndOpenAddPopup(checkedFoods: Food[]) {
+    function closeSelectPopupAndOpenAddPopup(checkedFoods: FoodInterface[]) {
         setIsSelectFoodsPopup(false);
-        setIsAddMealPopup(true);
+        setIsAddRecipePopup(true);
         setSelectedFoods(checkedFoods);
     }
 
     useEffect(() => {
         if (user) {
-            setCurrentPage('Meals');
+            setCurrentPage('Recipes');
             (async () => {//IIFE
                 try {
-                    await fetchMeals()
+                    await fetchRecipes()
                 } catch (error) {
                     console.error('Error:', error);
                 }
@@ -170,9 +170,9 @@ const Meals = () => {
     },[])
 
     return (
-        <LoadingOverlay active={isLoading} spinner text='Generating Meal...' styles={{wrapper: {height: '100%'}}}>
+        <LoadingOverlay active={isLoading} spinner text='Generating Recipe...' styles={{wrapper: {height: '100%'}}}>
         <div className='page'>
-            <div className={(isAddMealPopup) ? 'fridge-outer blur' : 'fridge-outer'}>
+            <div className={(isAddRecipePopup) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
                     <option value="" defaultValue="true">Type</option>
                     <option value="breakfast">Breakfast</option>
@@ -181,34 +181,34 @@ const Meals = () => {
                     <option value="snack">Snack</option>
                     <option value="other">Other</option>
                 </FilterBar>
-                {meals.length === 0 ? ( //TODO: IMPROVE
-                    <p>No meals available</p>
+                {recipes.length === 0 ? ( //TODO: IMPROVE
+                    <p>No recipes available</p>
                 ) : (
-                    <ul className={"Meals"}>
-                        {meals.map((item, index) => (
-                            <MealItem key={index} name={item.name} type={item.type} desc={item.description}
-                                  onItemClicked={fetchMeal}></MealItem>
+                    <ul className="h-96 flex flex-row flex-wrap m-10 overflow-y-auto overflow-x-hidden gap-4">
+                        {recipes.map((item, index) => (
+                            <Recipe key={index} name={item.name} type={item.type} desc={item.description}
+                                    onItemClicked={fetchRecipe}></Recipe>
                         ))}
                     </ul>
                 )}
                 <button onClick={() => setIsSelectFoodsPopup(true)} className='glow-on-hover add-btn'>+</button>
             </div>
 
-            {isMealPopup &&
-                <MealPopup onClick={() => setIsMealPopup(false)} meal={mealPopup} onDelete={handleDelete}/>
+            {isRecipePopup &&
+                <RecipePopup onClick={() => setIsRecipePopup(false)} recipe={recipePopup} onDelete={handleDelete}/>
             }
 
             {isSelectFoodsPopup &&
-                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup} onGenerate={handleGenerateMeal}/>
+                <SelectFoodsPopup onClick={() => setIsSelectFoodsPopup(false)} onSubmit={closeSelectPopupAndOpenAddPopup} onGenerate={handleGenerateRecipe}/>
             }
 
-            {isAddMealPopup &&
-                <AddMealPopup onClick={() => setIsAddMealPopup(false)} onSubmit={handleNewMeal} foods={selectedFoods}/>
+            {isAddRecipePopup &&
+                <AddRecipePopup onClick={() => setIsAddRecipePopup(false)} onSubmit={handleNewRecipe} foods={selectedFoods}/>
             }
 
-            {/* Generated MealItem Popup */}
+            {/* Generated Recipe Popup */}
             {isGeneratedPopup &&
-                <GeneratedMealPopup onClick={discardGeneratedMeal} onSubmit={handleNewMeal} generated={mealPopup}/>
+                <GeneratedRecipePopup onClick={discardGeneratedRecipe} onSubmit={handleNewRecipe} generated={recipePopup}/>
             }
         </div>
         </LoadingOverlay>
@@ -216,4 +216,4 @@ const Meals = () => {
 }
 
 
-export default Meals;
+export default Recipes;

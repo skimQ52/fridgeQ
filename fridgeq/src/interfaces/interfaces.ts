@@ -1,11 +1,11 @@
-export interface Food {
+export interface FoodInterface {
     name: string;
     type: string;
     quantity: number;
     updated_at: string;
 }
 
-export interface Meal {
+export interface RecipeInterface {
     name: string;
     description: string;
     type: string;

@@ -51,11 +51,15 @@ export default function FridgeItem(props: FridgeItemProps) {
     }
 
     return (
-        <div className='Item' onClick={handleClick}>
-            <p className='nameItem'>{props.name}</p>
-            <img src={image} alt="type descriptor"/>
-            <h2 className='quanItem'>{props.quan}x</h2>
-            <h1 className={daysDifference < 2 ? "timeItem green" : daysDifference < 5 ? "timeItem yellow" : "timeItem red"}>{daysDifference} days old</h1>
+        <div className="bobbing select-none h-36 w-36 flex flex-col bg-white drop-shadow-md rounded-3xl" onClick={handleClick}>
+            <h2 className='text-xl mt-3 ml-3'>{props.name}</h2>
+            <img className="max-h-16 max-w-28 block m-auto mt-0" src={image} alt="type descriptor"/>
+            <div className="ml-3 mr-3 flex flex-row justify-between">
+                <h1 className={daysDifference < 2 ? "mt-2 green" : daysDifference < 5 ? "mt-2 yellow" : "mt-2 red"}>{daysDifference} days
+                    old</h1>
+                <h2 className='text-2xl mt-0'>{props.quan}x</h2>
+            </div>
+
         </div>
     );
 }

@@ -1,13 +1,13 @@
 import React from 'react';
 
-interface MealItemProps {
+interface RecipeProps {
     type: string;
     name: string;
     desc: string;
     onItemClicked: (name: string) => void;
 }
 
-export default function MealItem(props: MealItemProps) {
+export default function Recipe(props: RecipeProps) {
 
     const handleClick = () => {
         props.onItemClicked(props.name); // Pass the desired string value

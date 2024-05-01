@@ -27,7 +27,7 @@ export function EditFoodPopup(props: EditFoodPopupProps) {
 
     return (
         <Popup onClick={props.onClick}>
-            <h1>{name}</h1>
+            <h1 className="text-2xl">{name}</h1>
             <h2>You currently have:</h2>
             <h3>{quantity}x</h3>
             <div style={{
@@ -37,14 +37,8 @@ export function EditFoodPopup(props: EditFoodPopupProps) {
                 flexDirection: 'row',
                 paddingBottom: '20px'
             }}>
-                <button onClick={() => {
-                    handleQuantityChange(-1)
-                }} className="small-btn">-
-                </button>
-                <button onClick={() => {
-                    handleQuantityChange(1)
-                }} className="small-btn">+
-                </button>
+                <button onClick={() => {handleQuantityChange(-1)}} className="small-btn">-</button>
+                <button onClick={() => {handleQuantityChange(1)}} className="small-btn">+</button>
             </div>
             <button onClick={updateFood} className='glow-on-hover confirmButton'>Update</button>
         </Popup>

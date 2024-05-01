@@ -29,7 +29,7 @@ export function AddFoodPopup(props: AddFoodPopupProps) {
 
     return (
         <Popup onClick={props.onClick}>
-            <h1>Add to your Fridge</h1>
+            <h1 className="text-2xl">Add to your Fridge</h1>
             <form onSubmit={makeNewFood}>
                 <TextInput label="Name" refer={foodRef} placeholder="Banana" maxLength={18}/>
                 <NumberInput label="Quantity" refer={quanRef} placeholder="1"/>

@@ -2,19 +2,19 @@ import Popup from "../../components/Popup.tsx";
 import React, {useEffect, useState} from "react";
 import {getFoods} from "../../services/foodService.ts";
 import {useAuthContext} from "../../hooks/useAuthContext.ts";
-import {Food} from "../../interfaces/interfaces.ts";
+import {FoodInterface} from "../../interfaces/interfaces.ts";
 
 interface SelectFoodsPopupProps {
     onClick: () => void;
-    onSubmit: (selectedFoods: Food[]) => void;
+    onSubmit: (selectedFoods: FoodInterface[]) => void;
     onGenerate: (ingredients: string[], type: string, e: any) => void;
 }
 
 export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     const {user} = useAuthContext();
 
-    const [foods, setFoods] = useState<Food[]>([]);
-    const [selectedFoods, setSelectedFoods] = useState<Food[]>([]);
+    const [foods, setFoods] = useState<FoodInterface[]>([]);
+    const [selectedFoods, setSelectedFoods] = useState<FoodInterface[]>([]);
     const [typeSelectState, setTypeSelectState] = useState('');
 
     const handleCheck = (e: any) => {
@@ -27,7 +27,7 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
         setSelectedFoods(updatedList);
     };
 
-    const isChecked = (item: Food) => selectedFoods.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
+    const isChecked = (item: FoodInterface) => selectedFoods.includes(item) ? "mealFoodListItem checked-item" : "mealFoodListItem";
 
     const confirmSelectedFoods = () => {
         props.onSubmit(selectedFoods);
@@ -47,7 +47,7 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
             return;
         }
         try {
-            const data = await getFoods(user.token) as Food[];
+            const data = await getFoods(user.token) as FoodInterface[];
             setFoods(data);
         } catch (error) {
             console.error('Error:', error);
@@ -67,7 +67,7 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     },[])
 
     return <Popup onClick={props.onClick}>
-        <h1>Select Foods For New Meal</h1>
+        <h1>Select Foods For New Recipe</h1>
         <div className="mealFoodList">
             {foods.map((item, index) => (
                 <div key={index}>
@@ -78,9 +78,9 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
         </div>
         <div className="buttonSpread">
             <button onClick={confirmSelectedFoods}
-                    className='glow-on-hover confirmButton'>Create Meal</button>
+                    className='glow-on-hover confirmButton'>Create Recipe</button>
             <div className="generateMealContainer">
-                <button onClick={handleGenerate} className="glow-on-hover confirmButton">Generate Meal</button>
+                <button onClick={handleGenerate} className="glow-on-hover confirmButton">Generate Recipe</button>
                 <select onChange={handleTypeSelect} className="input">
                     <option value="" defaultValue="true">Type</option>
                     <option value="Breakfast">Breakfast</option>

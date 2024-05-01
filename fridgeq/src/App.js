@@ -6,7 +6,7 @@ import Login from './pages/Login/Login';
 import Signup from './pages/Login/Signup';
 import Topbar from './components/Topbar';
 import Landing from './pages/Landing/Landing';
-import Meals from './pages/Meals/Meals';
+import Recipes from './pages/Recipes/Recipes';
 import { useAuthContext } from './hooks/useAuthContext';
 import { PageProvider } from './context/PageContext';
 
@@ -28,7 +28,7 @@ function App() {
               <Route path="/fridge" element={user ? <Fridge/> : <Navigate to="/login"/>}/>
               <Route path="/login" element={!user ? <Login/> : <Navigate to="/fridge"/>}/>
               <Route path="/signup" element={!user ? <Signup/> : <Navigate to="/fridge"/>}/>
-              <Route path="/meals" element={user ? <Meals/> : <Navigate to="/login"/>}/>
+              <Route path="/recipes" element={user ? <Recipes/> : <Navigate to="/login"/>}/>
             </Routes>
           </div>
         </div>

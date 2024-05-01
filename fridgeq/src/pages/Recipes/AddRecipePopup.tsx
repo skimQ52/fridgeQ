@@ -2,20 +2,20 @@ import React, {useEffect, useRef, useState} from "react";
 import ParagraphInput from "../../components/ParagraphInput.tsx";
 import TextInput from "../../components/TextInput.tsx";
 import Popup from "../../components/Popup.tsx";
-import {Food, Meal} from "../../interfaces/interfaces.ts";
+import {FoodInterface, RecipeInterface} from "../../interfaces/interfaces.ts";
 
-interface AddMealPopupProps {
-    onSubmit: (meal: Meal, e: React.FormEvent) => Promise<void>;
-    foods: Food[];
+interface AddRecipePopupProps {
+    onSubmit: (recipe: RecipeInterface, e: React.FormEvent) => Promise<void>;
+    foods: FoodInterface[];
     onClick: () => void;
 }
 
-export function AddMealPopup(props: AddMealPopupProps) {
+export function AddRecipePopup(props: AddRecipePopupProps) {
 
     const nameRef = useRef<HTMLInputElement>(null);
     const descRef = useRef<HTMLInputElement>(null);
     const [typeSelectState, setTypeSelectState] = useState<string>('');
-    const [recipe, setRecipe] = useState('');
+    const [recipeText, setRecipeText] = useState('');
     const [ingredients, setIngredients] = useState<string[]>([]);
 
     const makeNewFood = async (e: any) => {
@@ -23,21 +23,21 @@ export function AddMealPopup(props: AddMealPopupProps) {
             return;
         }
         try {
-            const meal: Meal = {
+            const recipe: RecipeInterface = {
                 name: nameRef.current.value,
                 description: descRef.current.value,
                 type: typeSelectState,
-                recipe:  recipe,
+                recipe:  recipeText,
                 ingredients: ingredients,
             }
-            await props.onSubmit(meal, e);
+            await props.onSubmit(recipe, e);
         } catch (e) {
             console.error(e);
         }
     }
 
     const handleRecipeChange = (newText: string) => {
-        setRecipe(newText); // Update the parent's state with the new text
+        setRecipeText(newText); // Update the parent's state with the new text
     };
 
     const handleTypeSelect = (event: any) => {
@@ -51,7 +51,7 @@ export function AddMealPopup(props: AddMealPopupProps) {
 
     return (
         <Popup onClick={props.onClick}>
-            <h1>Create New Meal</h1>
+            <h1>Create New Recipe</h1>
             <div className="ingredients">
                 {ingredients.map((item, index) => (
                     <div className="ingredient" key={index}>
