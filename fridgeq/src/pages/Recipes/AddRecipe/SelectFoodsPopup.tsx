@@ -1,8 +1,8 @@
-import Popup from "../../components/Popup.tsx";
+import Popup from "../../../components/Popup.tsx";
 import React, {useEffect, useState} from "react";
-import {getFoods} from "../../services/foodService.ts";
-import {useAuthContext} from "../../hooks/useAuthContext.ts";
-import {FoodInterface} from "../../interfaces/interfaces.ts";
+import {getFoods} from "../../../services/foodService.ts";
+import {useAuthContext} from "../../../hooks/useAuthContext.ts";
+import {FoodInterface} from "../../../interfaces/interfaces.ts";
 
 interface SelectFoodsPopupProps {
     onClick: () => void;

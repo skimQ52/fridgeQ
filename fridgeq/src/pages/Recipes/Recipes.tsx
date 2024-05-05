@@ -5,9 +5,9 @@ import Recipe from "./Recipe.tsx";
 import {addRecipe, deleteRecipe, generateRecipe, getRecipe, getRecipes} from "../../services/recipeService.ts";
 import RecipePopup from "./RecipePopup.tsx";
 import {FilterBar} from "../../components/FilterBar.tsx";
-import {SelectFoodsPopup} from "./SelectFoodsPopup.tsx";
-import {AddRecipePopup} from "./AddRecipePopup.tsx";
-import {GeneratedRecipePopup} from "./GeneratedRecipePopup.tsx";
+import {SelectFoodsPopup} from "./AddRecipe/SelectFoodsPopup.tsx";
+import {AddRecipePopup} from "./AddRecipe/AddRecipePopup.tsx";
+import {GeneratedRecipePopup} from "./AddRecipe/GeneratedRecipePopup.tsx";
 import LoadingOverlay from 'react-loading-overlay-ts';
 import {FoodInterface, RecipeInterface} from "../../interfaces/interfaces.ts";
 

@@ -1,8 +1,8 @@
 import React, {useRef, useState} from "react";
-import Popup from "../../components/Popup.tsx";
-import TextInput from "../../components/TextInput.tsx";
-import ParagraphInput from "../../components/ParagraphInput.tsx";
-import {RecipeInterface} from "../../interfaces/interfaces.ts";
+import Popup from "../../../components/Popup.tsx";
+import TextInput from "../../../components/TextInput.tsx";
+import ParagraphInput from "../../../components/ParagraphInput.tsx";
+import {RecipeInterface} from "../../../interfaces/interfaces.ts";
 
 interface GeneratedRecipePopupProps {
     onClick: () => void;

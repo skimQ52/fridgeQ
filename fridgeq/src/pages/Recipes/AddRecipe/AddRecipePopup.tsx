@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from "react";
-import ParagraphInput from "../../components/ParagraphInput.tsx";
-import TextInput from "../../components/TextInput.tsx";
-import Popup from "../../components/Popup.tsx";
-import {FoodInterface, RecipeInterface} from "../../interfaces/interfaces.ts";
+import ParagraphInput from "../../../components/ParagraphInput.tsx";
+import TextInput from "../../../components/TextInput.tsx";
+import Popup from "../../../components/Popup.tsx";
+import {FoodInterface, RecipeInterface} from "../../../interfaces/interfaces.ts";
 
 interface AddRecipePopupProps {
     onSubmit: (recipe: RecipeInterface, e: React.FormEvent) => Promise<void>;
