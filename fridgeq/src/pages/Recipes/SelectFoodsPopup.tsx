@@ -67,7 +67,7 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     },[])
 
     return <Popup onClick={props.onClick}>
-        <h1>Select Foods For New Recipe</h1>
+        <h1 className="text-2xl">Select Foods For New Recipe</h1>
         <div className="mealFoodList">
             {foods.map((item, index) => (
                 <div key={index}>
@@ -78,9 +78,10 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
         </div>
         <div className="buttonSpread">
             <button onClick={confirmSelectedFoods}
-                    className='glow-on-hover confirmButton'>Create Recipe</button>
+                    className='glow-on-hover confirmButton'>Create
+            </button>
             <div className="generateMealContainer">
-                <button onClick={handleGenerate} className="glow-on-hover confirmButton">Generate Recipe</button>
+                <button onClick={handleGenerate} className="glow-on-hover confirmButton">Generate</button>
                 <select onChange={handleTypeSelect} className="input">
                     <option value="" defaultValue="true">Type</option>
                     <option value="Breakfast">Breakfast</option>

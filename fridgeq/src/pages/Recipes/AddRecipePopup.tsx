@@ -51,7 +51,7 @@ export function AddRecipePopup(props: AddRecipePopupProps) {
 
     return (
         <Popup onClick={props.onClick}>
-            <h1>Create New Recipe</h1>
+            <h1 className="text-2xl">Create New Recipe</h1>
             <div className="ingredients">
                 {ingredients.map((item, index) => (
                     <div className="ingredient" key={index}>

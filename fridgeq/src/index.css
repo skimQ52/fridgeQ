@@ -483,7 +483,7 @@ div.error {
   margin: 10px 0;
   border-radius: 5px;
   border: 1px solid gray;
-    width: 100%;
+  width: 100%;
 }
 
 .input-select {
@@ -497,10 +497,8 @@ div.error {
 
 .confirmButton {
   width: 100%;
-  height: 4vh;
-  padding:2px;
-  margin-top: 5%;
-  margin-bottom: 5%;
+  /*height: 25px;*/
+  padding: 4px;
   filter: drop-shadow(1px 2px 3px #0000005e);
 }
 
@@ -632,6 +630,7 @@ form {
   flex-flow: row;
   align-items: center;
   justify-content: space-around;
+  gap: 15px;
 }
 
 .buttonSpread button {
@@ -640,16 +639,17 @@ form {
 
 .generateMealContainer {
   display: flex;
-  width: 55%;
+  width: 75%;
   background: linear-gradient(315deg, rgb(110, 212, 62) 0%, rgb(43, 180, 66) 60%, rgb(248, 197, 30) 98%);
-  animation: gradient 10s ease infinite;
-  background-size: 400% 400%;
+  animation: gradient 4s ease infinite;
+  background-size: 200% 200%;
   background-attachment: fixed;
   filter: drop-shadow(4px 4px 4px #00000025);
   border-radius: 20px;
   padding: 5px 10px;
   justify-content: space-around;
   align-items: center;
+  gap: 10px;
 }
 
 .generateMealContainer button {
