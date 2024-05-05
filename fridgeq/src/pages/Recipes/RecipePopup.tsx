@@ -15,14 +15,14 @@ export default function RecipePopup(props: RecipePopupProps) {
     }
 
     return <Popup onClick={props.onClick}>
-        <div className="recipeBig">
-            <div className="headerRecipe">
-                <h1>{props.recipe.name}</h1>
-                <div className="descContainerRecipe">
-                    <p className="descRecipe">"{props.recipe.description}"</p>
+        <div className="mealBig">
+            <div className="headerMeal">
+                <h1 className={"text-2xl"}>{props.recipe.name}</h1>
+                <div className="descContainerMeal">
+                    <p className="">"{props.recipe.description}"</p>
                 </div>
             </div>
-            <p className="recipeLineBreak"/>
+            <p className="mealLineBreak"/>
             <div className="ingredients">
                 {props.recipe.ingredients.map((item, index) => (
                     <div className="ingredient" key={index}>
@@ -32,7 +32,7 @@ export default function RecipePopup(props: RecipePopupProps) {
                 ))}
             </div>
             <textarea disabled={true} defaultValue={props.recipe.recipe}/>
-            <div className="footerRecipe">
+            <div className="footerMeal">
                 <button onClick={deleteRecipe} className="glow-on-hover deleteButton">Delete</button>
             </div>
 

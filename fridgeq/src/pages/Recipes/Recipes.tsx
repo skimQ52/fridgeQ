@@ -184,7 +184,7 @@ const Recipes = () => {
                 {recipes.length === 0 ? ( //TODO: IMPROVE
                     <p>No recipes available</p>
                 ) : (
-                    <ul className="h-96 flex flex-row flex-wrap m-10 overflow-y-auto overflow-x-hidden gap-4">
+                    <ul className="Meals blur-top-and-bottom">
                         {recipes.map((item, index) => (
                             <Recipe key={index} name={item.name} type={item.type} desc={item.description}
                                     onItemClicked={fetchRecipe}></Recipe>

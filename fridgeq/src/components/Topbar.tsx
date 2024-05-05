@@ -1,8 +1,8 @@
 import React from "react"
-import { Link } from 'react-router-dom'
-import { useLogout } from '../hooks/useLogout.ts'
-import { useAuthContext } from '../hooks/useAuthContext.ts';
-import { usePage } from '../context/PageContext.tsx';
+import {Link} from 'react-router-dom'
+import {useLogout} from '../hooks/useLogout.ts'
+import {useAuthContext} from '../hooks/useAuthContext.ts';
+import {usePage} from '../context/PageContext.tsx';
 
 const Topbar = () => {
   const { logout } = useLogout();
@@ -16,7 +16,7 @@ const Topbar = () => {
   return (
     <div className="flex absolute w-full h-12 bg-gray-200 z-10 drop-shadow-md items-center gap-10">
       {user && (
-        <h2 className="text-2xl absolute left-72">{user.name}'s {currentPage}</h2>
+          <h2 className="text-2xl absolute left-72 first-letter:capitalize">{user.name}'s {currentPage}</h2>
       )}
       <div className="absolute right-8 flex items-center">
         <nav>

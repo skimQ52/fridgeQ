@@ -133,7 +133,7 @@ div.error {
 .main-content {
   flex: 1; /* Expand to fill available space */
   margin-top: 30px;
-  height: 88vh;
+  margin-bottom: 30px;
 }
 
 .page {
@@ -290,16 +290,8 @@ div.error {
 
 /* Fridge */
 
-.Fridge {
-  /* box-shadow: 0px 0px 25px 15px aliceblue; */
-  /*-webkit-mask-image: linear-gradient(*/
-  /*        180deg,*/
-  /*        rgba(0, 0, 0, 0) 0%,*/
-  /*        rgba(0, 0, 0, 1) 5%,*/
-  /*        rgba(0, 0, 0, 1) 95%,*/
-  /*        rgba(0, 0, 0, 0) 100%*/
-  /*); !* edges blurred *!*/
-  mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
+.blur-top-and-bottom {
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 2%, rgba(0, 0, 0, 1) 95%, rgba(0, 0, 0, 0) 100%);
 }
 
 .fridge-outer {
@@ -491,6 +483,7 @@ div.error {
   margin: 10px 0;
   border-radius: 5px;
   border: 1px solid gray;
+    width: 100%;
 }
 
 .input-select {
@@ -529,11 +522,9 @@ form {
   align-content: flex-start; /* Align rows at the top */
   justify-content: left;
   margin: 3%;
-  height: 65vh;
+  height: 75%;
   overflow-y: auto;
   overflow-x: hidden;
-  /*-webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%); !* edges blurred *!*/
-  mask-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 5%, rgba(0,0,0,1) 95%, rgba(0,0,0,0) 100%);
 }
 
 .Meal {

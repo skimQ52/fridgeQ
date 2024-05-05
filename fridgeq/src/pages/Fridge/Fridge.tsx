@@ -153,7 +153,8 @@ const Fridge = () => {
                     <option value="snacks">Snacks</option>
                 </FilterBar>
 
-                <div className="h-96 flex flex-row flex-wrap m-10 overflow-y-auto overflow-x-hidden gap-4">
+                <div
+                    className="blur-top-and-bottom h-3/4 flex flex-row flex-wrap m-10 pt-4 pb-4 overflow-y-auto overflow-x-hidden gap-8 justify-left items-start">
                     {foods.map((item, index) => (
                         <FridgeItem key={index} type={item.type} name={item.name} quan={item.quantity}
                                     onItemClicked={showEditFoodPopup} time={item.updated_at}></FridgeItem>
