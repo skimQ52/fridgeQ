@@ -14,41 +14,39 @@ interface FridgeItemProps {
     time: string;
     onItemClicked: (name: string, quan: number) => void;
 }
+
+function getIconAsset(props: FridgeItemProps) {
+    switch (props.type) {
+        case 'grains':
+            return grains;
+        case 'dairy':
+            return dairy;
+        case 'vegetables':
+            return vegetables;
+        case 'fruits':
+            return fruits;
+        case 'proteins':
+            return proteins;
+        case 'condiments':
+            return condiments;
+        case 'snacks':
+            return snacks;
+        default:
+            return fruits;
+    }
+}
+
 export default function FridgeItem(props: FridgeItemProps) {
     const handleClick = () => {
-        props.onItemClicked(props.name, props.quan); // Pass the desired string value
+        props.onItemClicked(props.name, props.quan);
     };
-    const timeUpdated = new Date(props.time); //when object was last updated
-    const currentDate = new Date(); // current date
+    const timeUpdated = new Date(props.time);
+    const currentDate = new Date();
     const timeDifference = currentDate.getTime() - timeUpdated.getTime();
     const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
     let image;
 
-    switch (props.type) {
-        case 'grains':
-            image = grains;
-            break;
-          case 'dairy':
-            image = dairy;
-            break;
-          case 'vegetables':
-            image = vegetables;
-            break;
-          case 'fruits':
-            image = fruits;
-            break;
-          case 'proteins':
-            image = proteins;
-            break;
-          case 'condiments':
-            image = condiments;
-            break;
-          case 'snacks':
-            image = snacks;
-            break;
-          default:
-            image = fruits;
-    }
+    image = getIconAsset(props);
 
     return (
         <div className="bobbing select-none h-36 w-36 flex flex-col bg-white drop-shadow-md rounded-3xl" onClick={handleClick}>
