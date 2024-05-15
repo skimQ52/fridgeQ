@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,6 +14,18 @@ class MealControllerTest extends TestCase
 
     /** @var User $user */
     protected Model $user;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        /** @var User $user */
+        $this->user = User::query()->create([
+            'name' => 'test',
+            'email' => 'test@gmail.com',
+            'password' => 'testPassword',
+        ]);
+    }
 
     public function test_put_creates_new_meal(): void
     {
@@ -35,8 +46,7 @@ class MealControllerTest extends TestCase
                 "message" => "Meal Stored Successfully"
             ]);
 
-        $meal = Meal::query()
-            ->where("user_id", $this->user->id)
+        $meal = $this->user->meals()
             ->firstOrFail();
         $this->assertEquals([
             [
@@ -48,17 +58,5 @@ class MealControllerTest extends TestCase
                 'quantity' => 2,
             ],
         ], $meal->foods);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        /** @var User $user */
-        $this->user = User::query()->create([
-            'name' => 'test',
-            'email' => 'test@gmail.com',
-            'password' => 'testPassword',
-        ]);
     }
 }

@@ -48,8 +48,7 @@ class RecipeControllerTest extends TestCase
                 'user_id' => $this->user->id,
             ]);
 
-        $recipe = Recipe::query()
-            ->where("user_id", $this->user->id)
+        $recipe = $this->user->recipes()
             ->where("name", "Chiken ALfredo")
             ->firstOrFail();
         $this->assertEquals('its chicken with alfredo', $recipe->description);
@@ -60,13 +59,12 @@ class RecipeControllerTest extends TestCase
 
     public function test_put_rejects_existing_recipe(): void
     {
-        Recipe::query()->create([
+        $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
             'type' => 'dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
-            'user_id' => $this->user->id,
         ]);
 
         $this->actingAs($this->user)->putJson('/api/recipe', [
@@ -75,7 +73,6 @@ class RecipeControllerTest extends TestCase
             'type' => 'lunch',
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
-            'user_id' => $this->user->id,
         ])
             ->assertStatus(422)
             ->assertJsonFragment([
@@ -103,7 +100,6 @@ class RecipeControllerTest extends TestCase
             'type' => 'lunch',
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
-            'user_id' => $this->user->id,
         ])
             ->assertStatus(500)
             ->assertJsonFragment(["The name may not be greater than 25 characters."]);
@@ -119,7 +115,6 @@ class RecipeControllerTest extends TestCase
             "type" => "SudoWoodo",
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
-            'user_id' => $this->user->id,
         ])
             ->assertStatus(500)
             ->assertJsonFragment(["The selected type is invalid."]);
@@ -135,7 +130,6 @@ class RecipeControllerTest extends TestCase
             "type" => 45,
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
-            'user_id' => $this->user->id,
         ])
             ->assertStatus(500)
             ->assertJsonFragment(["The type must be a string. (and 1 more error)"]);
@@ -145,29 +139,27 @@ class RecipeControllerTest extends TestCase
 
     public function test_delete_destroys_food() {
 
-        Recipe::query()->create([
+        $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
             'type' => 'dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
-            'user_id' => $this->user->id,
         ]);
 
-        Recipe::query()->create([
+        $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
             'type' => 'dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
-            'user_id' => $this->user->id,
         ]);
 
         $this->actingAs($this->user)->deleteJson('/api/recipe', ['name' => 'Pesto Salad'])
             ->assertStatus(200)
             ->assertJsonFragment(['message' => 'Pesto Salad deleted successfully']);
 
-        $recipes = Recipe::query()->where('user_id', $this->user->id)->get();
+        $recipes = $this->user->recipes()->get();
         $this->assertCount(1, $recipes);
         $this->assertEquals('Chiken ALfredo', $recipes->first()->name);
     }
@@ -175,13 +167,12 @@ class RecipeControllerTest extends TestCase
     public function test_delete_doesnt_destroy_missing_recipe()
     {
 
-        Recipe::query()->create([
+        $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
             'type' => 'dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
-            'user_id' => $this->user->id,
         ]);
 
         Recipe::query()->create([
@@ -202,22 +193,20 @@ class RecipeControllerTest extends TestCase
 
     public function test_get_returns_all_foods(): void
     {
-        $recipe1 = Recipe::query()->create([
+        $recipe1 = $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
             'type' => 'dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
-            'user_id' => $this->user->id,
         ]);
 
-        $recipe2 = Recipe::query()->create([
+        $recipe2 = $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
             'type' => 'dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
-            'user_id' => $this->user->id,
         ]);
 
         Recipe::query()->create([
@@ -240,26 +229,24 @@ class RecipeControllerTest extends TestCase
                 "type" => $recipe1->type,
                 "recipe" => $recipe1->recipe,
                 "ingredients" => $recipe1->ingredients,
-                'user_id' => $this->user->id,
 
                 "_id" => $recipe2->id,
                 "name" => $recipe2->name,
                 "description" => $recipe2->description,
                 "type" => $recipe2->type,
                 "recipe" => $recipe2->recipe,
-                'user_id' => $this->user->id,
+                "ingredients" => $recipe2->ingredients,
             ]);
     }
 
     public function test_get_with_name_returns_the_food(): void
     {
-        $taco = Recipe::query()->create([
+        $taco = $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
             'type' => 'dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
-            'user_id' => $this->user->id,
         ]);
 
         $this->actingAs($this->user)->getJson('/api/recipe', [
@@ -273,7 +260,6 @@ class RecipeControllerTest extends TestCase
                 "type" => $taco->type,
                 "recipe" => $taco->recipe,
                 "ingredients" => $taco->ingredients,
-                'user_id' => $this->user->id,
             ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
@@ -12,14 +13,16 @@ class RecipeController extends Controller
      */
     public function index(Request $request)
     {
+        /** @var User $user */
+        $user = auth()->user();
         try {
             $recipeName = $request->query('name');
 
             if ($recipeName) {
-                $recipe = Recipe::query()->where('name', $recipeName)->first();
+                $recipe = $user->recipes()->where('name', $recipeName)->first();
                 return response()->json(['data' => $recipe]);
             }
-            $recipes = Recipe::query()->get(); // todo: where user_id
+            $recipes = $user->recipes()->get();
             return response()->json(['data' => $recipes]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -62,23 +65,22 @@ class RecipeController extends Controller
                 'ingredients.required' => 'The ingredients field is required.',
             ]);
 
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
 
-            $recipe = Recipe::query()
-                ->where('user_id', $user_id)
+            $recipe = $user->recipes()
                 ->where('name', $validated['name'])
                 ->first();
             if ($recipe) {
                 return response()->json(['message' => 'The user already has this recipe.'], 422);
             }
 
-            $recipe = Recipe::query()->create([
+            $recipe = $user->recipes()->create([
                 'name' => $validated['name'],
                 'description' => $validated['description'],
                 'type' => $validated['type'],
                 'recipe' => $validated['recipe'],
                 'ingredients' => $validated['ingredients'],
-                'user_id' => $user_id,
             ]);
             return response()->json((['data' => $recipe]));
         } catch (\Exception $e) {
@@ -116,11 +118,11 @@ class RecipeController extends Controller
     public function destroy(Request $request)
     {
         try {
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
             $name = $request->input("name");
-            $recipe = Recipe::query()
+            $recipe = $user->recipes()
                 ->where('name', $name)
-                ->where('user_id', $user_id)
                 ->first();
             if (!$recipe) {
                 return response()->json(['message' => 'User does not have the recipe: ' . $name]);
