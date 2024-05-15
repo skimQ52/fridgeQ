@@ -13,7 +13,38 @@ class MealController extends Controller
      */
     public function index()
     {
-        //
+        return response()->json([
+            'meals' => [
+                [
+                    'foods' => [
+                        [
+                            'name' => 'banana',
+                            'quantity' => 2,
+                        ],
+                        [
+                            'name' => 'onion',
+                            'quantity' => 2,
+                        ],
+                    ]
+                ],
+                [
+                    'foods' => [
+                        [
+                            'name' => 'egg',
+                            'quantity' => 4,
+                        ],
+                        [
+                            'name' => 'bacon',
+                            'quantity' => 7,
+                        ],
+                        [
+                            'name' => 'bread',
+                            'quantity' => 1,
+                        ],
+                    ]
+                ],
+            ]
+        ]);
     }
 
     /**

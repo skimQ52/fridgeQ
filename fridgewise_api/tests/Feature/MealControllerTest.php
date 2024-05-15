@@ -79,10 +79,43 @@ class MealControllerTest extends TestCase
         ]);
 
         // ensure there is an endpoint
-        $this->actingAs($this->user)->getJson('/api/meal')->assertOk();
+        $this->actingAs($this->user)
+            ->getJson('/api/meal')
+            ->assertOk()
+            ->assertJson([
+                'meals' => [
+                    [
+                        'foods' => [
+                            [
+                                'name' => 'banana',
+                                'quantity' => 2,
+                            ],
+                            [
+                                'name' => 'onion',
+                                'quantity' => 2,
+                            ],
+                        ]
+                    ],
+                    [
+                        'foods' => [
+                            [
+                                'name' => 'egg',
+                                'quantity' => 4,
+                            ],
+                            [
+                                'name' => 'bacon',
+                                'quantity' => 7,
+                            ],
+                            [
+                                'name' => 'bread',
+                                'quantity' => 1,
+                            ],
+                        ]
+                    ],
+                ]
+            ])
+        ;
 
-
-        // creating a request for certain user
 
         // assert response is identical with user's current meals
     }
