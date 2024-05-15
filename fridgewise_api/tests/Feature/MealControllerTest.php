@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,6 +28,64 @@ class MealControllerTest extends TestCase
         ]);
     }
 
+
+    public function test_get_all_meals() : void {
+        $this->user->meals()->createMany(
+            [
+                [
+                    'foods' => [
+                        [
+                            'name' => 'banana',
+                            'quantity' => 2,
+                        ],
+                        [
+                            'name' => 'onion',
+                            'quantity' => 2,
+                        ],
+                    ]
+                ],
+                [
+                    'foods' => [
+                        [
+                            'name' => 'egg',
+                            'quantity' => 4,
+                        ],
+                        [
+                            'name' => 'bacon',
+                            'quantity' => 7,
+                        ],
+                        [
+                            'name' => 'bread',
+                            'quantity' => 1,
+                        ],
+                    ]
+                ],
+            ],
+        );
+
+        //create another user and a food for that random user (to assert it doesnt also get returned)
+        $anotherUser = User::factory()->create();
+        $anotherUser->meals()->create([
+            'foods' => [
+                [
+                    'name' => 'olives',
+                    'quantity' => 10,
+                ],
+                [
+                    'name' => 'strawberry jam',
+                    'quantity' => 1,
+                ],
+            ]
+        ]);
+
+        // ensure there is an endpoint
+        $this->actingAs($this->user)->getJson('/api/meal')->assertOk();
+
+
+        // creating a request for certain user
+
+        // assert response is identical with user's current meals
+    }
     public function test_put_creates_new_meal(): void
     {
         $this->actingAs($this->user)->putJson('/api/meal', [

@@ -36,6 +36,7 @@ Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
     Route::patch('/food', [FoodController::class, 'update']);
 
     Route::put('/meal', [MealController::class, 'store']);
+    Route::get('/meal', [MealController::class, 'index']);
 
     Route::put('/recipe', [RecipeController::class, 'store']);
     Route::delete('/recipe', [RecipeController::class, 'destroy']);
