@@ -28,6 +28,29 @@ class MealControllerTest extends TestCase
         ]);
     }
 
+    public function test_a_user_can_delete_their_meal()
+    {
+        $meal = $this->user->meals()->create(
+                [
+                    'foods' => [
+                        [
+                            'name' => 'banana',
+                            'quantity' => 2,
+                        ],
+                        [
+                            'name' => 'onion',
+                            'quantity' => 2,
+                        ],
+                    ]
+                ]);
+
+        $totalCount = $this->user->meals()->count();
+
+        $this->actingAs($this->user)->deleteJson(route('meals.destroy', $meal))->assertOk();
+
+        $this->assertEquals($totalCount--, $this->user->meals()->count());
+    }
+
 
     public function test_get_all_meals() : void {
         $this->user->meals()->createMany(
