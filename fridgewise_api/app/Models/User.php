@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use MongoDB\Laravel\Auth\User as Authenticatable;
+use MongoDB\Laravel\Relations\HasMany;
+
+/**
+ * @property string $id
+ */
 
 class User extends Authenticatable
 {
@@ -29,7 +33,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function meals()
+    public function foods(): HasMany
+    {
+        return $this->hasMany(Food::class);
+    }
+
+    public function meals(): HasMany
     {
         return $this->hasMany(Meal::class);
     }

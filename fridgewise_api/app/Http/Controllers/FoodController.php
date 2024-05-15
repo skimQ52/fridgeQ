@@ -2,34 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Food;
+use App\Models\User;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class FoodController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         try {
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
             $foodName = $request->query('name');
 
             if ($foodName) {
-                $food = Food::query()
+                $food = $user->foods()
                     ->where('name', $foodName)
-                    ->where('user_id', $user_id)
                     ->first();
                 return response()->json(['data' => $food]);
             }
-            $foods = Food::query()
-                ->where('user_id', $user_id)
-                ->get();
+
+            $foods = $user->foods()->get();
+
             return response()->json(['data' => $foods]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         try {
             $validated = $request->validate([
@@ -48,12 +50,13 @@ class FoodController extends Controller
                 'type.in' => 'The selected type is invalid.',
             ]);
 
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
 
-            $food = Food::query()
+            $food = $user->foods()
                 ->where('name', $validated['name'])
-                ->where('user_id', $user_id)
                 ->first();
+
             if ($food) {
                 $food->update([
                     'quantity' => $validated['quantity'],
@@ -61,11 +64,10 @@ class FoodController extends Controller
                 return response()->json(['data' => $food]);
             }
 
-            $food = Food::query()->create([
+            $food = $user->foods()->create([
                 'name' => $validated['name'],
                 'quantity' => $validated['quantity'],
                 'type' => $validated['type'],
-                'user_id' => $user_id,
             ]);
             return response()->json(['data' => $food]);
         } catch (\Exception $e) {
@@ -73,19 +75,17 @@ class FoodController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request)
+    public function update(Request $request): JsonResponse
     {
         try {
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
             $name = $request->input('name');
             $quan = $request->input('quan');
 
-            $food = Food::query()
+            $food = $user->foods()
                 ->where('name', $name)
-                ->where('user_id', $user_id)
+                ->where('user_id', $user->id)
                 ->first();
             if (!$food) {
                 return response()->json([
@@ -106,17 +106,14 @@ class FoodController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Request $request)
+    public function destroy(Request $request): JsonResponse
     {
         try {
-            $user_id = $request->user()->_id;
+            /** @var User $user */
+            $user = auth()->user();
             $name = $request->input("name");
-            $food = Food::query()
+            $food = $user->foods()
                 ->where('name', $name)
-                ->where('user_id', $user_id)
                 ->first();
             if (!$food) {
                 return response()->json([
@@ -131,7 +128,7 @@ class FoodController extends Controller
                     'message' => $name.' deleted successfully'
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
