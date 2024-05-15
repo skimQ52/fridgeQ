@@ -114,11 +114,26 @@ class MealControllerTest extends TestCase
                     ],
                 ]
             ])
+            ->assertJsonMissingExact([
+                'foods' => [
+                    [
+                        'name' => 'olives',
+                        'quantity' => 10,
+                    ],
+                    [
+                        'name' => 'strawberry jam',
+                        'quantity' => 1,
+                    ],
+                ]
+            ]);
         ;
-
-
-        // assert response is identical with user's current meals
     }
+
+    public function test_un_auth_person_cannot_get(): void {
+
+        $this->getJson('/api/meal', [])->assertUnauthorized();
+    }
+
     public function test_put_creates_new_meal(): void
     {
         $this->actingAs($this->user)->putJson('/api/meal', [
