@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -14,8 +13,8 @@ class UserController extends Controller
     {
 
         $validated = $request->validate([
-           'email' => 'required|email',
-           'password' => 'required',
+            'email' => 'required|email',
+            'password' => 'required',
             'device_name' => 'required',
         ]);
 
@@ -43,7 +42,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email',
             'password' => 'required|string|min:8',
+            'device_name' => 'required',
         ]);
+
+        if (User::query()->where('email', $validatedData['email'])->exists()) {
+            return response()->json([
+                'message' => 'Email is already taken.'
+            ], 422);
+        }
 
         $hashedPass = Hash::make($validatedData['password']);
 
@@ -53,7 +59,10 @@ class UserController extends Controller
             'password' => $hashedPass,
         ]);
 
+        $plainTextToken = $user->createToken($request->device_name)->plainTextToken;
         return response()->json([
+            'id' => $user->id,
+            'token' => $plainTextToken,
             'email' => $user->email,
             'name' => $user->name,
         ]);

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -86,7 +85,6 @@ class MealControllerTest extends TestCase
             ],
         );
 
-        //create another user and a food for that random user (to assert it doesnt also get returned)
         $anotherUser = User::factory()->create();
         $anotherUser->meals()->create([
             'foods' => [
@@ -101,7 +99,6 @@ class MealControllerTest extends TestCase
             ]
         ]);
 
-        // ensure there is an endpoint
         $this->actingAs($this->user)
             ->getJson('/api/meal')
             ->assertOk()
@@ -152,8 +149,8 @@ class MealControllerTest extends TestCase
         ;
     }
 
-    public function test_un_auth_person_cannot_get(): void {
-
+    public function test_unauthorized_person_cannot_get(): void
+    {
         $this->getJson('/api/meal', [])->assertUnauthorized();
     }
 

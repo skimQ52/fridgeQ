@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useAuthContext } from './useAuthContext';
+import {useState} from 'react';
+import {useAuthContext} from './useAuthContext';
 
 export const useLogin = () => {
     const [error, setError] = useState<null | boolean>(null);
@@ -19,11 +19,9 @@ export const useLogin = () => {
             },
             body: JSON.stringify({email, password, "device_name": browser})
         });
-        console.log(JSON.stringify({email, password, "device_name": browser}));
         try {
             const json = await response.json();
             if (!json.token) {
-                console.log("HERE");
                 setIsLoading(false);
                 setError(json.error);
             }

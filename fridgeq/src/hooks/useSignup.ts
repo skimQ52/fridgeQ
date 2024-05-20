@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useAuthContext } from './useAuthContext';
+import {useState} from 'react';
+import {useAuthContext} from './useAuthContext';
 
 export const useSignup = () => {
     const [error, setError] = useState<null | boolean>(null);
@@ -10,12 +10,14 @@ export const useSignup = () => {
         setIsLoading(true);
         setError(null);
 
+        const device_name = 'browser';
+        let body = JSON.stringify({email, password, name, device_name});
         const response = await fetch('http://localhost:8000/api/user/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email, password, name})
+            body: body
         });
         const json = await response.json();
 
