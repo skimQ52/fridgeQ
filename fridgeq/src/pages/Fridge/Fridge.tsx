@@ -137,8 +137,6 @@ const Fridge = () => {
         }
     },[])
 
-    // const outerFridge = "relative bg-gray-100 rounded-2xl h-full m-1 mt-4 p-1"; //todo: breaking stuff and zooming
-
     return (
         <div className='page'>
             <div className={`fridge-outer ${isAddFoodPopup || isEditFoodPopup ? 'blur' : ''}`}>
