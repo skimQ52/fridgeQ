@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Meal;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,24 +31,58 @@ class MealControllerTest extends TestCase
     public function test_a_user_can_delete_their_meal()
     {
         $meal = $this->user->meals()->create(
-                [
-                    'foods' => [
-                        [
-                            'name' => 'banana',
-                            'quantity' => 2,
-                        ],
-                        [
-                            'name' => 'onion',
-                            'quantity' => 2,
-                        ],
-                    ]
-                ]);
+            [
+                'foods' => [
+                    [
+                        'name' => 'banana',
+                        'quantity' => 2,
+                    ],
+                    [
+                        'name' => 'onion',
+                        'quantity' => 2,
+                    ],
+                ]
+            ]
+        );
 
         $totalCount = $this->user->meals()->count();
 
-        $this->actingAs($this->user)->deleteJson(route('meals.destroy', $meal))->assertOk();
+        $this->actingAs($this->user)->deleteJson(route('meals.destroy', $meal))
+            ->assertOk()
+            ->assertJsonFragment([
+                "message" => "Meal deleted successfully"
+            ]);
 
         $this->assertEquals($totalCount--, $this->user->meals()->count());
+    }
+
+    public function test_cannot_delete_non_existent_meal()
+    {
+        $meal = Meal::query()->create(
+            [
+                'foods' => [
+                    [
+                        'name' => 'banana',
+                        'quantity' => 2,
+                    ],
+                    [
+                        'name' => 'onion',
+                        'quantity' => 2,
+                    ],
+                ],
+                'user_id' => 'somethingrandom',
+            ]
+        );
+
+        $totalCount = $this->user->meals()->count();
+
+        $this->actingAs($this->user)->deleteJson(route('meals.destroy', $meal))
+            ->assertUnprocessable()
+            ->assertJsonFragment([
+                "message" => "User does not have this meal"
+            ]);
+
+        $this->assertEquals($totalCount, $this->user->meals()->count());
     }
 
 
@@ -151,7 +186,7 @@ class MealControllerTest extends TestCase
 
     public function test_unauthorized_person_cannot_get(): void
     {
-        $this->getJson('/api/meal', [])->assertUnauthorized();
+        $this->getJson('/api/meal')->assertUnauthorized();
     }
 
     public function test_put_creates_new_meal(): void

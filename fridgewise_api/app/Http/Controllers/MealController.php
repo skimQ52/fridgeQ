@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Meal;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class MealController extends Controller
@@ -13,8 +14,9 @@ class MealController extends Controller
      */
     public function index()
     {
-        $mealsValue = auth()->user()->meals;
-        return response()->json(["meals" => $mealsValue]);
+        /** @var User $user */
+        $user = auth()->user();
+        return response()->json(["meals" => $user->meals()->get()]);
     }
 
     /**
@@ -68,8 +70,17 @@ class MealController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Meal $meal)
+    public function destroy(Meal $meal): JsonResponse
     {
+        $userHasTheMeal = auth()->user()->meals()->where('id', $meal->id)->first();
+        if (!$userHasTheMeal) {
+            return response()->json([
+                'message' => "User does not have this meal",
+            ], 422);
+        }
         $meal->delete();
+        return response()->json([
+            'message' => "Meal deleted successfully",
+        ]);
     }
 }
