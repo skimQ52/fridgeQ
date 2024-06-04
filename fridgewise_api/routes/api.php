@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FoodController;
 use App\Http\Controllers\MealController;
 use App\Http\Controllers\RecipeController;
@@ -42,4 +43,6 @@ Route::middleware(['auth:sanctum', 'auth-model:user'])->group(function () {
     Route::put('/recipe', [RecipeController::class, 'store']);
     Route::delete('/recipe', [RecipeController::class, 'destroy']);
     Route::get('/recipe', [RecipeController::class, 'index']);
+
+    Route::post('/chat', ChatController::class);
 });
