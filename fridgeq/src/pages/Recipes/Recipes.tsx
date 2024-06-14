@@ -79,6 +79,7 @@ const Recipes = () => {
             console.log(response);
             await fetchRecipes();
             setIsAddRecipePopup(false);
+            setIsGeneratedPopup(false);
         } catch (error) {
             e.preventDefault();
             console.error('Error:', error);
@@ -139,6 +140,7 @@ const Recipes = () => {
                 ingredients: ingredients,
             })
             setIsGeneratedPopup(true);
+            setIsSelectFoodsPopup(false);
         } catch (error) {
             e.preventDefault();
             console.error('Error:', error);
@@ -175,11 +177,11 @@ const Recipes = () => {
             <div className={(isAddRecipePopup) ? 'fridge-outer blur' : 'fridge-outer'}>
                 <FilterBar onChange={handleQueryChange} sort={sortAlphabetically}>
                     <option value="" defaultValue="true">Type</option>
-                    <option value="breakfast">Breakfast</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="snack">Snack</option>
-                    <option value="other">Other</option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                    <option value="Dessert">Dessert</option>
                 </FilterBar>
                 {recipes.length === 0 ? ( //TODO: IMPROVE
                     <p>No recipes available</p>

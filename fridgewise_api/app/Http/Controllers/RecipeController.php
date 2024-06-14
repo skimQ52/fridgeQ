@@ -44,25 +44,11 @@ class RecipeController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'string|required|max:25',
+                'name' => 'string|required|max:50',
                 'description' => 'string|required|max:250',
                 'recipe' => 'string|required|max:1250',
                 'ingredients' => 'array|required',
-                'type' => 'string|in:breakfast,lunch,dinner,snack,dessert'
-            ], [
-                'name.required' => 'The name field is required.',
-                'name.string' => 'The name must be a string.',
-                'name.max' => 'The name may not be greater than 25 characters.',
-                'description.required' => 'The description field is required.',
-                'description.string' => 'The description must be a string.',
-                'description.max' => 'The name may not be greater than 250 characters.',
-                'recipe.required' => 'The recipe field is required.',
-                'recipe.string' => 'The recipe must be a string.',
-                'recipe.max' => 'The recipe may not be greater than 1250 characters.',
-                'type.required' => 'The type field is required.',
-                'type.string' => 'The type must be a string.',
-                'type.in' => 'The selected type is invalid.',
-                'ingredients.required' => 'The ingredients field is required.',
+                'type' => 'string|in:Breakfast,Lunch,Dinner,Snack,Dessert'
             ]);
 
             /** @var User $user */

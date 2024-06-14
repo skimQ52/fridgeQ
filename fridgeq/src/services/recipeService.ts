@@ -1,4 +1,4 @@
-import { handleApiResponse } from "./foodService.ts";
+import {handleApiResponse} from "./foodService.ts";
 
 const BASE_URL = 'http://localhost:8000/api/recipe';
 
@@ -30,6 +30,7 @@ export const getRecipes = async <T>(userToken: string): Promise<T> => {
 
 export const addRecipe = async <T>(data: string, userToken: string): Promise<T> => {
     try {
+        console.log(data);
         const response = await fetch(`${BASE_URL}`, {
             method: 'PUT',
             headers: {
@@ -60,7 +61,7 @@ export const deleteRecipe = async <T>(name: string, userToken: string): Promise<
 
 export const generateRecipe = async <T>(data: string, userToken: string): Promise<T> => {
     try {
-        const response = await fetch(`${BASE_URL}/generate_recipe`, {
+        const response = await fetch(`http://localhost:8000/api/chat`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${userToken}`,

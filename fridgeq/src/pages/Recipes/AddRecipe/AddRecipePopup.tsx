@@ -66,11 +66,11 @@ export function AddRecipePopup(props: AddRecipePopupProps) {
                 <ParagraphInput defaultValue="" maxlength={1200} label="Recipe" onTextChange={handleRecipeChange}/>
                 <select onChange={handleTypeSelect} className="input input-select">
                     <option value="" defaultValue="true">Type</option>
-                    <option value="breakfast">Breakfast</option>
-                    <option value="lunch">Lunch</option>
-                    <option value="dinner">Dinner</option>
-                    <option value="snack">Snack</option>
-                    <option value="dessert">Dessert</option>
+                    <option value="Breakfast">Breakfast</option>
+                    <option value="Lunch">Lunch</option>
+                    <option value="Dinner">Dinner</option>
+                    <option value="Snack">Snack</option>
+                    <option value="Dessert">Dessert</option>
                 </select>
                 {/*{props.error && <div className="error">{props.error}</div>}*/}
                 <button className="glow-on-hover confirmButton">Confirm</button>

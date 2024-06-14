@@ -33,7 +33,7 @@ class RecipeControllerTest extends TestCase
         $this->actingAs($this->user)->putJson('/api/recipe', [
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
             'user_id' => $this->user->id,
@@ -42,7 +42,7 @@ class RecipeControllerTest extends TestCase
             ->assertJsonFragment([
                 "name" => "Chiken ALfredo",
                 'description' => 'its chicken with alfredo',
-                'type' => 'dinner',
+                'type' => 'Dinner',
                 'recipe' => 'put chicken with alfredo',
                 'ingredients' => ['chicken', 'alfredo'],
                 'user_id' => $this->user->id,
@@ -52,7 +52,7 @@ class RecipeControllerTest extends TestCase
             ->where("name", "Chiken ALfredo")
             ->firstOrFail();
         $this->assertEquals('its chicken with alfredo', $recipe->description);
-        $this->assertEquals('dinner', $recipe->type);
+        $this->assertEquals('Dinner', $recipe->type);
         $this->assertEquals('put chicken with alfredo', $recipe->recipe);
         $this->assertEquals(['chicken', 'alfredo'], $recipe->ingredients);
     }
@@ -62,7 +62,7 @@ class RecipeControllerTest extends TestCase
         $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
         ]);
@@ -70,7 +70,7 @@ class RecipeControllerTest extends TestCase
         $this->actingAs($this->user)->putJson('/api/recipe', [
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo for lunch',
-            'type' => 'lunch',
+            'type' => 'Lunch',
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
         ])
@@ -92,17 +92,17 @@ class RecipeControllerTest extends TestCase
         $this->assertDatabaseCount('recipes', 0);
     }
 
-    public function test_put_name_is_max_25_chars(): void
+    public function test_put_name_is_max_50_chars(): void
     {
         $this->actingAs($this->user)->putJson('/api/recipe', [
-            "name" => "taco45678910111111111111111111111111111",
+            "name" => "taco45678910111111111111111111111111111taco45678910111111111111111111111111111",
             'description' => 'its chicken with alfredo for lunch',
-            'type' => 'lunch',
+            'type' => 'Lunch',
             'recipe' => 'put chicken with alfredo at lunchtime',
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
         ])
             ->assertStatus(500)
-            ->assertJsonFragment(["The name may not be greater than 25 characters."]);
+            ->assertJsonFragment(["The name field must not be greater than 50 characters."]);
 
         $this->assertDatabaseCount('recipes', 0);
     }
@@ -132,7 +132,7 @@ class RecipeControllerTest extends TestCase
             'ingredients' => ['chicken', 'alfredo', 'carrot'],
         ])
             ->assertStatus(500)
-            ->assertJsonFragment(["The type must be a string. (and 1 more error)"]);
+            ->assertJsonFragment(["The type field must be a string. (and 1 more error)"]);
 
         $this->assertDatabaseCount('recipes', 0);
     }
@@ -142,7 +142,7 @@ class RecipeControllerTest extends TestCase
         $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
         ]);
@@ -150,7 +150,7 @@ class RecipeControllerTest extends TestCase
         $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
         ]);
@@ -170,7 +170,7 @@ class RecipeControllerTest extends TestCase
         $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
         ]);
@@ -178,7 +178,7 @@ class RecipeControllerTest extends TestCase
         Recipe::query()->create([
             "name" => 'Pesto Salad',
             'description' => 'its pesto salad',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put pesto and salad',
             'ingredients' => ['pesto', 'salad'],
             'user_id' => 'someotheruserid',
@@ -196,7 +196,7 @@ class RecipeControllerTest extends TestCase
         $recipe1 = $this->user->recipes()->create([
             "name" => "Chiken ALfredo",
             'description' => 'its chicken with alfredo',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put chicken with alfredo',
             'ingredients' => ['chicken', 'alfredo'],
         ]);
@@ -204,7 +204,7 @@ class RecipeControllerTest extends TestCase
         $recipe2 = $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
         ]);
@@ -212,7 +212,7 @@ class RecipeControllerTest extends TestCase
         Recipe::query()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
             'user_id' => 'someotheruserid',
@@ -244,7 +244,7 @@ class RecipeControllerTest extends TestCase
         $taco = $this->user->recipes()->create([
             "name" => "Pesto Salad",
             'description' => 'its asaladwiuth pesto',
-            'type' => 'dinner',
+            'type' => 'Dinner',
             'recipe' => 'put the salad with the pesto',
             'ingredients' => ['pesto', 'lettuce', 'tomato'],
         ]);

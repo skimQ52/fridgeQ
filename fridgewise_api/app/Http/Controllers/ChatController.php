@@ -10,6 +10,14 @@ class ChatController extends Controller
 {
     public function __invoke(Request $request): JsonResponse
     {
+
+        $type = $request->input('type');
+        $ingredients = implode(", ", $request->input('ingredients'));
+
+        $prompt =
+            "Can you give me a " . $type . " meal idea with this ingredient list:" .
+            $ingredients . "With exclusively output in this format:\nName:\nDescription:\nInstructions:";
+
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
         ])->post('https://api.openai.com/v1/chat/completions', [
@@ -17,14 +25,22 @@ class ChatController extends Controller
             "messages" => [
                 [
                     "role" => "user",
-                    "content" => "Helloo?"
+                    "content" => $prompt
                 ]
             ],
-//            'prompt' => $request->input('message'),
 //            'temperature' => 0.7,
             'max_tokens' => 300,
         ]);
 
-        return response()->json($response->json());
+        $sections = preg_split('/\bName:|Description:|Instructions:/', $response->json()['choices'][0]['message']['content']);
+
+        $recipe = [
+            'name' => trim($sections[1]),
+            'description' => trim($sections[2]),
+            'recipe' => trim($sections[3]),
+        ];
+
+        return response()->json(['data' => $recipe, 'status' => 200]);
+
     }
 }
