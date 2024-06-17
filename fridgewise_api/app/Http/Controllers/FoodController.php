@@ -95,6 +95,15 @@ class FoodController extends Controller
                 ]);
             }
 
+            if ($quan == 0) {
+                $food->delete();
+                return response()->json([
+                    'data' => [
+                        'message' => $name . ' deleted successfully'
+                    ],
+                ]);
+            }
+
             $food->update(['quantity' => $quan]);
             return response()->json([
                 'data' => [

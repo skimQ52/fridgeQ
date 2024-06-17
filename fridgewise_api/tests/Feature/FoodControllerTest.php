@@ -238,6 +238,22 @@ class FoodControllerTest extends TestCase
             ->assertJsonFragment(['message' => 'User does not have the food: bread']);
     }
 
+    public function test_patch_deletes_if_quan_is_0()
+    {
+
+        $this->user->foods()->create([
+            'name' => 'bread',
+            'type' => 'grains',
+            'quantity' => 3,
+        ]);
+
+        $this->actingAs($this->user)->patchJson('/api/food', ['name' => 'bread', 'quan' => 0])
+            ->assertStatus(200)
+            ->assertJsonFragment(['message' => 'bread deleted successfully']);
+
+        $this->assertCount(0, $this->user->foods()->where('name', 'bread')->get());
+    }
+
     public function test_get_returns_all_foods(): void
     {
         $bread = $this->user->foods()->create([

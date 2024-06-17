@@ -66,10 +66,6 @@ const Fridge = () => {
         if (!user) {
             return;
         }
-        if (quantity === 0) { // Need to delete
-            await handleDelete(name);
-            return;
-        }
         try {
             const response = await updateFood(name, quantity, user.token);
             setIsEditFoodPopup(false);
