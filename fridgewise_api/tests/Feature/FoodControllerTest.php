@@ -67,13 +67,13 @@ class FoodControllerTest extends TestCase
             ->assertJsonFragment([
                 "name" => "taco",
                 "type" => "fruits",
-                "quantity" => 29
+                "quantity" => 32
         ]);
 
         $food->refresh();
         $this->assertEquals('taco', $food->name);
         $this->assertEquals('fruits', $food->type);
-        $this->assertEquals(29, $food->quantity);
+        $this->assertEquals(32, $food->quantity);
     }
 
     public function test_put_fails_if_fields_are_missing(): void

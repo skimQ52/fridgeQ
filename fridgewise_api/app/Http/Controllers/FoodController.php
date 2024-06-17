@@ -59,7 +59,7 @@ class FoodController extends Controller
 
             if ($food) {
                 $food->update([
-                    'quantity' => $validated['quantity'],
+                    'quantity' => $food->quantity + $validated['quantity'],
                 ]);
                 return response()->json(['data' => $food]);
             }

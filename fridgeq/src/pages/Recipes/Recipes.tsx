@@ -208,7 +208,6 @@ const Recipes = () => {
                 <AddRecipePopup onClick={() => setIsAddRecipePopup(false)} onSubmit={handleNewRecipe} foods={selectedFoods}/>
             }
 
-            {/* Generated Recipe Popup */}
             {isGeneratedPopup &&
                 <GeneratedRecipePopup onClick={discardGeneratedRecipe} onSubmit={handleNewRecipe} generated={recipePopup}/>
             }

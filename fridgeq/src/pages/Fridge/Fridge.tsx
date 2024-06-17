@@ -44,12 +44,6 @@ const Fridge = () => {
         if (!user) {
             return;
         }
-        const existingFood = Object.values(foods).find(food => food.name.toLowerCase() === name.toLowerCase());
-        if (existingFood) {
-            const newQuantity = existingFood.quantity + quantity;
-            const response = await handleUpdateFood(existingFood.name, newQuantity, e);
-            return;
-        }
 
         const data = {
             name: name,
