@@ -7,7 +7,7 @@ import {FoodInterface} from "../../../interfaces/interfaces.ts";
 interface SelectFoodsPopupProps {
     onClick: () => void;
     onSubmit: (selectedFoods: FoodInterface[]) => void;
-    onGenerate: (ingredients: string[], type: string, e: any) => void;
+    onGenerate: (ingredients: string[], type: string, scale: number, e: any) => void;
 }
 
 export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
@@ -16,6 +16,7 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
     const [foods, setFoods] = useState<FoodInterface[]>([]);
     const [selectedFoods, setSelectedFoods] = useState<FoodInterface[]>([]);
     const [typeSelectState, setTypeSelectState] = useState('');
+    const [scaleSelectState, setScaleSelectState] = useState(0.8);
 
     const handleCheck = (e: any) => {
         let updatedList = [...selectedFoods];
@@ -38,8 +39,13 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
         setTypeSelectState(query);
     };
 
+    const handleScaleChange = (e: any) => {
+        const query = e.target.value;
+        setScaleSelectState(query);
+    };
+
     const handleGenerate = async (e: any) => {
-        props.onGenerate(selectedFoods as unknown as string[], typeSelectState, e);
+        props.onGenerate(selectedFoods as unknown as string[], typeSelectState, scaleSelectState, e);
     }
 
     const fetchFoods = async () => {
@@ -81,14 +87,23 @@ export function SelectFoodsPopup(props: SelectFoodsPopupProps) {
                     className='glow-on-hover confirmButton'>Create
             </button>
             <div className="generateMealContainer">
-                <button onClick={handleGenerate} className="glow-on-hover confirmButton">Generate</button>
-                <select onChange={handleTypeSelect} className="input">
-                    <option value="" defaultValue="true">Type</option>
-                    <option value="Breakfast">Breakfast</option>
-                    <option value="Lunch">Lunch</option>
-                    <option value="Dinner">Dinner</option>
-                    <option value="Snack">Snack</option>
-                </select>
+                <h4>Generate a Meal</h4>
+                <label className="text-sm" htmlFor="scale">Creativity Scale:</label>
+                <input
+                    type="range" onChange={handleScaleChange} id="scale" min="0" max="2" step="0.4" defaultValue="0.8"
+                />
+                <div className="flex w-100 gap-3">
+                    <button onClick={handleGenerate} className="glow-on-hover p-4 text-green-700 font-bold rounded">
+                        GO
+                    </button>
+                    <select onChange={handleTypeSelect} className="border-1 rounded text-center">
+                        <option value="" defaultValue="true">Type</option>
+                        <option value="Breakfast">Breakfast</option>
+                        <option value="Lunch">Lunch</option>
+                        <option value="Dinner">Dinner</option>
+                        <option value="Snack">Snack</option>
+                    </select>
+                </div>
             </div>
         </div>
         {/*{props.error && <div className="error">{props.error}</div>}*/}

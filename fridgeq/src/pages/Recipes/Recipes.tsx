@@ -118,13 +118,14 @@ const Recipes = () => {
         setRecipes(filteredRecipes);
     }
 
-    const handleGenerateRecipe = async (ingredients: string[], type: string, e: any) => {
+    const handleGenerateRecipe = async (ingredients: string[], type: string, scale: number, e: any) => {
         if (!user) {
             return;
         }
         const data = {
             ingredients: ingredients,
-            type: type
+            type: type,
+            temperature: scale
         };
         const dataString = JSON.stringify(data);
         setIsLoading(true);

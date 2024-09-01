@@ -12,6 +12,7 @@ class ChatController extends Controller
     {
 
         $type = $request->input('type');
+        $temperature = $request->input('temperature');
         $ingredients = implode(", ", $request->input('ingredients'));
 
         $prompt =
@@ -28,7 +29,7 @@ class ChatController extends Controller
                     "content" => $prompt
                 ]
             ],
-//            'temperature' => 0.7,
+            'temperature' => $temperature,
             'max_tokens' => 300,
         ]);
 
